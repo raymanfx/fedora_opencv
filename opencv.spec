@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        0.9.7
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -60,10 +60,11 @@ This package contains Python bindings for the OpenCV library.
                      samples/python/*.py
 %{__sed} -i 's/^#!.*//' interfaces/swig/python/adaptors.py \
                         interfaces/swig/python/__init__.py
+autoreconf -vif
 
 
 %build
-%configure --enable-maintainer-mode --disable-static --enable-python --with-apps
+%configure --disable-static --enable-python --with-apps
 make %{?_smp_mflags}
 
 
@@ -123,6 +124,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar  8 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-15
+- Force a re-run of Autotools by calling autoreconf.
+
 * Wed Mar  8 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-14
 - Added build dependency on Autotools.
 
