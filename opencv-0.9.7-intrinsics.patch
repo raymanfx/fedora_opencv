@@ -1,0 +1,195 @@
+diff -urp opencv-0.9.7.orig/configure.in opencv-0.9.7/configure.in
+--- opencv-0.9.7.orig/configure.in	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/configure.in	2006-03-07 12:05:24.000000000 -0500
+@@ -281,6 +281,11 @@ dnl
+ #
+ #AC_SUBST(CXXOPENMP)
+ 
++dnl
++dnl ****************** SSE2 Intrinsics **************************
++dnl
++AC_CHECK_HEADERS([emmintrin.h])
++
+ AC_SUBST(DEBUG)
+ 
+ AC_CONFIG_FILES([Makefile
+diff -urp opencv-0.9.7.orig/cv/src/_cv.h opencv-0.9.7/cv/src/_cv.h
+--- opencv-0.9.7.orig/cv/src/_cv.h	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/cv/src/_cv.h	2006-03-07 12:05:24.000000000 -0500
+@@ -42,6 +42,10 @@
+ #ifndef _CV_INTERNAL_H_
+ #define _CV_INTERNAL_H_
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #if defined _MSC_VER && _MSC_VER >= 1200
+     /* disable warnings related to inline functions */
+     #pragma warning( disable: 4711 4710 4514 )
+diff -urp opencv-0.9.7.orig/cvaux/src/_cvaux.h opencv-0.9.7/cvaux/src/_cvaux.h
+--- opencv-0.9.7.orig/cvaux/src/_cvaux.h	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/cvaux/src/_cvaux.h	2006-03-07 12:05:24.000000000 -0500
+@@ -41,6 +41,10 @@
+ #ifndef __CVAUX_H__
+ #define __CVAUX_H__
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #if _MSC_VER >= 1200
+ #pragma warning( disable: 4710 4711 4514 ) /* function AAA selected for automatic inline expansion */
+ #endif
+diff -urp opencv-0.9.7.orig/cxcore/include/cxtypes.h opencv-0.9.7/cxcore/include/cxtypes.h
+--- opencv-0.9.7.orig/cxcore/include/cxtypes.h	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/cxcore/include/cxtypes.h	2006-03-07 12:05:24.000000000 -0500
+@@ -48,7 +48,8 @@
+   #include <string.h>
+   #include <float.h>
+ 
+-  #if defined WIN64 && defined EM64T && defined _MSC_VER
++  #if  defined HAVE_EMMINTRIN_H \
++    || defined WIN64 && defined EM64T && defined _MSC_VER
+     #include <emmintrin.h>
+   #endif
+ 
+diff -urp opencv-0.9.7.orig/cxcore/src/_cxcore.h opencv-0.9.7/cxcore/src/_cxcore.h
+--- opencv-0.9.7.orig/cxcore/src/_cxcore.h	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/cxcore/src/_cxcore.h	2006-03-07 12:05:24.000000000 -0500
+@@ -42,6 +42,10 @@
+ #ifndef _CXCORE_INTERNAL_H_
+ #define _CXCORE_INTERNAL_H_
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #if defined _MSC_VER && _MSC_VER >= 1200
+     /* disable warnings related to inline functions */
+     #pragma warning( disable: 4711 4710 4514 )
+diff -urp opencv-0.9.7.orig/interfaces/swig/python/error.h opencv-0.9.7/interfaces/swig/python/error.h
+--- opencv-0.9.7.orig/interfaces/swig/python/error.h	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/interfaces/swig/python/error.h	2006-03-07 12:06:40.000000000 -0500
+@@ -44,6 +44,9 @@
+ //             Mark Asbach       <asbach@ient.rwth-aachen.de>
+ //             Institute of Communications Engineering, RWTH Aachen University
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
+ 
+ #include "cxcore.h"
+ 
+diff -urp opencv-0.9.7.orig/interfaces/swig/python/pycvseq.h opencv-0.9.7/interfaces/swig/python/pycvseq.h
+--- opencv-0.9.7.orig/interfaces/swig/python/pycvseq.h	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/interfaces/swig/python/pycvseq.h	2006-03-07 12:07:13.000000000 -0500
+@@ -39,6 +39,9 @@
+ //
+ //M*/
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
+ 
+ #include "cxcore.h"
+ 
+diff -urp opencv-0.9.7.orig/otherlibs/highgui/_highgui.h opencv-0.9.7/otherlibs/highgui/_highgui.h
+--- opencv-0.9.7.orig/otherlibs/highgui/_highgui.h	2006-03-06 22:58:42.000000000 -0500
++++ opencv-0.9.7/otherlibs/highgui/_highgui.h	2006-03-07 12:05:24.000000000 -0500
+@@ -42,6 +42,12 @@
+ #ifndef __HIGHGUI_H_
+ #define __HIGHGUI_H_
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#elif defined WIN32
++void  FillBitmapInfo( BITMAPINFO* bmi, int width, int height, int bpp, int origin );
++#endif
++
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -52,12 +58,6 @@
+ #include "highgui.h"
+ #include "cxmisc.h"
+ 
+-#ifndef WIN32
+-#include "cvconfig.h"
+-#else
+-void  FillBitmapInfo( BITMAPINFO* bmi, int width, int height, int bpp, int origin );
+-#endif
+-
+ /* Errors */
+ #define HG_OK          0 /* Don't bet on it! */
+ #define HG_BADNAME    -1 /* Bad window or file name */
+diff -urp opencv-0.9.7.orig/interfaces/swig/general/cv.i opencv-0.9.7/interfaces/swig/general/cv.i
+--- opencv-0.9.7.orig/interfaces/swig/general/cv.i	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/interfaces/swig/general/cv.i	2006-03-07 12:33:16.000000000 -0500
+@@ -49,6 +49,10 @@
+ 
+ 
+ %{
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #include "cv.h"
+ %}
+ 
+diff -urp opencv-0.9.7.orig/interfaces/swig/general/highgui.i opencv-0.9.7/interfaces/swig/general/highgui.i
+--- opencv-0.9.7.orig/interfaces/swig/general/highgui.i	2006-03-06 22:58:41.000000000 -0500
++++ opencv-0.9.7/interfaces/swig/general/highgui.i	2006-03-07 12:33:46.000000000 -0500
+@@ -48,6 +48,10 @@
+ %module(package="opencv") highgui
+ 
+ %{
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #include "highgui.h"
+ %}
+ 
+diff -urp opencv-0.9.7.orig/apps/haartraining/src/_cvcommon.h opencv-0.9.7/apps/haartraining/src/_cvcommon.h
+--- opencv-0.9.7.orig/apps/haartraining/src/_cvcommon.h	2006-03-07 14:23:05.000000000 -0500
++++ opencv-0.9.7/apps/haartraining/src/_cvcommon.h	2006-03-07 14:34:25.000000000 -0500
+@@ -42,6 +42,10 @@
+ #ifndef __CVCOMMON_H_
+ #define __CVCOMMON_H_
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #include <cv.h>
+ #include <cxmisc.h>
+ 
+diff -urp opencv-0.9.7.orig/apps/haartraining/src/_cvhaartraining.h opencv-0.9.7/apps/haartraining/src/_cvhaartraining.h
+--- opencv-0.9.7.orig/apps/haartraining/src/_cvhaartraining.h	2006-03-07 14:23:05.000000000 -0500
++++ opencv-0.9.7/apps/haartraining/src/_cvhaartraining.h	2006-03-07 14:33:31.000000000 -0500
+@@ -48,6 +48,10 @@
+ #ifndef __CVHAARTRAINING_H_
+ #define __CVHAARTRAINING_H_
+ 
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #include <_cvcommon.h>
+ #include <cvclassifier.h>
+ #include <string.h>
+diff -urp opencv-0.9.7.orig/apps/haartraining/src/performance.cpp opencv-0.9.7/apps/haartraining/src/performance.cpp
+--- opencv-0.9.7.orig/apps/haartraining/src/performance.cpp	2006-03-07 14:23:05.000000000 -0500
++++ opencv-0.9.7/apps/haartraining/src/performance.cpp	2006-03-07 14:35:41.000000000 -0500
+@@ -44,6 +44,10 @@
+  *
+  * Measure performance of classifier
+  */
++#ifdef HAVE_CONFIG_H
++#include <cvconfig.h>
++#endif
++
+ #include "cv.h"
+ #include <stdio.h>
+ #include <math.h>

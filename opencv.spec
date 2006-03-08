@@ -1,8 +1,11 @@
 %define with_ffmpeg 0
 
+%define pythondir %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
+%define pyexecdir %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib(1)')
+
 Name:           opencv
 Version:        0.9.7
-Release:        3
+Release:        13%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -10,6 +13,8 @@ License:        Intel Open Source License
 URL:            http://www.intel.com/technology/computing/opencv/index.htm
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-%{version}.tar.gz
 Source1:        opencv-samples-Makefile
+Patch0:         opencv-0.9.7-intrinsics-simple.patch
+Patch1:         opencv-0.9.7-pythondir.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
@@ -40,7 +45,7 @@ will use the OpenCV library.
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv = %{version}-%{release}
-Requires:       %{_libdir}/python%(echo `python -c "import sys; print sys.version[0:3]"`)
+Requires:       python-abi = %(%{__python} -c "import sys ; print sys.version[:3]")
 
 %description python
 This package contains Python bindings for the OpenCV library.
@@ -48,6 +53,8 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q
+%patch0 -p1 -b .intrinsics
+%patch1 -p1 -b .pythondir
 %{__sed} -i 's/\r//' interfaces/swig/python/*.py \
                      samples/python/*.py
 %{__sed} -i 's/^#!.*//' interfaces/swig/python/adaptors.py \
@@ -55,7 +62,7 @@ This package contains Python bindings for the OpenCV library.
 
 
 %build
-%configure --disable-static --enable-python --with-apps
+%configure --enable-maintainer-mode --disable-static --enable-python --with-apps
 make %{?_smp_mflags}
 
 
@@ -63,7 +70,7 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la \
-      $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/opencv/*.la \
+      $RPM_BUILD_ROOT%{pyexecdir}/opencv/*.la \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/build_all.sh \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.dsp \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.vcproj \
@@ -106,11 +113,46 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files python
-%{_libdir}/python*/site-packages/opencv
+%dir %{pythondir}/opencv
+%{pythondir}/opencv/*.py
+%{pythondir}/opencv/*.pyc
+%ghost %{pythondir}/opencv/*.pyo
+%{pyexecdir}/opencv
 %doc %{_datadir}/opencv/samples/python
 
 
 %changelog
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-13
+- Changed intrinsics patch so that it matches upstream.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-12
+- More intrinsics patch fixing.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-11
+- Don't do "make check" because it doesn't run any tests anyway.
+- Back to main intrinsics patch.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-10
+- Using simple intrinsincs patch.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-9
+- Still more fixing of intrinsics patch for Python bindings on x86_64.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-8
+- Again fixed intrinsics patch so that Python modules build on x86_64.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-7
+- Fixed intrinsics patch so that it works.
+
+* Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-6
+- Fixed Python bindings location on x86_64.
+
+* Mon Mar  6 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-5
+- SSE2 support on x86_64.
+
+* Mon Mar  6 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-4
+- Rebuild
+
 * Sun Oct 16 2005 Simon Perreault <nomis80@nomis80.org> - 0.9.7-3
 - Removed useless sample compilation makefiles/project files and replaced them
   with one that works on Fedora Core.
