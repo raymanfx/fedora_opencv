@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        0.9.7
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -17,6 +17,7 @@ Patch0:         opencv-0.9.7-intrinsics-simple.patch
 Patch1:         opencv-0.9.7-pythondir.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+BuildRequires:  autoconf, automake
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
 BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
 BuildRequires:  python-devel
@@ -122,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar  8 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-14
+- Added build dependency on Autotools.
+
 * Tue Mar  7 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-13
 - Changed intrinsics patch so that it matches upstream.
 
