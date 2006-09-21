@@ -1,0 +1,1071 @@
+diff -uNr opencv-0.9.9.orig/aclocal.m4 opencv-0.9.9/aclocal.m4
+--- opencv-0.9.9.orig/aclocal.m4	2006-08-18 16:34:17.000000000 +0200
++++ opencv-0.9.9/aclocal.m4	2006-09-21 04:24:11.000000000 +0200
+@@ -13,7 +13,7 @@
+ 
+ # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
+ 
+-# serial 48 Debian 1.5.22-4 AC_PROG_LIBTOOL
++# serial 48 AC_PROG_LIBTOOL
+ 
+ 
+ # AC_PROVIDE_IFELSE(MACRO-NAME, IF-PROVIDED, IF-NOT-PROVIDED)
+@@ -1397,6 +1397,18 @@
+   dynamic_linker=no
+   ;;
+ 
++kfreebsd*-gnu)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  hardcode_into_libs=yes
++  dynamic_linker='GNU ld.so'
++  ;;
++
+ freebsd* | dragonfly*)
+   # DragonFly does not have aout.  When/if they implement a new
+   # versioning mechanism, adjust this.
+@@ -1552,7 +1564,7 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -1566,10 +1578,27 @@
+   # before this can be enabled.
+   hardcode_into_libs=yes
+ 
++  # find out which ABI we are using
++  libsuff=
++  case "$host_cpu" in
++  x86_64*|s390x*|powerpc64*)
++    echo '[#]line __oline__ "configure"' > conftest.$ac_ext
++    if AC_TRY_EVAL(ac_compile); then
++      case `/usr/bin/file conftest.$ac_objext` in
++      *64-bit*)
++        libsuff=64
++        sys_lib_search_path_spec="/lib${libsuff} /usr/lib${libsuff} /usr/local/lib${libsuff}"
++        ;;
++      esac
++    fi
++    rm -rf conftest*
++    ;;
++  esac
++
+   # Append ld.so.conf contents to the search path
+   if test -f /etc/ld.so.conf; then
+     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s", \[$]2)); skip = 1; } { if (!skip) print \[$]0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;/^$/d' | tr '\n' ' '`
+-    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
++    sys_lib_dlsearch_path_spec="/lib${libsuff} /usr/lib${libsuff} $lt_ld_extra"
+   fi
+ 
+   # We used to test for /lib/ld.so.1 and disable shared libraries on
+@@ -1581,7 +1610,7 @@
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
++knetbsd*-gnu)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -1590,7 +1619,7 @@
+   shlibpath_var=LD_LIBRARY_PATH
+   shlibpath_overrides_runpath=no
+   hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
++  dynamic_linker='GNU ld.so'
+   ;;
+ 
+ netbsd*)
+@@ -2298,7 +2327,7 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-freebsd* | dragonfly*)
++freebsd* | kfreebsd*-gnu | dragonfly*)
+   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
+     case $host_cpu in
+     i*86 )
+@@ -2352,11 +2381,11 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-netbsd* | netbsdelf*-gnu)
++netbsd*)
+   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
+     lt_cv_deplibs_check_method='match_pattern /lib[[^/]]+(\.so\.[[0-9]]+\.[[0-9]]+|_pic\.a)$'
+   else
+@@ -3104,7 +3133,7 @@
+   freebsd-elf*)
+     _LT_AC_TAGVAR(archive_cmds_need_lc, $1)=no
+     ;;
+-  freebsd* | dragonfly*)
++  freebsd* | kfreebsd*-gnu | dragonfly*)
+     # FreeBSD 3 and later use GNU C++ and GNU ld with standard ELF
+     # conventions
+     _LT_AC_TAGVAR(ld_shlibs, $1)=yes
+@@ -3263,7 +3292,7 @@
+     _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
+     _LT_AC_TAGVAR(hardcode_libdir_separator, $1)=:
+     ;;
+-  linux* | k*bsd*-gnu)
++  linux*)
+     case $cc_basename in
+       KCC*)
+ 	# Kuck and Associates, Inc. (KAI) C++ Compiler
+@@ -3365,7 +3394,7 @@
+ 	;;
+     esac
+     ;;
+-  netbsd* | netbsdelf*-gnu)
++  netbsd*)
+     if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+       _LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable  -o $lib $predep_objects $libobjs $deplibs $postdep_objects $linker_flags'
+       wlarc=
+@@ -4630,7 +4659,7 @@
+   lt_cv_sys_global_symbol_to_cdecl="sed -n -e 's/^T .* \(.*\)$/extern int \1();/p' -e 's/^$symcode* .* \(.*\)$/extern char \1;/p'"
+   lt_cv_sys_global_symbol_to_c_name_address="sed -n -e 's/^: \([[^ ]]*\) $/  {\\\"\1\\\", (lt_ptr) 0},/p' -e 's/^$symcode* \([[^ ]]*\) \([[^ ]]*\)$/  {\"\2\", (lt_ptr) \&\2},/p'"
+   ;;
+-linux* | k*bsd*-gnu)
++linux*)
+   if test "$host_cpu" = ia64; then
+     symcode='[[ABCDGIRSTW]]'
+     lt_cv_sys_global_symbol_to_cdecl="sed -n -e 's/^T .* \(.*\)$/extern int \1();/p' -e 's/^$symcode* .* \(.*\)$/extern char \1;/p'"
+@@ -4903,7 +4932,7 @@
+ 	    ;;
+ 	esac
+ 	;;
+-      freebsd* | dragonfly*)
++      freebsd* | kfreebsd*-gnu | dragonfly*)
+ 	# FreeBSD uses GNU C++
+ 	;;
+       hpux9* | hpux10* | hpux11*)
+@@ -4946,7 +4975,7 @@
+ 	    ;;
+ 	esac
+ 	;;
+-      linux* | k*bsd*-gnu)
++      linux*)
+ 	case $cc_basename in
+ 	  KCC*)
+ 	    # KAI C++ Compiler
+@@ -4989,7 +5018,7 @@
+ 	    ;;
+ 	esac
+ 	;;
+-      netbsd* | netbsdelf*-gnu)
++      netbsd*)
+ 	;;
+       osf3* | osf4* | osf5*)
+ 	case $cc_basename in
+@@ -5200,7 +5229,7 @@
+       _LT_AC_TAGVAR(lt_prog_compiler_static, $1)='-Bstatic'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       case $cc_basename in
+       icc* | ecc*)
+ 	_LT_AC_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+@@ -5341,9 +5370,6 @@
+   cygwin* | mingw*)
+     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGRS]] /s/.* \([[^ ]]*\)/\1 DATA/;/^.* __nm__/s/^.* __nm__\([[^ ]]*\) [[^ ]]*/\1 DATA/;/^I /d;/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
+   ;;
+-  linux* | k*bsd*-gnu)
+-    _LT_AC_TAGVAR(link_all_deplibs, $1)=no
+-  ;;
+   *)
+     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
+   ;;
+@@ -5514,7 +5540,7 @@
+       _LT_AC_TAGVAR(archive_expsym_cmds, $1)='sed "s,^,_," $export_symbols >$output_objdir/$soname.expsym~$CC -shared $pic_flag $libobjs $deplibs $compiler_flags ${wl}-h,$soname ${wl}--retain-symbols-file,$output_objdir/$soname.expsym ${wl}--image-base,`expr ${RANDOM-$$} % 4096 / 2 \* 262144 + 1342177280` -o $lib'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
+ 	tmp_addflag=
+ 	case $cc_basename,$host_cpu in
+@@ -5540,13 +5566,12 @@
+   $echo "local: *; };" >> $output_objdir/$libname.ver~
+ 	  $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+ 	fi
+-	_LT_AC_TAGVAR(link_all_deplibs, $1)=no
+       else
+ 	_LT_AC_TAGVAR(ld_shlibs, $1)=no
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -5876,7 +5901,7 @@
+       ;;
+ 
+     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
+-    freebsd* | dragonfly*)
++    freebsd* | kfreebsd*-gnu | dragonfly*)
+       _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
+       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
+       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
+@@ -5978,7 +6003,7 @@
+       _LT_AC_TAGVAR(link_all_deplibs, $1)=yes
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+diff -uNr opencv-0.9.9.orig/configure opencv-0.9.9/configure
+--- opencv-0.9.9.orig/configure	2006-08-18 16:34:17.000000000 +0200
++++ opencv-0.9.9/configure	2006-09-21 04:24:15.000000000 +0200
+@@ -4333,7 +4333,7 @@
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-freebsd* | dragonfly*)
++freebsd* | kfreebsd*-gnu | dragonfly*)
+   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
+     case $host_cpu in
+     i*86 )
+@@ -4387,11 +4387,11 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-netbsd* | netbsdelf*-gnu)
++netbsd*)
+   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
+     lt_cv_deplibs_check_method='match_pattern /lib[^/]+(\.so\.[0-9]+\.[0-9]+|_pic\.a)$'
+   else
+@@ -5956,7 +5956,7 @@
+   lt_cv_sys_global_symbol_to_cdecl="sed -n -e 's/^T .* \(.*\)$/extern int \1();/p' -e 's/^$symcode* .* \(.*\)$/extern char \1;/p'"
+   lt_cv_sys_global_symbol_to_c_name_address="sed -n -e 's/^: \([^ ]*\) $/  {\\\"\1\\\", (lt_ptr) 0},/p' -e 's/^$symcode* \([^ ]*\) \([^ ]*\)$/  {\"\2\", (lt_ptr) \&\2},/p'"
+   ;;
+-linux* | k*bsd*-gnu)
++linux*)
+   if test "$host_cpu" = ia64; then
+     symcode='[ABCDGIRSTW]'
+     lt_cv_sys_global_symbol_to_cdecl="sed -n -e 's/^T .* \(.*\)$/extern int \1();/p' -e 's/^$symcode* .* \(.*\)$/extern char \1;/p'"
+@@ -6876,7 +6876,7 @@
+       lt_prog_compiler_static='-Bstatic'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       case $cc_basename in
+       icc* | ecc*)
+ 	lt_prog_compiler_wl='-Wl,'
+@@ -7315,7 +7315,7 @@
+       archive_expsym_cmds='sed "s,^,_," $export_symbols >$output_objdir/$soname.expsym~$CC -shared $pic_flag $libobjs $deplibs $compiler_flags ${wl}-h,$soname ${wl}--retain-symbols-file,$output_objdir/$soname.expsym ${wl}--image-base,`expr ${RANDOM-$$} % 4096 / 2 \* 262144 + 1342177280` -o $lib'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
+ 	tmp_addflag=
+ 	case $cc_basename,$host_cpu in
+@@ -7341,13 +7341,12 @@
+   $echo "local: *; };" >> $output_objdir/$libname.ver~
+ 	  $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+ 	fi
+-	link_all_deplibs=no
+       else
+ 	ld_shlibs=no
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	archive_cmds='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -7779,7 +7778,7 @@
+       ;;
+ 
+     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
+-    freebsd* | dragonfly*)
++    freebsd* | kfreebsd*-gnu | dragonfly*)
+       archive_cmds='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
+       hardcode_libdir_flag_spec='-R$libdir'
+       hardcode_direct=yes
+@@ -7881,7 +7880,7 @@
+       link_all_deplibs=yes
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+@@ -8371,6 +8370,18 @@
+   dynamic_linker=no
+   ;;
+ 
++kfreebsd*-gnu)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  hardcode_into_libs=yes
++  dynamic_linker='GNU ld.so'
++  ;;
++
+ freebsd* | dragonfly*)
+   # DragonFly does not have aout.  When/if they implement a new
+   # versioning mechanism, adjust this.
+@@ -8526,7 +8537,7 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -8540,10 +8551,31 @@
+   # before this can be enabled.
+   hardcode_into_libs=yes
+ 
++  # find out which ABI we are using
++  libsuff=
++  case "$host_cpu" in
++  x86_64*|s390x*|powerpc64*)
++    echo '#line 8558 "configure"' > conftest.$ac_ext
++    if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
++  (eval $ac_compile) 2>&5
++  ac_status=$?
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); }; then
++      case `/usr/bin/file conftest.$ac_objext` in
++      *64-bit*)
++        libsuff=64
++        sys_lib_search_path_spec="/lib${libsuff} /usr/lib${libsuff} /usr/local/lib${libsuff}"
++        ;;
++      esac
++    fi
++    rm -rf conftest*
++    ;;
++  esac
++
+   # Append ld.so.conf contents to the search path
+   if test -f /etc/ld.so.conf; then
+     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;/^$/d' | tr '\n' ' '`
+-    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
++    sys_lib_dlsearch_path_spec="/lib${libsuff} /usr/lib${libsuff} $lt_ld_extra"
+   fi
+ 
+   # We used to test for /lib/ld.so.1 and disable shared libraries on
+@@ -8555,7 +8587,7 @@
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
++knetbsd*-gnu)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -8564,7 +8596,7 @@
+   shlibpath_var=LD_LIBRARY_PATH
+   shlibpath_overrides_runpath=no
+   hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
++  dynamic_linker='GNU ld.so'
+   ;;
+ 
+ netbsd*)
+@@ -9420,7 +9452,7 @@
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<EOF
+-#line 9423 "configure"
++#line 9455 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -9520,7 +9552,7 @@
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<EOF
+-#line 9523 "configure"
++#line 9555 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -10837,7 +10869,7 @@
+   freebsd-elf*)
+     archive_cmds_need_lc_CXX=no
+     ;;
+-  freebsd* | dragonfly*)
++  freebsd* | kfreebsd*-gnu | dragonfly*)
+     # FreeBSD 3 and later use GNU C++ and GNU ld with standard ELF
+     # conventions
+     ld_shlibs_CXX=yes
+@@ -10996,7 +11028,7 @@
+     hardcode_libdir_flag_spec_CXX='${wl}-rpath ${wl}$libdir'
+     hardcode_libdir_separator_CXX=:
+     ;;
+-  linux* | k*bsd*-gnu)
++  linux*)
+     case $cc_basename in
+       KCC*)
+ 	# Kuck and Associates, Inc. (KAI) C++ Compiler
+@@ -11098,7 +11130,7 @@
+ 	;;
+     esac
+     ;;
+-  netbsd* | netbsdelf*-gnu)
++  netbsd*)
+     if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+       archive_cmds_CXX='$LD -Bshareable  -o $lib $predep_objects $libobjs $deplibs $postdep_objects $linker_flags'
+       wlarc=
+@@ -11665,7 +11697,7 @@
+ 	    ;;
+ 	esac
+ 	;;
+-      freebsd* | dragonfly*)
++      freebsd* | kfreebsd*-gnu | dragonfly*)
+ 	# FreeBSD uses GNU C++
+ 	;;
+       hpux9* | hpux10* | hpux11*)
+@@ -11708,7 +11740,7 @@
+ 	    ;;
+ 	esac
+ 	;;
+-      linux* | k*bsd*-gnu)
++      linux*)
+ 	case $cc_basename in
+ 	  KCC*)
+ 	    # KAI C++ Compiler
+@@ -11751,7 +11783,7 @@
+ 	    ;;
+ 	esac
+ 	;;
+-      netbsd* | netbsdelf*-gnu)
++      netbsd*)
+ 	;;
+       osf3* | osf4* | osf5*)
+ 	case $cc_basename in
+@@ -11860,11 +11892,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:11863: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:11895: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:11867: \$? = $ac_status" >&5
++   echo "$as_me:11899: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -11964,11 +11996,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:11967: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:11999: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:11971: \$? = $ac_status" >&5
++   echo "$as_me:12003: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -12036,9 +12068,6 @@
+   cygwin* | mingw*)
+     export_symbols_cmds_CXX='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS] /s/.* \([^ ]*\)/\1 DATA/;/^.* __nm__/s/^.* __nm__\([^ ]*\) [^ ]*/\1 DATA/;/^I /d;/^[AITW] /s/.* //'\'' | sort | uniq > $export_symbols'
+   ;;
+-  linux* | k*bsd*-gnu)
+-    link_all_deplibs_CXX=no
+-  ;;
+   *)
+     export_symbols_cmds_CXX='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
+   ;;
+@@ -12318,6 +12347,18 @@
+   dynamic_linker=no
+   ;;
+ 
++kfreebsd*-gnu)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  hardcode_into_libs=yes
++  dynamic_linker='GNU ld.so'
++  ;;
++
+ freebsd* | dragonfly*)
+   # DragonFly does not have aout.  When/if they implement a new
+   # versioning mechanism, adjust this.
+@@ -12473,7 +12514,7 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -12487,10 +12528,31 @@
+   # before this can be enabled.
+   hardcode_into_libs=yes
+ 
++  # find out which ABI we are using
++  libsuff=
++  case "$host_cpu" in
++  x86_64*|s390x*|powerpc64*)
++    echo '#line 12535 "configure"' > conftest.$ac_ext
++    if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
++  (eval $ac_compile) 2>&5
++  ac_status=$?
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); }; then
++      case `/usr/bin/file conftest.$ac_objext` in
++      *64-bit*)
++        libsuff=64
++        sys_lib_search_path_spec="/lib${libsuff} /usr/lib${libsuff} /usr/local/lib${libsuff}"
++        ;;
++      esac
++    fi
++    rm -rf conftest*
++    ;;
++  esac
++
+   # Append ld.so.conf contents to the search path
+   if test -f /etc/ld.so.conf; then
+     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;/^$/d' | tr '\n' ' '`
+-    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
++    sys_lib_dlsearch_path_spec="/lib${libsuff} /usr/lib${libsuff} $lt_ld_extra"
+   fi
+ 
+   # We used to test for /lib/ld.so.1 and disable shared libraries on
+@@ -12502,7 +12564,7 @@
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
++knetbsd*-gnu)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -12511,7 +12573,7 @@
+   shlibpath_var=LD_LIBRARY_PATH
+   shlibpath_overrides_runpath=no
+   hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
++  dynamic_linker='GNU ld.so'
+   ;;
+ 
+ netbsd*)
+@@ -13419,7 +13481,7 @@
+       lt_prog_compiler_static_F77='-Bstatic'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       case $cc_basename in
+       icc* | ecc*)
+ 	lt_prog_compiler_wl_F77='-Wl,'
+@@ -13525,11 +13587,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:13528: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:13590: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:13532: \$? = $ac_status" >&5
++   echo "$as_me:13594: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -13629,11 +13691,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:13632: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:13694: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:13636: \$? = $ac_status" >&5
++   echo "$as_me:13698: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -13858,7 +13920,7 @@
+       archive_expsym_cmds_F77='sed "s,^,_," $export_symbols >$output_objdir/$soname.expsym~$CC -shared $pic_flag $libobjs $deplibs $compiler_flags ${wl}-h,$soname ${wl}--retain-symbols-file,$output_objdir/$soname.expsym ${wl}--image-base,`expr ${RANDOM-$$} % 4096 / 2 \* 262144 + 1342177280` -o $lib'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
+ 	tmp_addflag=
+ 	case $cc_basename,$host_cpu in
+@@ -13884,13 +13946,12 @@
+   $echo "local: *; };" >> $output_objdir/$libname.ver~
+ 	  $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+ 	fi
+-	link_all_deplibs_F77=no
+       else
+ 	ld_shlibs_F77=no
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	archive_cmds_F77='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -14302,7 +14363,7 @@
+       ;;
+ 
+     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
+-    freebsd* | dragonfly*)
++    freebsd* | kfreebsd*-gnu | dragonfly*)
+       archive_cmds_F77='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
+       hardcode_libdir_flag_spec_F77='-R$libdir'
+       hardcode_direct_F77=yes
+@@ -14404,7 +14465,7 @@
+       link_all_deplibs_F77=yes
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	archive_cmds_F77='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+@@ -14894,6 +14955,18 @@
+   dynamic_linker=no
+   ;;
+ 
++kfreebsd*-gnu)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  hardcode_into_libs=yes
++  dynamic_linker='GNU ld.so'
++  ;;
++
+ freebsd* | dragonfly*)
+   # DragonFly does not have aout.  When/if they implement a new
+   # versioning mechanism, adjust this.
+@@ -15049,7 +15122,7 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -15063,10 +15136,31 @@
+   # before this can be enabled.
+   hardcode_into_libs=yes
+ 
++  # find out which ABI we are using
++  libsuff=
++  case "$host_cpu" in
++  x86_64*|s390x*|powerpc64*)
++    echo '#line 15143 "configure"' > conftest.$ac_ext
++    if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
++  (eval $ac_compile) 2>&5
++  ac_status=$?
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); }; then
++      case `/usr/bin/file conftest.$ac_objext` in
++      *64-bit*)
++        libsuff=64
++        sys_lib_search_path_spec="/lib${libsuff} /usr/lib${libsuff} /usr/local/lib${libsuff}"
++        ;;
++      esac
++    fi
++    rm -rf conftest*
++    ;;
++  esac
++
+   # Append ld.so.conf contents to the search path
+   if test -f /etc/ld.so.conf; then
+     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;/^$/d' | tr '\n' ' '`
+-    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
++    sys_lib_dlsearch_path_spec="/lib${libsuff} /usr/lib${libsuff} $lt_ld_extra"
+   fi
+ 
+   # We used to test for /lib/ld.so.1 and disable shared libraries on
+@@ -15078,7 +15172,7 @@
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
++knetbsd*-gnu)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -15087,7 +15181,7 @@
+   shlibpath_var=LD_LIBRARY_PATH
+   shlibpath_overrides_runpath=no
+   hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
++  dynamic_linker='GNU ld.so'
+   ;;
+ 
+ netbsd*)
+@@ -15821,11 +15915,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:15824: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:15918: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:15828: \$? = $ac_status" >&5
++   echo "$as_me:15922: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -15983,7 +16077,7 @@
+       lt_prog_compiler_static_GCJ='-Bstatic'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       case $cc_basename in
+       icc* | ecc*)
+ 	lt_prog_compiler_wl_GCJ='-Wl,'
+@@ -16089,11 +16183,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:16092: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:16186: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:16096: \$? = $ac_status" >&5
++   echo "$as_me:16190: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -16193,11 +16287,11 @@
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:16196: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:16290: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:16200: \$? = $ac_status" >&5
++   echo "$as_me:16294: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -16422,7 +16516,7 @@
+       archive_expsym_cmds_GCJ='sed "s,^,_," $export_symbols >$output_objdir/$soname.expsym~$CC -shared $pic_flag $libobjs $deplibs $compiler_flags ${wl}-h,$soname ${wl}--retain-symbols-file,$output_objdir/$soname.expsym ${wl}--image-base,`expr ${RANDOM-$$} % 4096 / 2 \* 262144 + 1342177280` -o $lib'
+       ;;
+ 
+-    linux* | k*bsd*-gnu)
++    linux*)
+       if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
+ 	tmp_addflag=
+ 	case $cc_basename,$host_cpu in
+@@ -16448,13 +16542,12 @@
+   $echo "local: *; };" >> $output_objdir/$libname.ver~
+ 	  $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+ 	fi
+-	link_all_deplibs_GCJ=no
+       else
+ 	ld_shlibs_GCJ=no
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	archive_cmds_GCJ='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -16886,7 +16979,7 @@
+       ;;
+ 
+     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
+-    freebsd* | dragonfly*)
++    freebsd* | kfreebsd*-gnu | dragonfly*)
+       archive_cmds_GCJ='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
+       hardcode_libdir_flag_spec_GCJ='-R$libdir'
+       hardcode_direct_GCJ=yes
+@@ -16988,7 +17081,7 @@
+       link_all_deplibs_GCJ=yes
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
+ 	archive_cmds_GCJ='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+@@ -17478,6 +17571,18 @@
+   dynamic_linker=no
+   ;;
+ 
++kfreebsd*-gnu)
++  version_type=linux
++  need_lib_prefix=no
++  need_version=no
++  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
++  soname_spec='${libname}${release}${shared_ext}$major'
++  shlibpath_var=LD_LIBRARY_PATH
++  shlibpath_overrides_runpath=no
++  hardcode_into_libs=yes
++  dynamic_linker='GNU ld.so'
++  ;;
++
+ freebsd* | dragonfly*)
+   # DragonFly does not have aout.  When/if they implement a new
+   # versioning mechanism, adjust this.
+@@ -17633,7 +17738,7 @@
+   ;;
+ 
+ # This must be Linux ELF.
+-linux* | k*bsd*-gnu)
++linux*)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -17647,10 +17752,31 @@
+   # before this can be enabled.
+   hardcode_into_libs=yes
+ 
++  # find out which ABI we are using
++  libsuff=
++  case "$host_cpu" in
++  x86_64*|s390x*|powerpc64*)
++    echo '#line 17759 "configure"' > conftest.$ac_ext
++    if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
++  (eval $ac_compile) 2>&5
++  ac_status=$?
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); }; then
++      case `/usr/bin/file conftest.$ac_objext` in
++      *64-bit*)
++        libsuff=64
++        sys_lib_search_path_spec="/lib${libsuff} /usr/lib${libsuff} /usr/local/lib${libsuff}"
++        ;;
++      esac
++    fi
++    rm -rf conftest*
++    ;;
++  esac
++
+   # Append ld.so.conf contents to the search path
+   if test -f /etc/ld.so.conf; then
+     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;/^$/d' | tr '\n' ' '`
+-    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
++    sys_lib_dlsearch_path_spec="/lib${libsuff} /usr/lib${libsuff} $lt_ld_extra"
+   fi
+ 
+   # We used to test for /lib/ld.so.1 and disable shared libraries on
+@@ -17662,7 +17788,7 @@
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
++knetbsd*-gnu)
+   version_type=linux
+   need_lib_prefix=no
+   need_version=no
+@@ -17671,7 +17797,7 @@
+   shlibpath_var=LD_LIBRARY_PATH
+   shlibpath_overrides_runpath=no
+   hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
++  dynamic_linker='GNU ld.so'
+   ;;
+ 
+ netbsd*)
+diff -uNr opencv-0.9.9.orig/cvconfig.h.in opencv-0.9.9/cvconfig.h.in
+--- opencv-0.9.9.orig/cvconfig.h.in	2006-08-18 16:34:17.000000000 +0200
++++ opencv-0.9.9/cvconfig.h.in	2006-09-21 04:24:16.000000000 +0200
+@@ -134,7 +134,7 @@
+ 
+ /* If using the C implementation of alloca, define if you know the
+    direction of stack growth for your system; otherwise it will be
+-   automatically deduced at runtime.
++   automatically deduced at run-time.
+ 	STACK_DIRECTION > 0 => grows toward higher addresses
+ 	STACK_DIRECTION < 0 => grows toward lower addresses
+ 	STACK_DIRECTION = 0 => direction of growth unknown */
+diff -uNr opencv-0.9.9.orig/interfaces/swig/python/Makefile.in opencv-0.9.9/interfaces/swig/python/Makefile.in
+--- opencv-0.9.9.orig/interfaces/swig/python/Makefile.in	2006-08-18 16:34:45.000000000 +0200
++++ opencv-0.9.9/interfaces/swig/python/Makefile.in	2006-09-21 04:24:24.000000000 +0200
+@@ -63,10 +63,10 @@
+     *) f=$$p;; \
+   esac;
+ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+-am__installdirs = "$(DESTDIR)$(pkgpythondir)" \
++am__installdirs = "$(DESTDIR)$(pkgpyexecdir)" \
+ 	"$(DESTDIR)$(pkgpythondir)"
+-pkgpythonLTLIBRARIES_INSTALL = $(INSTALL)
+-LTLIBRARIES = $(pkgpython_LTLIBRARIES)
++pkgpyexecLTLIBRARIES_INSTALL = $(INSTALL)
++LTLIBRARIES = $(pkgpyexec_LTLIBRARIES)
+ @BUILD_PYTHON_WRAPPERS_TRUE@_cv_la_DEPENDENCIES =  \
+ @BUILD_PYTHON_WRAPPERS_TRUE@	$(top_builddir)/cv/src/libcv.la
+ am___cv_la_SOURCES_DIST = _cv.cpp error.cpp error.h pyhelpers.cpp \
+@@ -77,7 +77,7 @@
+ @BUILD_PYTHON_WRAPPERS_TRUE@	_cv_la-pyhelpers.lo \
+ @BUILD_PYTHON_WRAPPERS_TRUE@	_cv_la-cvshadow.lo
+ _cv_la_OBJECTS = $(am__cv_la_OBJECTS)
+-@BUILD_PYTHON_WRAPPERS_TRUE@am__cv_la_rpath = -rpath $(pkgpythondir)
++@BUILD_PYTHON_WRAPPERS_TRUE@am__cv_la_rpath = -rpath $(pkgpyexecdir)
+ @BUILD_PYTHON_WRAPPERS_TRUE@_highgui_la_DEPENDENCIES = $(top_builddir)/otherlibs/highgui/libhighgui.la
+ am___highgui_la_SOURCES_DIST = _highgui.cpp pyhelpers.cpp pyhelpers.h \
+ 	highgui.i
+@@ -86,7 +86,7 @@
+ @BUILD_PYTHON_WRAPPERS_TRUE@	_highgui_la-pyhelpers.lo
+ _highgui_la_OBJECTS = $(am__highgui_la_OBJECTS)
+ @BUILD_PYTHON_WRAPPERS_TRUE@am__highgui_la_rpath = -rpath \
+-@BUILD_PYTHON_WRAPPERS_TRUE@	$(pkgpythondir)
++@BUILD_PYTHON_WRAPPERS_TRUE@	$(pkgpyexecdir)
+ DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
+ depcomp = $(SHELL) $(top_srcdir)/autotools/depcomp
+ am__depfiles_maybe = depfiles
+@@ -324,7 +324,7 @@
+ 
+ 
+ # Conditional targets #######################################################
+-@BUILD_PYTHON_WRAPPERS_TRUE@pkgpython_LTLIBRARIES = _cv.la _highgui.la
++@BUILD_PYTHON_WRAPPERS_TRUE@pkgpyexec_LTLIBRARIES = _cv.la _highgui.la
+ @BUILD_PYTHON_WRAPPERS_TRUE@pkgpython_PYTHON = \
+ @BUILD_PYTHON_WRAPPERS_TRUE@  __init__.py    \
+ @BUILD_PYTHON_WRAPPERS_TRUE@  cv.py          \
+@@ -382,28 +382,28 @@
+ 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+ 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+-install-pkgpythonLTLIBRARIES: $(pkgpython_LTLIBRARIES)
++install-pkgpyexecLTLIBRARIES: $(pkgpyexec_LTLIBRARIES)
+ 	@$(NORMAL_INSTALL)
+-	test -z "$(pkgpythondir)" || $(mkdir_p) "$(DESTDIR)$(pkgpythondir)"
+-	@list='$(pkgpython_LTLIBRARIES)'; for p in $$list; do \
++	test -z "$(pkgpyexecdir)" || $(mkdir_p) "$(DESTDIR)$(pkgpyexecdir)"
++	@list='$(pkgpyexec_LTLIBRARIES)'; for p in $$list; do \
+ 	  if test -f $$p; then \
+ 	    f=$(am__strip_dir) \
+-	    echo " $(LIBTOOL) --mode=install $(pkgpythonLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(pkgpythondir)/$$f'"; \
+-	    $(LIBTOOL) --mode=install $(pkgpythonLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(pkgpythondir)/$$f"; \
++	    echo " $(LIBTOOL) --mode=install $(pkgpyexecLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) '$$p' '$(DESTDIR)$(pkgpyexecdir)/$$f'"; \
++	    $(LIBTOOL) --mode=install $(pkgpyexecLTLIBRARIES_INSTALL) $(INSTALL_STRIP_FLAG) "$$p" "$(DESTDIR)$(pkgpyexecdir)/$$f"; \
+ 	  else :; fi; \
+ 	done
+ 
+-uninstall-pkgpythonLTLIBRARIES:
++uninstall-pkgpyexecLTLIBRARIES:
+ 	@$(NORMAL_UNINSTALL)
+-	@set -x; list='$(pkgpython_LTLIBRARIES)'; for p in $$list; do \
++	@set -x; list='$(pkgpyexec_LTLIBRARIES)'; for p in $$list; do \
+ 	  p=$(am__strip_dir) \
+-	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(pkgpythondir)/$$p'"; \
+-	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(pkgpythondir)/$$p"; \
++	  echo " $(LIBTOOL) --mode=uninstall rm -f '$(DESTDIR)$(pkgpyexecdir)/$$p'"; \
++	  $(LIBTOOL) --mode=uninstall rm -f "$(DESTDIR)$(pkgpyexecdir)/$$p"; \
+ 	done
+ 
+-clean-pkgpythonLTLIBRARIES:
+-	-test -z "$(pkgpython_LTLIBRARIES)" || rm -f $(pkgpython_LTLIBRARIES)
+-	@list='$(pkgpython_LTLIBRARIES)'; for p in $$list; do \
++clean-pkgpyexecLTLIBRARIES:
++	-test -z "$(pkgpyexec_LTLIBRARIES)" || rm -f $(pkgpyexec_LTLIBRARIES)
++	@list='$(pkgpyexec_LTLIBRARIES)'; for p in $$list; do \
+ 	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+ 	  test "$$dir" != "$$p" || dir=.; \
+ 	  echo "rm -f \"$${dir}/so_locations\""; \
+@@ -607,7 +607,7 @@
+ check: check-am
+ all-am: Makefile $(LTLIBRARIES)
+ installdirs:
+-	for dir in "$(DESTDIR)$(pkgpythondir)" "$(DESTDIR)$(pkgpythondir)"; do \
++	for dir in "$(DESTDIR)$(pkgpyexecdir)" "$(DESTDIR)$(pkgpythondir)"; do \
+ 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+ 	done
+ install: install-am
+@@ -636,7 +636,7 @@
+ 	@echo "it deletes files that may require special tools to rebuild."
+ clean: clean-am
+ 
+-clean-am: clean-generic clean-libtool clean-pkgpythonLTLIBRARIES \
++clean-am: clean-generic clean-libtool clean-pkgpyexecLTLIBRARIES \
+ 	mostlyclean-am
+ 
+ distclean: distclean-am
+@@ -655,9 +655,9 @@
+ 
+ info-am:
+ 
+-install-data-am: install-pkgpythonLTLIBRARIES install-pkgpythonPYTHON
++install-data-am: install-pkgpythonPYTHON
+ 
+-install-exec-am:
++install-exec-am: install-pkgpyexecLTLIBRARIES
+ 
+ install-info: install-info-am
+ 
+@@ -683,21 +683,21 @@
+ 
+ ps-am:
+ 
+-uninstall-am: uninstall-info-am uninstall-pkgpythonLTLIBRARIES \
++uninstall-am: uninstall-info-am uninstall-pkgpyexecLTLIBRARIES \
+ 	uninstall-pkgpythonPYTHON
+ 
+ .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+-	clean-libtool clean-pkgpythonLTLIBRARIES ctags distclean \
++	clean-libtool clean-pkgpyexecLTLIBRARIES ctags distclean \
+ 	distclean-compile distclean-generic distclean-libtool \
+ 	distclean-tags distdir dvi dvi-am html html-am info info-am \
+ 	install install-am install-data install-data-am install-exec \
+ 	install-exec-am install-info install-info-am install-man \
+-	install-pkgpythonLTLIBRARIES install-pkgpythonPYTHON \
++	install-pkgpyexecLTLIBRARIES install-pkgpythonPYTHON \
+ 	install-strip installcheck installcheck-am installdirs \
+ 	maintainer-clean maintainer-clean-generic mostlyclean \
+ 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+ 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+-	uninstall-info-am uninstall-pkgpythonLTLIBRARIES \
++	uninstall-info-am uninstall-pkgpyexecLTLIBRARIES \
+ 	uninstall-pkgpythonPYTHON
+ 
+ 
