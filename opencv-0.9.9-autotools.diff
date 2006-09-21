@@ -1,6 +1,6 @@
 diff -uNr opencv-0.9.9.orig/aclocal.m4 opencv-0.9.9/aclocal.m4
 --- opencv-0.9.9.orig/aclocal.m4	2006-08-18 16:34:17.000000000 +0200
-+++ opencv-0.9.9/aclocal.m4	2006-09-21 04:24:11.000000000 +0200
++++ opencv-0.9.9/aclocal.m4	2006-09-21 17:26:11.000000000 +0200
 @@ -13,7 +13,7 @@
  
  # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
@@ -234,7 +234,7 @@ diff -uNr opencv-0.9.9.orig/aclocal.m4 opencv-0.9.9/aclocal.m4
        else
 diff -uNr opencv-0.9.9.orig/configure opencv-0.9.9/configure
 --- opencv-0.9.9.orig/configure	2006-08-18 16:34:17.000000000 +0200
-+++ opencv-0.9.9/configure	2006-09-21 04:24:15.000000000 +0200
++++ opencv-0.9.9/configure	2006-09-21 17:26:11.000000000 +0200
 @@ -4333,7 +4333,7 @@
    lt_cv_deplibs_check_method=pass_all
    ;;
@@ -916,9 +916,43 @@ diff -uNr opencv-0.9.9.orig/configure opencv-0.9.9/configure
    ;;
  
  netbsd*)
+@@ -19036,28 +19162,28 @@
+     i686-*-*)
+         if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+           # default to i686/pentiumpro -- people can override this
+-          CXXFLAGS="-g -march=i686 -ffast-math -fomit-frame-pointer $CXXFLAGS"
++:          CXXFLAGS="-g -march=i686 -ffast-math -fomit-frame-pointer $CXXFLAGS"
+         fi
+         ;;
+     powerpc-*-*)
+         if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+             # default to G3 processors -- people can override this
+-            CXXFLAGS="-g -mcpu=G3 -mtune=G5 -fomit-frame-pointer $CXXFLAGS"
++:            CXXFLAGS="-g -mcpu=G3 -mtune=G5 -fomit-frame-pointer $CXXFLAGS"
+         fi
+         ;;
+     *-*-*)
+         if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+-            CXXFLAGS="-fomit-frame-pointer $CXXFLAGS"
++:            CXXFLAGS="-fomit-frame-pointer $CXXFLAGS"
+         fi
+         ;;
+     esac
+ 
+     CPPFLAGS="-DNDEBUG $CPPFLAGS"
+-    CXXFLAGS="-O3 $CXXFLAGS"
++:    CXXFLAGS="-O3 $CXXFLAGS"
+ fi
+ 
+ if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+-    CXXFLAGS="-Wall -fno-rtti -pipe $CXXFLAGS"
++:    CXXFLAGS="-Wall -fno-rtti -pipe $CXXFLAGS"
+ fi
+ 
+ # add libm because it is used by several libraries and OpenCV itself
 diff -uNr opencv-0.9.9.orig/cvconfig.h.in opencv-0.9.9/cvconfig.h.in
 --- opencv-0.9.9.orig/cvconfig.h.in	2006-08-18 16:34:17.000000000 +0200
-+++ opencv-0.9.9/cvconfig.h.in	2006-09-21 04:24:16.000000000 +0200
++++ opencv-0.9.9/cvconfig.h.in	2006-09-21 17:26:11.000000000 +0200
 @@ -134,7 +134,7 @@
  
  /* If using the C implementation of alloca, define if you know the
@@ -930,7 +964,7 @@ diff -uNr opencv-0.9.9.orig/cvconfig.h.in opencv-0.9.9/cvconfig.h.in
  	STACK_DIRECTION = 0 => direction of growth unknown */
 diff -uNr opencv-0.9.9.orig/interfaces/swig/python/Makefile.in opencv-0.9.9/interfaces/swig/python/Makefile.in
 --- opencv-0.9.9.orig/interfaces/swig/python/Makefile.in	2006-08-18 16:34:45.000000000 +0200
-+++ opencv-0.9.9/interfaces/swig/python/Makefile.in	2006-09-21 04:24:24.000000000 +0200
++++ opencv-0.9.9/interfaces/swig/python/Makefile.in	2006-09-21 17:26:11.000000000 +0200
 @@ -63,10 +63,10 @@
      *) f=$$p;; \
    esac;

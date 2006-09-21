@@ -1,0 +1,37 @@
+diff -uNr opencv-0.9.9.orig/configure.in opencv-0.9.9/configure.in
+--- opencv-0.9.9.orig/configure.in	2006-08-18 16:34:16.000000000 +0200
++++ opencv-0.9.9/configure.in	2006-09-21 17:26:11.000000000 +0200
+@@ -201,28 +201,28 @@
+     i686-*-*)
+         if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+           # default to i686/pentiumpro -- people can override this
+-          CXXFLAGS="-g -march=i686 -ffast-math -fomit-frame-pointer $CXXFLAGS"
++:          CXXFLAGS="-g -march=i686 -ffast-math -fomit-frame-pointer $CXXFLAGS"
+         fi
+         ;;
+     powerpc-*-*)
+         if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+             # default to G3 processors -- people can override this
+-            CXXFLAGS="-g -mcpu=G3 -mtune=G5 -fomit-frame-pointer $CXXFLAGS"
++:            CXXFLAGS="-g -mcpu=G3 -mtune=G5 -fomit-frame-pointer $CXXFLAGS"
+         fi
+         ;;
+     *-*-*)
+         if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+-            CXXFLAGS="-fomit-frame-pointer $CXXFLAGS"
++:            CXXFLAGS="-fomit-frame-pointer $CXXFLAGS"
+         fi
+         ;;
+     esac
+     
+     CPPFLAGS="-DNDEBUG $CPPFLAGS"
+-    CXXFLAGS="-O3 $CXXFLAGS"
++:    CXXFLAGS="-O3 $CXXFLAGS"
+ fi
+ 
+ if test x"$ac_cv_c_compiler_gnu" = "xyes"; then
+-    CXXFLAGS="-Wall -fno-rtti -pipe $CXXFLAGS"
++:    CXXFLAGS="-Wall -fno-rtti -pipe $CXXFLAGS"
+ fi
+ 
+ # add libm because it is used by several libraries and OpenCV itself 
