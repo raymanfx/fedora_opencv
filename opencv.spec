@@ -4,8 +4,8 @@
 %define pyexecdir %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib(1)')
 
 Name:           opencv
-Version:        0.9.7
-Release:        18%{?dist}
+Version:        0.9.9
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -13,11 +13,10 @@ License:        Intel Open Source License
 URL:            http://www.intel.com/technology/computing/opencv/index.htm
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-%{version}.tar.gz
 Source1:        opencv-samples-Makefile
-Patch0:         opencv-0.9.7-intrinsics-simple.patch
-Patch1:         opencv-0.9.7-pythondir.patch
+Patch0:         opencv-0.9.9-pythondir.diff
+Patch1:         opencv-0.9.9-autotools.diff
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  autoconf, automake, libtool
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
 BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
 BuildRequires:  python-devel
@@ -54,17 +53,17 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q
-%patch0 -p1 -b .intrinsics
-%patch1 -p1 -b .pythondir
+%patch0 -p1
+%patch1 -p1
 %{__sed} -i 's/\r//' interfaces/swig/python/*.py \
                      samples/python/*.py
 %{__sed} -i 's/^#!.*//' interfaces/swig/python/adaptors.py \
                         interfaces/swig/python/__init__.py
-autoreconf -vif
 
+find -name Makefile.in | xargs touch
 
 %build
-%configure --disable-static --enable-python --with-apps
+%configure --disable-static --enable-python --enable-apps
 make %{?_smp_mflags}
 
 
@@ -79,7 +78,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/facedetect.cmd \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gcc \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gen
-install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/Makefile
+install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
 
 
 %clean
@@ -124,6 +123,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.9-1
+- Upstream update.
+- Don't BR: autotools.
+- Install samples' Makefile as GNUmakefile.
+
 * Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.7-18
 - Un'%%ghost *.pyo.
 - Separate %%{pythondir} from %%{pyexecdir}.
