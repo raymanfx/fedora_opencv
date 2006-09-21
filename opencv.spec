@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        0.9.7
-Release:        17%{?dist}
+Release:        18%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
