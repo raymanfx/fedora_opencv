@@ -17,7 +17,7 @@ Patch0:         opencv-0.9.7-intrinsics-simple.patch
 Patch1:         opencv-0.9.7-pythondir.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  autoconf, automake
+BuildRequires:  autoconf, automake, libtool
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
 BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
 BuildRequires:  python-devel
@@ -126,6 +126,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.7-17
 - Rebuild for FC6.
+- BR: libtool.
 
 * Fri Mar 17 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-16
 - Rebuild.
