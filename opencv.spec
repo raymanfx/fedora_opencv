@@ -115,15 +115,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files python
-%dir %{pythondir}/opencv
-%{pythondir}/opencv/*.py
-%{pythondir}/opencv/*.pyc
-%ghost %{pythondir}/opencv/*.pyo
+%{pythondir}/opencv
+%if "%{pythondir}" != "%{pyexecdir}"
 %{pyexecdir}/opencv
+%endif
+
 %doc %{_datadir}/opencv/samples/python
 
 
 %changelog
+* Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.7-18
+- Un'%%ghost *.pyo.
+- Separate %%{pythondir} from %%{pyexecdir}.
+
 * Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.7-17
 - Rebuild for FC6.
 - BR: libtool.
