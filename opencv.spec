@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        0.9.7
-Release:        15%{?dist}
+Release:        17%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -124,6 +124,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.7-17
+- Rebuild for FC6.
+
+* Fri Mar 17 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-16
+- Rebuild.
+
 * Wed Mar  8 2006 Simon Perreault <nomis80@nomis80.org> - 0.9.7-15
 - Force a re-run of Autotools by calling autoreconf.
 
