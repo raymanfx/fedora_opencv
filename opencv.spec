@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        0.9.9
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -131,6 +131,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Oct 05 2006 Christian Iseli <Christian.Iseli@licr.org> 0.9.9-3
+ - rebuilt for unwind info generation, broken in gcc-4.1.1-21
+
 * Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.9-2
 - Stop configure.in from hacking CXXFLAGS.
 - Activate testsuite.
