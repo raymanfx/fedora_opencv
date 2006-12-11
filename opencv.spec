@@ -4,8 +4,8 @@
 %define pyexecdir %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib(1)')
 
 Name:           opencv
-Version:        0.9.9
-Release:        4%{?dist}
+Version:        1.0.0
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -13,9 +13,9 @@ License:        Intel Open Source License
 URL:            http://www.intel.com/technology/computing/opencv/index.htm
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-%{version}.tar.gz
 Source1:        opencv-samples-Makefile
-Patch0:         opencv-0.9.9-pythondir.diff
-Patch1:		opencv-0.9.9-configure.in.diff
-Patch2:         opencv-0.9.9-autotools.diff
+Patch0:         opencv-1.0.0-pythondir.diff
+Patch1:		opencv-1.0.0-configure.in.diff
+Patch2:         opencv-1.0.0-autotools.diff
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
@@ -130,6 +130,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Dec 11 2006 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-1
+- Upstream update.
+
 * Mon Dec 11 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.9-4
 - Remove python-abi.
 
