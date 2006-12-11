@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        0.9.9
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -47,7 +47,6 @@ will use the OpenCV library.
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv = %{version}-%{release}
-Requires:       python-abi = %(%{__python} -c "import sys ; print sys.version[:3]")
 
 %description python
 This package contains Python bindings for the OpenCV library.
@@ -131,8 +130,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Dec 11 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.9-4
+- Remove python-abi.
+
 * Thu Oct 05 2006 Christian Iseli <Christian.Iseli@licr.org> 0.9.9-3
- - rebuilt for unwind info generation, broken in gcc-4.1.1-21
+- rebuilt for unwind info generation, broken in gcc-4.1.1-21
 
 * Thu Sep 21 2006 Ralf Corsépius <rc040203@freenet.de> - 0.9.9-2
 - Stop configure.in from hacking CXXFLAGS.
