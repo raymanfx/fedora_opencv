@@ -120,10 +120,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files python
-%{pythondir}/opencv
-%if "%{pythondir}" != "%{pyexecdir}"
 %{pyexecdir}/opencv
-%endif
 
 %doc %{_datadir}/opencv/samples/python
 
