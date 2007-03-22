@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        1.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -84,8 +84,7 @@ install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
 
 
 %check
-# The test suite fails.
-make check ||:
+make check
 
 
 %clean
@@ -130,6 +129,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Mar 22 2007 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-2
+- Move all of the python module to pyexecdir (BZ 233128).
+- Activate the testsuite.
+
 * Mon Dec 11 2006 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-1
 - Upstream update.
 
