@@ -1,6 +1,6 @@
 diff -ur opencv-1.0.0.orig/aclocal.m4 opencv-1.0.0/aclocal.m4
 --- opencv-1.0.0.orig/aclocal.m4	2006-11-03 16:54:43.000000000 +0100
-+++ opencv-1.0.0/aclocal.m4	2006-12-11 11:48:08.000000000 +0100
++++ opencv-1.0.0/aclocal.m4	2007-03-22 04:08:41.000000000 +0100
 @@ -1578,10 +1578,27 @@
    # before this can be enabled.
    hardcode_into_libs=yes
@@ -91,7 +91,7 @@ diff -ur opencv-1.0.0.orig/aclocal.m4 opencv-1.0.0/aclocal.m4
  
 diff -ur opencv-1.0.0.orig/apps/haartraining/include/Makefile.in opencv-1.0.0/apps/haartraining/include/Makefile.in
 --- opencv-1.0.0.orig/apps/haartraining/include/Makefile.in	2006-11-03 16:54:52.000000000 +0100
-+++ opencv-1.0.0/apps/haartraining/include/Makefile.in	2006-12-11 11:48:56.000000000 +0100
++++ opencv-1.0.0/apps/haartraining/include/Makefile.in	2007-03-22 04:08:54.000000000 +0100
 @@ -160,6 +160,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -102,7 +102,7 @@ diff -ur opencv-1.0.0.orig/apps/haartraining/include/Makefile.in opencv-1.0.0/ap
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/apps/haartraining/Makefile.in opencv-1.0.0/apps/haartraining/Makefile.in
 --- opencv-1.0.0.orig/apps/haartraining/Makefile.in	2006-11-03 16:54:52.000000000 +0100
-+++ opencv-1.0.0/apps/haartraining/Makefile.in	2006-12-11 11:48:55.000000000 +0100
++++ opencv-1.0.0/apps/haartraining/Makefile.in	2007-03-22 04:08:53.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -113,7 +113,7 @@ diff -ur opencv-1.0.0.orig/apps/haartraining/Makefile.in opencv-1.0.0/apps/haart
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/apps/haartraining/src/Makefile.in opencv-1.0.0/apps/haartraining/src/Makefile.in
 --- opencv-1.0.0.orig/apps/haartraining/src/Makefile.in	2006-11-03 16:54:52.000000000 +0100
-+++ opencv-1.0.0/apps/haartraining/src/Makefile.in	2006-12-11 11:48:56.000000000 +0100
++++ opencv-1.0.0/apps/haartraining/src/Makefile.in	2007-03-22 04:08:54.000000000 +0100
 @@ -202,6 +202,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -124,7 +124,7 @@ diff -ur opencv-1.0.0.orig/apps/haartraining/src/Makefile.in opencv-1.0.0/apps/h
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/apps/Makefile.in opencv-1.0.0/apps/Makefile.in
 --- opencv-1.0.0.orig/apps/Makefile.in	2006-11-03 16:54:51.000000000 +0100
-+++ opencv-1.0.0/apps/Makefile.in	2006-12-11 11:48:55.000000000 +0100
++++ opencv-1.0.0/apps/Makefile.in	2007-03-22 04:08:53.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -135,7 +135,7 @@ diff -ur opencv-1.0.0.orig/apps/Makefile.in opencv-1.0.0/apps/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/configure opencv-1.0.0/configure
 --- opencv-1.0.0.orig/configure	2006-11-03 16:54:49.000000000 +0100
-+++ opencv-1.0.0/configure	2006-12-11 11:48:22.000000000 +0100
++++ opencv-1.0.0/configure	2007-03-22 04:08:47.000000000 +0100
 @@ -466,7 +466,7 @@
  # include <unistd.h>
  #endif"
@@ -727,7 +727,7 @@ diff -ur opencv-1.0.0.orig/configure opencv-1.0.0/configure
  s,@ECHO@,$ECHO,;t t
 diff -ur opencv-1.0.0.orig/cv/include/Makefile.in opencv-1.0.0/cv/include/Makefile.in
 --- opencv-1.0.0.orig/cv/include/Makefile.in	2006-11-03 16:54:52.000000000 +0100
-+++ opencv-1.0.0/cv/include/Makefile.in	2006-12-11 11:48:57.000000000 +0100
++++ opencv-1.0.0/cv/include/Makefile.in	2007-03-22 04:08:55.000000000 +0100
 @@ -160,6 +160,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -738,7 +738,7 @@ diff -ur opencv-1.0.0.orig/cv/include/Makefile.in opencv-1.0.0/cv/include/Makefi
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cv/Makefile.in opencv-1.0.0/cv/Makefile.in
 --- opencv-1.0.0.orig/cv/Makefile.in	2006-11-03 16:54:52.000000000 +0100
-+++ opencv-1.0.0/cv/Makefile.in	2006-12-11 11:48:57.000000000 +0100
++++ opencv-1.0.0/cv/Makefile.in	2007-03-22 04:08:54.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -749,7 +749,7 @@ diff -ur opencv-1.0.0.orig/cv/Makefile.in opencv-1.0.0/cv/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cv/src/Makefile.in opencv-1.0.0/cv/src/Makefile.in
 --- opencv-1.0.0.orig/cv/src/Makefile.in	2006-11-03 16:54:53.000000000 +0100
-+++ opencv-1.0.0/cv/src/Makefile.in	2006-12-11 11:48:58.000000000 +0100
++++ opencv-1.0.0/cv/src/Makefile.in	2007-03-22 04:08:55.000000000 +0100
 @@ -203,6 +203,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -760,7 +760,7 @@ diff -ur opencv-1.0.0.orig/cv/src/Makefile.in opencv-1.0.0/cv/src/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cvaux/include/Makefile.in opencv-1.0.0/cvaux/include/Makefile.in
 --- opencv-1.0.0.orig/cvaux/include/Makefile.in	2006-11-03 16:54:53.000000000 +0100
-+++ opencv-1.0.0/cvaux/include/Makefile.in	2006-12-11 11:48:59.000000000 +0100
++++ opencv-1.0.0/cvaux/include/Makefile.in	2007-03-22 04:08:56.000000000 +0100
 @@ -160,6 +160,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -771,7 +771,7 @@ diff -ur opencv-1.0.0.orig/cvaux/include/Makefile.in opencv-1.0.0/cvaux/include/
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cvaux/Makefile.in opencv-1.0.0/cvaux/Makefile.in
 --- opencv-1.0.0.orig/cvaux/Makefile.in	2006-11-03 16:54:53.000000000 +0100
-+++ opencv-1.0.0/cvaux/Makefile.in	2006-12-11 11:48:58.000000000 +0100
++++ opencv-1.0.0/cvaux/Makefile.in	2007-03-22 04:08:55.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -782,7 +782,7 @@ diff -ur opencv-1.0.0.orig/cvaux/Makefile.in opencv-1.0.0/cvaux/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cvaux/src/Makefile.in opencv-1.0.0/cvaux/src/Makefile.in
 --- opencv-1.0.0.orig/cvaux/src/Makefile.in	2006-11-03 16:54:53.000000000 +0100
-+++ opencv-1.0.0/cvaux/src/Makefile.in	2006-12-11 11:49:00.000000000 +0100
++++ opencv-1.0.0/cvaux/src/Makefile.in	2007-03-22 04:08:57.000000000 +0100
 @@ -209,6 +209,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -793,7 +793,7 @@ diff -ur opencv-1.0.0.orig/cvaux/src/Makefile.in opencv-1.0.0/cvaux/src/Makefile
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cxcore/include/Makefile.in opencv-1.0.0/cxcore/include/Makefile.in
 --- opencv-1.0.0.orig/cxcore/include/Makefile.in	2006-11-03 16:54:54.000000000 +0100
-+++ opencv-1.0.0/cxcore/include/Makefile.in	2006-12-11 11:49:01.000000000 +0100
++++ opencv-1.0.0/cxcore/include/Makefile.in	2007-03-22 04:08:57.000000000 +0100
 @@ -160,6 +160,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -804,7 +804,7 @@ diff -ur opencv-1.0.0.orig/cxcore/include/Makefile.in opencv-1.0.0/cxcore/includ
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cxcore/Makefile.in opencv-1.0.0/cxcore/Makefile.in
 --- opencv-1.0.0.orig/cxcore/Makefile.in	2006-11-03 16:54:53.000000000 +0100
-+++ opencv-1.0.0/cxcore/Makefile.in	2006-12-11 11:49:00.000000000 +0100
++++ opencv-1.0.0/cxcore/Makefile.in	2007-03-22 04:08:57.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -815,7 +815,7 @@ diff -ur opencv-1.0.0.orig/cxcore/Makefile.in opencv-1.0.0/cxcore/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/cxcore/src/Makefile.in opencv-1.0.0/cxcore/src/Makefile.in
 --- opencv-1.0.0.orig/cxcore/src/Makefile.in	2006-11-03 16:54:54.000000000 +0100
-+++ opencv-1.0.0/cxcore/src/Makefile.in	2006-12-11 11:49:01.000000000 +0100
++++ opencv-1.0.0/cxcore/src/Makefile.in	2007-03-22 04:08:58.000000000 +0100
 @@ -193,6 +193,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -826,7 +826,7 @@ diff -ur opencv-1.0.0.orig/cxcore/src/Makefile.in opencv-1.0.0/cxcore/src/Makefi
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/data/Makefile.in opencv-1.0.0/data/Makefile.in
 --- opencv-1.0.0.orig/data/Makefile.in	2006-11-03 16:54:54.000000000 +0100
-+++ opencv-1.0.0/data/Makefile.in	2006-12-11 11:49:02.000000000 +0100
++++ opencv-1.0.0/data/Makefile.in	2007-03-22 04:08:58.000000000 +0100
 @@ -158,6 +158,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -837,7 +837,7 @@ diff -ur opencv-1.0.0.orig/data/Makefile.in opencv-1.0.0/data/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/docs/Makefile.in opencv-1.0.0/docs/Makefile.in
 --- opencv-1.0.0.orig/docs/Makefile.in	2006-11-03 16:54:54.000000000 +0100
-+++ opencv-1.0.0/docs/Makefile.in	2006-12-11 11:49:02.000000000 +0100
++++ opencv-1.0.0/docs/Makefile.in	2007-03-22 04:08:58.000000000 +0100
 @@ -158,6 +158,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -848,7 +848,7 @@ diff -ur opencv-1.0.0.orig/docs/Makefile.in opencv-1.0.0/docs/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/interfaces/Makefile.in opencv-1.0.0/interfaces/Makefile.in
 --- opencv-1.0.0.orig/interfaces/Makefile.in	2006-11-03 16:54:54.000000000 +0100
-+++ opencv-1.0.0/interfaces/Makefile.in	2006-12-11 11:49:02.000000000 +0100
++++ opencv-1.0.0/interfaces/Makefile.in	2007-03-22 04:08:59.000000000 +0100
 @@ -164,6 +164,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -859,7 +859,7 @@ diff -ur opencv-1.0.0.orig/interfaces/Makefile.in opencv-1.0.0/interfaces/Makefi
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/interfaces/swig/filtered/Makefile.in opencv-1.0.0/interfaces/swig/filtered/Makefile.in
 --- opencv-1.0.0.orig/interfaces/swig/filtered/Makefile.in	2006-11-03 16:54:55.000000000 +0100
-+++ opencv-1.0.0/interfaces/swig/filtered/Makefile.in	2006-12-11 11:49:03.000000000 +0100
++++ opencv-1.0.0/interfaces/swig/filtered/Makefile.in	2007-03-22 04:08:59.000000000 +0100
 @@ -158,6 +158,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -870,7 +870,7 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/filtered/Makefile.in opencv-1.0.0/int
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/interfaces/swig/general/Makefile.in opencv-1.0.0/interfaces/swig/general/Makefile.in
 --- opencv-1.0.0.orig/interfaces/swig/general/Makefile.in	2006-11-03 16:54:55.000000000 +0100
-+++ opencv-1.0.0/interfaces/swig/general/Makefile.in	2006-12-11 11:49:04.000000000 +0100
++++ opencv-1.0.0/interfaces/swig/general/Makefile.in	2007-03-22 04:09:00.000000000 +0100
 @@ -150,6 +150,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -881,7 +881,7 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/general/Makefile.in opencv-1.0.0/inte
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/interfaces/swig/Makefile.in opencv-1.0.0/interfaces/swig/Makefile.in
 --- opencv-1.0.0.orig/interfaces/swig/Makefile.in	2006-11-03 16:54:55.000000000 +0100
-+++ opencv-1.0.0/interfaces/swig/Makefile.in	2006-12-11 11:49:03.000000000 +0100
++++ opencv-1.0.0/interfaces/swig/Makefile.in	2007-03-22 04:08:59.000000000 +0100
 @@ -162,6 +162,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -892,16 +892,26 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/Makefile.in opencv-1.0.0/interfaces/s
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/interfaces/swig/python/Makefile.in opencv-1.0.0/interfaces/swig/python/Makefile.in
 --- opencv-1.0.0.orig/interfaces/swig/python/Makefile.in	2006-11-03 16:54:55.000000000 +0100
-+++ opencv-1.0.0/interfaces/swig/python/Makefile.in	2006-12-11 11:49:04.000000000 +0100
++++ opencv-1.0.0/interfaces/swig/python/Makefile.in	2007-03-22 04:09:00.000000000 +0100
+@@ -44,7 +44,7 @@
+ host_triplet = @host@
+ target_triplet = @target@
+ subdir = interfaces/swig/python
+-DIST_COMMON = $(am__pkgpython_PYTHON_DIST) $(noinst_PYTHON) \
++DIST_COMMON = $(am__pkgpyexec_PYTHON_DIST) $(noinst_PYTHON) \
+ 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/autotools/aclocal/az_python.m4 \
 @@ -63,10 +63,10 @@
      *) f=$$p;; \
    esac;
  am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 -am__installdirs = "$(DESTDIR)$(pkgpythondir)" \
-+am__installdirs = "$(DESTDIR)$(pkgpyexecdir)" \
- 	"$(DESTDIR)$(pkgpythondir)"
+-	"$(DESTDIR)$(pkgpythondir)"
 -pkgpythonLTLIBRARIES_INSTALL = $(INSTALL)
 -LTLIBRARIES = $(pkgpython_LTLIBRARIES)
++am__installdirs = "$(DESTDIR)$(pkgpyexecdir)" \
++	"$(DESTDIR)$(pkgpyexecdir)"
 +pkgpyexecLTLIBRARIES_INSTALL = $(INSTALL)
 +LTLIBRARIES = $(pkgpyexec_LTLIBRARIES)
  @BUILD_PYTHON_WRAPPERS_TRUE@_cv_la_DEPENDENCIES =  \
@@ -925,6 +935,18 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/python/Makefile.in opencv-1.0.0/inter
  DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
  depcomp = $(SHELL) $(top_srcdir)/autotools/depcomp
  am__depfiles_maybe = depfiles
+@@ -109,9 +109,9 @@
+ SOURCES = $(_cv_la_SOURCES) $(_highgui_la_SOURCES)
+ DIST_SOURCES = $(am___cv_la_SOURCES_DIST) \
+ 	$(am___highgui_la_SOURCES_DIST)
+-am__pkgpython_PYTHON_DIST = __init__.py cv.py adaptors.py highgui.py \
++am__pkgpyexec_PYTHON_DIST = __init__.py cv.py adaptors.py highgui.py \
+ 	matlab_syntax.py
+-pkgpythonPYTHON_INSTALL = $(INSTALL_DATA)
++pkgpyexecPYTHON_INSTALL = $(INSTALL_DATA)
+ py_compile = $(top_srcdir)/autotools/py-compile
+ ETAGS = etags
+ CTAGS = ctags
 @@ -211,6 +211,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -933,15 +955,17 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/python/Makefile.in opencv-1.0.0/inter
  SET_MAKE = @SET_MAKE@
  SHELL = @SHELL@
  STRIP = @STRIP@
-@@ -324,7 +325,7 @@
+@@ -324,8 +325,8 @@
  
  
  # Conditional targets #######################################################
 -@BUILD_PYTHON_WRAPPERS_TRUE@pkgpython_LTLIBRARIES = _cv.la _highgui.la
+-@BUILD_PYTHON_WRAPPERS_TRUE@pkgpython_PYTHON = \
 +@BUILD_PYTHON_WRAPPERS_TRUE@pkgpyexec_LTLIBRARIES = _cv.la _highgui.la
- @BUILD_PYTHON_WRAPPERS_TRUE@pkgpython_PYTHON = \
++@BUILD_PYTHON_WRAPPERS_TRUE@pkgpyexec_PYTHON = \
  @BUILD_PYTHON_WRAPPERS_TRUE@  __init__.py    \
  @BUILD_PYTHON_WRAPPERS_TRUE@  cv.py          \
+ @BUILD_PYTHON_WRAPPERS_TRUE@  adaptors.py    \
 @@ -382,28 +383,28 @@
  	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
  $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
@@ -983,12 +1007,58 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/python/Makefile.in opencv-1.0.0/inter
  	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
  	  test "$$dir" != "$$p" || dir=.; \
  	  echo "rm -f \"$${dir}/so_locations\""; \
+@@ -499,33 +500,33 @@
+ distclean-libtool:
+ 	-rm -f libtool
+ uninstall-info-am:
+-install-pkgpythonPYTHON: $(pkgpython_PYTHON)
++install-pkgpyexecPYTHON: $(pkgpyexec_PYTHON)
+ 	@$(NORMAL_INSTALL)
+-	test -z "$(pkgpythondir)" || $(mkdir_p) "$(DESTDIR)$(pkgpythondir)"
+-	@list='$(pkgpython_PYTHON)'; dlist=''; for p in $$list; do\
++	test -z "$(pkgpyexecdir)" || $(mkdir_p) "$(DESTDIR)$(pkgpyexecdir)"
++	@list='$(pkgpyexec_PYTHON)'; dlist=''; for p in $$list; do\
+ 	  if test -f "$$p"; then b=; else b="$(srcdir)/"; fi; \
+ 	  if test -f $$b$$p; then \
+ 	    f=$(am__strip_dir) \
+ 	    dlist="$$dlist $$f"; \
+-	    echo " $(pkgpythonPYTHON_INSTALL) '$$b$$p' '$(DESTDIR)$(pkgpythondir)/$$f'"; \
+-	    $(pkgpythonPYTHON_INSTALL) "$$b$$p" "$(DESTDIR)$(pkgpythondir)/$$f"; \
++	    echo " $(pkgpyexecPYTHON_INSTALL) '$$b$$p' '$(DESTDIR)$(pkgpyexecdir)/$$f'"; \
++	    $(pkgpyexecPYTHON_INSTALL) "$$b$$p" "$(DESTDIR)$(pkgpyexecdir)/$$f"; \
+ 	  else :; fi; \
+ 	done; \
+ 	if test -n "$$dlist"; then \
+ 	  if test -z "$(DESTDIR)"; then \
+-	    PYTHON=$(PYTHON) $(py_compile) --basedir "$(pkgpythondir)" $$dlist; \
++	    PYTHON=$(PYTHON) $(py_compile) --basedir "$(pkgpyexecdir)" $$dlist; \
+ 	  else \
+-	    PYTHON=$(PYTHON) $(py_compile) --destdir "$(DESTDIR)" --basedir "$(pkgpythondir)" $$dlist; \
++	    PYTHON=$(PYTHON) $(py_compile) --destdir "$(DESTDIR)" --basedir "$(pkgpyexecdir)" $$dlist; \
+ 	  fi; \
+ 	else :; fi
+ 
+-uninstall-pkgpythonPYTHON:
++uninstall-pkgpyexecPYTHON:
+ 	@$(NORMAL_UNINSTALL)
+-	@list='$(pkgpython_PYTHON)'; dlist=''; for p in $$list; do\
++	@list='$(pkgpyexec_PYTHON)'; dlist=''; for p in $$list; do\
+ 	  f=$(am__strip_dir) \
+-	  rm -f "$(DESTDIR)$(pkgpythondir)/$$f"; \
+-	  rm -f "$(DESTDIR)$(pkgpythondir)/$${f}c"; \
+-	  rm -f "$(DESTDIR)$(pkgpythondir)/$${f}o"; \
++	  rm -f "$(DESTDIR)$(pkgpyexecdir)/$$f"; \
++	  rm -f "$(DESTDIR)$(pkgpyexecdir)/$${f}c"; \
++	  rm -f "$(DESTDIR)$(pkgpyexecdir)/$${f}o"; \
+ 	done
+ 
+ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 @@ -607,7 +608,7 @@
  check: check-am
  all-am: Makefile $(LTLIBRARIES)
  installdirs:
 -	for dir in "$(DESTDIR)$(pkgpythondir)" "$(DESTDIR)$(pkgpythondir)"; do \
-+	for dir in "$(DESTDIR)$(pkgpyexecdir)" "$(DESTDIR)$(pkgpythondir)"; do \
++	for dir in "$(DESTDIR)$(pkgpyexecdir)" "$(DESTDIR)$(pkgpyexecdir)"; do \
  	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
  	done
  install: install-am
@@ -1006,20 +1076,21 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/python/Makefile.in opencv-1.0.0/inter
  info-am:
  
 -install-data-am: install-pkgpythonLTLIBRARIES install-pkgpythonPYTHON
-+install-data-am: install-pkgpythonPYTHON
++install-data-am:
  
 -install-exec-am:
-+install-exec-am: install-pkgpyexecLTLIBRARIES
++install-exec-am: install-pkgpyexecLTLIBRARIES install-pkgpyexecPYTHON
  
  install-info: install-info-am
  
-@@ -683,21 +684,21 @@
+@@ -683,22 +684,22 @@
  
  ps-am:
  
 -uninstall-am: uninstall-info-am uninstall-pkgpythonLTLIBRARIES \
+-	uninstall-pkgpythonPYTHON
 +uninstall-am: uninstall-info-am uninstall-pkgpyexecLTLIBRARIES \
- 	uninstall-pkgpythonPYTHON
++	uninstall-pkgpyexecPYTHON
  
  .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 -	clean-libtool clean-pkgpythonLTLIBRARIES ctags distclean \
@@ -1029,19 +1100,21 @@ diff -ur opencv-1.0.0.orig/interfaces/swig/python/Makefile.in opencv-1.0.0/inter
  	install install-am install-data install-data-am install-exec \
  	install-exec-am install-info install-info-am install-man \
 -	install-pkgpythonLTLIBRARIES install-pkgpythonPYTHON \
-+	install-pkgpyexecLTLIBRARIES install-pkgpythonPYTHON \
++	install-pkgpyexecLTLIBRARIES install-pkgpyexecPYTHON \
  	install-strip installcheck installcheck-am installdirs \
  	maintainer-clean maintainer-clean-generic mostlyclean \
  	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
  	pdf pdf-am ps ps-am tags uninstall uninstall-am \
 -	uninstall-info-am uninstall-pkgpythonLTLIBRARIES \
+-	uninstall-pkgpythonPYTHON
 +	uninstall-info-am uninstall-pkgpyexecLTLIBRARIES \
- 	uninstall-pkgpythonPYTHON
++	uninstall-pkgpyexecPYTHON
  
  
+ # SWIG #######################################################################
 diff -ur opencv-1.0.0.orig/Makefile.in opencv-1.0.0/Makefile.in
 --- opencv-1.0.0.orig/Makefile.in	2006-11-03 16:54:59.000000000 +0100
-+++ opencv-1.0.0/Makefile.in	2006-12-11 11:49:13.000000000 +0100
++++ opencv-1.0.0/Makefile.in	2007-03-22 04:09:06.000000000 +0100
 @@ -192,6 +192,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1052,7 +1125,7 @@ diff -ur opencv-1.0.0.orig/Makefile.in opencv-1.0.0/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/ml/include/Makefile.in opencv-1.0.0/ml/include/Makefile.in
 --- opencv-1.0.0.orig/ml/include/Makefile.in	2006-11-03 16:54:56.000000000 +0100
-+++ opencv-1.0.0/ml/include/Makefile.in	2006-12-11 11:49:05.000000000 +0100
++++ opencv-1.0.0/ml/include/Makefile.in	2007-03-22 04:09:01.000000000 +0100
 @@ -160,6 +160,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1063,7 +1136,7 @@ diff -ur opencv-1.0.0.orig/ml/include/Makefile.in opencv-1.0.0/ml/include/Makefi
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/ml/Makefile.in opencv-1.0.0/ml/Makefile.in
 --- opencv-1.0.0.orig/ml/Makefile.in	2006-11-03 16:54:55.000000000 +0100
-+++ opencv-1.0.0/ml/Makefile.in	2006-12-11 11:49:05.000000000 +0100
++++ opencv-1.0.0/ml/Makefile.in	2007-03-22 04:09:00.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1074,7 +1147,7 @@ diff -ur opencv-1.0.0.orig/ml/Makefile.in opencv-1.0.0/ml/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/ml/src/Makefile.in opencv-1.0.0/ml/src/Makefile.in
 --- opencv-1.0.0.orig/ml/src/Makefile.in	2006-11-03 16:54:56.000000000 +0100
-+++ opencv-1.0.0/ml/src/Makefile.in	2006-12-11 11:49:06.000000000 +0100
++++ opencv-1.0.0/ml/src/Makefile.in	2007-03-22 04:09:01.000000000 +0100
 @@ -190,6 +190,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1085,7 +1158,7 @@ diff -ur opencv-1.0.0.orig/ml/src/Makefile.in opencv-1.0.0/ml/src/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/otherlibs/highgui/Makefile.in opencv-1.0.0/otherlibs/highgui/Makefile.in
 --- opencv-1.0.0.orig/otherlibs/highgui/Makefile.in	2006-11-03 16:54:56.000000000 +0100
-+++ opencv-1.0.0/otherlibs/highgui/Makefile.in	2006-12-11 11:49:07.000000000 +0100
++++ opencv-1.0.0/otherlibs/highgui/Makefile.in	2007-03-22 04:09:02.000000000 +0100
 @@ -212,6 +212,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1096,7 +1169,7 @@ diff -ur opencv-1.0.0.orig/otherlibs/highgui/Makefile.in opencv-1.0.0/otherlibs/
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/otherlibs/Makefile.in opencv-1.0.0/otherlibs/Makefile.in
 --- opencv-1.0.0.orig/otherlibs/Makefile.in	2006-11-03 16:54:56.000000000 +0100
-+++ opencv-1.0.0/otherlibs/Makefile.in	2006-12-11 11:49:06.000000000 +0100
++++ opencv-1.0.0/otherlibs/Makefile.in	2007-03-22 04:09:02.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1107,7 +1180,7 @@ diff -ur opencv-1.0.0.orig/otherlibs/Makefile.in opencv-1.0.0/otherlibs/Makefile
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/samples/c/Makefile.in opencv-1.0.0/samples/c/Makefile.in
 --- opencv-1.0.0.orig/samples/c/Makefile.in	2006-11-03 16:54:57.000000000 +0100
-+++ opencv-1.0.0/samples/c/Makefile.in	2006-12-11 11:49:08.000000000 +0100
++++ opencv-1.0.0/samples/c/Makefile.in	2007-03-22 04:09:03.000000000 +0100
 @@ -158,6 +158,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1118,7 +1191,7 @@ diff -ur opencv-1.0.0.orig/samples/c/Makefile.in opencv-1.0.0/samples/c/Makefile
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/samples/Makefile.in opencv-1.0.0/samples/Makefile.in
 --- opencv-1.0.0.orig/samples/Makefile.in	2006-11-03 16:54:56.000000000 +0100
-+++ opencv-1.0.0/samples/Makefile.in	2006-12-11 11:49:07.000000000 +0100
++++ opencv-1.0.0/samples/Makefile.in	2007-03-22 04:09:02.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1129,7 +1202,7 @@ diff -ur opencv-1.0.0.orig/samples/Makefile.in opencv-1.0.0/samples/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/samples/python/Makefile.in opencv-1.0.0/samples/python/Makefile.in
 --- opencv-1.0.0.orig/samples/python/Makefile.in	2006-11-03 16:54:57.000000000 +0100
-+++ opencv-1.0.0/samples/python/Makefile.in	2006-12-11 11:49:08.000000000 +0100
++++ opencv-1.0.0/samples/python/Makefile.in	2007-03-22 04:09:03.000000000 +0100
 @@ -152,6 +152,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1140,7 +1213,7 @@ diff -ur opencv-1.0.0.orig/samples/python/Makefile.in opencv-1.0.0/samples/pytho
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/cv/Makefile.in opencv-1.0.0/tests/cv/Makefile.in
 --- opencv-1.0.0.orig/tests/cv/Makefile.in	2006-11-03 16:54:57.000000000 +0100
-+++ opencv-1.0.0/tests/cv/Makefile.in	2006-12-11 11:49:09.000000000 +0100
++++ opencv-1.0.0/tests/cv/Makefile.in	2007-03-22 04:09:04.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1151,7 +1224,7 @@ diff -ur opencv-1.0.0.orig/tests/cv/Makefile.in opencv-1.0.0/tests/cv/Makefile.i
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/cv/src/Makefile.in opencv-1.0.0/tests/cv/src/Makefile.in
 --- opencv-1.0.0.orig/tests/cv/src/Makefile.in	2006-11-03 16:54:57.000000000 +0100
-+++ opencv-1.0.0/tests/cv/src/Makefile.in	2006-12-11 11:49:10.000000000 +0100
++++ opencv-1.0.0/tests/cv/src/Makefile.in	2007-03-22 04:09:04.000000000 +0100
 @@ -188,6 +188,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1162,7 +1235,7 @@ diff -ur opencv-1.0.0.orig/tests/cv/src/Makefile.in opencv-1.0.0/tests/cv/src/Ma
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/cxcore/Makefile.in opencv-1.0.0/tests/cxcore/Makefile.in
 --- opencv-1.0.0.orig/tests/cxcore/Makefile.in	2006-11-03 16:54:58.000000000 +0100
-+++ opencv-1.0.0/tests/cxcore/Makefile.in	2006-12-11 11:49:10.000000000 +0100
++++ opencv-1.0.0/tests/cxcore/Makefile.in	2007-03-22 04:09:04.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1173,7 +1246,7 @@ diff -ur opencv-1.0.0.orig/tests/cxcore/Makefile.in opencv-1.0.0/tests/cxcore/Ma
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/cxcore/src/Makefile.in opencv-1.0.0/tests/cxcore/src/Makefile.in
 --- opencv-1.0.0.orig/tests/cxcore/src/Makefile.in	2006-11-03 16:54:58.000000000 +0100
-+++ opencv-1.0.0/tests/cxcore/src/Makefile.in	2006-12-11 11:49:11.000000000 +0100
++++ opencv-1.0.0/tests/cxcore/src/Makefile.in	2007-03-22 04:09:05.000000000 +0100
 @@ -174,6 +174,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1184,7 +1257,7 @@ diff -ur opencv-1.0.0.orig/tests/cxcore/src/Makefile.in opencv-1.0.0/tests/cxcor
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/cxts/Makefile.in opencv-1.0.0/tests/cxts/Makefile.in
 --- opencv-1.0.0.orig/tests/cxts/Makefile.in	2006-11-03 16:54:58.000000000 +0100
-+++ opencv-1.0.0/tests/cxts/Makefile.in	2006-12-11 11:49:11.000000000 +0100
++++ opencv-1.0.0/tests/cxts/Makefile.in	2007-03-22 04:09:05.000000000 +0100
 @@ -171,6 +171,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1195,7 +1268,7 @@ diff -ur opencv-1.0.0.orig/tests/cxts/Makefile.in opencv-1.0.0/tests/cxts/Makefi
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/Makefile.in opencv-1.0.0/tests/Makefile.in
 --- opencv-1.0.0.orig/tests/Makefile.in	2006-11-03 16:54:57.000000000 +0100
-+++ opencv-1.0.0/tests/Makefile.in	2006-12-11 11:49:09.000000000 +0100
++++ opencv-1.0.0/tests/Makefile.in	2007-03-22 04:09:03.000000000 +0100
 @@ -156,6 +156,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1206,7 +1279,7 @@ diff -ur opencv-1.0.0.orig/tests/Makefile.in opencv-1.0.0/tests/Makefile.in
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/tests/python/Makefile.in opencv-1.0.0/tests/python/Makefile.in
 --- opencv-1.0.0.orig/tests/python/Makefile.in	2006-11-03 16:54:58.000000000 +0100
-+++ opencv-1.0.0/tests/python/Makefile.in	2006-12-11 11:49:12.000000000 +0100
++++ opencv-1.0.0/tests/python/Makefile.in	2007-03-22 04:09:05.000000000 +0100
 @@ -152,6 +152,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
@@ -1217,7 +1290,7 @@ diff -ur opencv-1.0.0.orig/tests/python/Makefile.in opencv-1.0.0/tests/python/Ma
  STRIP = @STRIP@
 diff -ur opencv-1.0.0.orig/utils/Makefile.in opencv-1.0.0/utils/Makefile.in
 --- opencv-1.0.0.orig/utils/Makefile.in	2006-11-03 16:54:58.000000000 +0100
-+++ opencv-1.0.0/utils/Makefile.in	2006-12-11 11:49:12.000000000 +0100
++++ opencv-1.0.0/utils/Makefile.in	2007-03-22 04:09:06.000000000 +0100
 @@ -151,6 +151,7 @@
  QUICKTIME_CFLAGS = @QUICKTIME_CFLAGS@
  QUICKTIME_LIBS = @QUICKTIME_LIBS@
