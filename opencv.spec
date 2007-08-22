@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        1.0.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -127,6 +127,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Aug 22 2007 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-4
+- Mass rebuild.
+
 * Thu Mar 22 2007 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-3
 - Fix %%{_datadir}/opencv/samples ownership.
 - Adjust timestamp of cvconfig.h.in to avoid re-running autoheader.
