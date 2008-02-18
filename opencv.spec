@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        1.0.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -127,6 +127,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 18 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1.0.0-7
+- Autorebuild for GCC 4.3
+
 * Sun Feb 10 2008 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-6
 - Rebuild for gcc43.
 
