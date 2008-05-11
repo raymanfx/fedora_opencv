@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        1.0.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -16,6 +16,7 @@ Source1:        opencv-samples-Makefile
 Patch0:         opencv-1.0.0-pythondir.diff
 Patch1:		opencv-1.0.0-configure.in.diff
 Patch2:         opencv-1.0.0-autotools.diff
+Patch3:         opencv-1.0.0-pkgconfig.diff
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
@@ -57,6 +58,7 @@ This package contains Python bindings for the OpenCV library.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %{__sed} -i 's/\r//' interfaces/swig/python/*.py \
                      samples/python/*.py
 %{__sed} -i 's/^#!.*//' interfaces/swig/python/adaptors.py \
@@ -127,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun May 11 2008 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-8
+- Adjust library order in opencv.pc.in (BZ 445937).
+
 * Mon Feb 18 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1.0.0-7
 - Autorebuild for GCC 4.3
 
