@@ -5,11 +5,12 @@
 
 Name:           opencv
 Version:        1.0.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
-License:        Intel Open Source License
+# This is normal three clause BSD.
+License:        BSD
 URL:            http://www.intel.com/technology/computing/opencv/index.htm
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-%{version}.tar.gz
 Source1:        opencv-samples-Makefile
@@ -129,6 +130,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu May 22 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 1.0.0-9
+- fix license tag
+
 * Sun May 11 2008 Ralf Corsépius <rc040203@freenet.de> - 1.0.0-8
 - Adjust library order in opencv.pc.in (BZ 445937).
 
