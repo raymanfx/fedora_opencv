@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        1.0.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -130,6 +130,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 1.0.0-10
+- Rebuild for Python 2.6
+
 * Thu May 22 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 1.0.0-9
 - fix license tag
 
