@@ -1,11 +1,11 @@
 %define with_ffmpeg 0
 
-%define pythondir %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib()')
-%define pyexecdir %(%{__python} -c 'from distutils import sysconfig; print sysconfig.get_python_lib(1)')
+%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           opencv
 Version:        1.0.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -22,7 +22,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
 BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
-BuildRequires:  python-devel
+BuildRequires:  python python-devel
 %if %{with_ffmpeg}
 BuildRequires:  ffmpeg-devel >= 0.4.9
 %endif
@@ -76,7 +76,7 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la \
-      $RPM_BUILD_ROOT%{pyexecdir}/opencv/*.la \
+      $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.la \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/build_all.sh \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.dsp \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.vcproj \
@@ -124,12 +124,16 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files python
-%{pyexecdir}/opencv
+%{python_sitearch}/opencv
 %doc %dir %{_datadir}/opencv/samples
 %doc %{_datadir}/opencv/samples/python
 
 
 %changelog
+* Fri Dec 19 2008 Ralf Corsépius <corsepiu@fedoraproject.org> - 1.0.0-11
+- Adopt latest python spec rules.
+- Rebuild for Python 2.6 once again.
+
 * Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 1.0.0-10
 - Rebuild for Python 2.6
 
