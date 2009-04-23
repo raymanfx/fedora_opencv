@@ -1,11 +1,9 @@
-%define with_ffmpeg 0
-
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           opencv
 Version:        1.0.0
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -18,14 +16,19 @@ Patch0:         opencv-1.0.0-pythondir.diff
 Patch1:		opencv-1.0.0-configure.in.diff
 Patch2:         opencv-1.0.0-autotools.diff
 Patch3:         opencv-1.0.0-pkgconfig.diff
+Patch4:         opencv-1.0.0-gcc44.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gtk2-devel, libpng-devel, libjpeg-devel, libtiff-devel
+BuildRequires:  gtk2-devel
+BuildRequires:  jasper-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libjpeg-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  libtool
 BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
-BuildRequires:  python python-devel
-%if %{with_ffmpeg}
-BuildRequires:  ffmpeg-devel >= 0.4.9
-%endif
+BuildRequires:  python-devel
+%{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
+
 
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
@@ -60,6 +63,7 @@ This package contains Python bindings for the OpenCV library.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1 -b .gcc44
 %{__sed} -i 's/\r//' interfaces/swig/python/*.py \
                      samples/python/*.py
 %{__sed} -i 's/^#!.*//' interfaces/swig/python/adaptors.py \
@@ -74,7 +78,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la \
       $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.la \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/build_all.sh \
@@ -83,7 +87,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/facedetect.cmd \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gcc \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gen
-install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
+install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
 
 
 %check
@@ -97,9 +101,6 @@ rm -rf $RPM_BUILD_ROOT
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-
-%post python -p /sbin/ldconfig
-%postun python -p /sbin/ldconfig
 
 
 %files
@@ -130,6 +131,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Apr 22 2009 kwizart < kwizart at gmail.com > - 1.0.0-14
+- Fix for gcc44
+- Enable BR jasper-devel
+- Disable ldconfig run on python modules (uneeded)
+- Prevent timestamp change on install
+
 * Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.0-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
