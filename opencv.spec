@@ -74,6 +74,7 @@ This package contains Python bindings for the OpenCV library.
 autoreconf -vif
 
 %build
+export SWIG_PYTHON_LIBS=%{_libdir}
 %configure --disable-static --enable-apps \
 %ifarch i386 i586
   --disable-sse2 \
