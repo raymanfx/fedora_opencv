@@ -2,22 +2,23 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           opencv
-Version:        1.0.0
-Release:        14%{?dist}
+Version:        1.1.0
+Release:        0.1.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
-Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-%{version}.tar.gz
+Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-1.1pre1.tar.gz
 Source1:        opencv-samples-Makefile
-Patch0:         opencv-1.0.0-pythondir.diff
-Patch1:		opencv-1.0.0-configure.in.diff
-Patch2:         opencv-1.0.0-autotools.diff
-Patch3:         opencv-1.0.0-pkgconfig.diff
-Patch4:         opencv-1.0.0-gcc44.patch
+Patch0:         opencv-1.0.0-gcc44.patch
+Patch1:         opencv-1.1-nooptim.patch
+Patch2:         opencv-1.1.0-pythondir.diff
+Patch3:         opencv-1.1.0-conflicts.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+BuildRequires:  libtool
 
 BuildRequires:  gtk2-devel
 BuildRequires:  jasper-devel
@@ -27,6 +28,7 @@ BuildRequires:  libtiff-devel
 BuildRequires:  libtool
 BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
 BuildRequires:  python-devel
+BuildRequires:  python-imaging, numpy
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 
 
@@ -52,6 +54,8 @@ will use the OpenCV library.
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv = %{version}-%{release}
+Requires:       python-imaging
+Requires:       numpy
 
 %description python
 This package contains Python bindings for the OpenCV library.
@@ -59,39 +63,49 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1 -b .gcc44
-%{__sed} -i 's/\r//' interfaces/swig/python/*.py \
-                     samples/python/*.py
-%{__sed} -i 's/^#!.*//' interfaces/swig/python/adaptors.py \
-                        interfaces/swig/python/__init__.py
-# Adjust timestamp on cvconfig.h.in
-touch -r configure.in cvconfig.h.in
+%patch0 -p1 -b .gcc44
+%patch1 -p1 -b .nooptim
+%patch2 -p1 -b .pydir
+#autotools conflicts between AC_CONFIG_MACRO_DIR and AM_FLAGS
+%patch3 -p1 -b .conflicts
+
+
+#Renew the autotools (and remove rpath).
+autoreconf -vif
 
 %build
-%configure --disable-static --enable-python --enable-apps
+%configure --disable-static --enable-apps \
+%ifarch i386 i586
+  --disable-sse2 \
+%endif
+
 make %{?_smp_mflags}
+
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.la \
-      $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.la \
-      $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/build_all.sh \
+find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
+
+rm -f $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/build_all.sh \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.dsp \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.vcproj \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/facedetect.cmd \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gcc \
       $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gen
-install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
+install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
+
+#Remove unversioned documentation
+rm -rf $RPM_BUILD_ROOT%{_docdir}/opencv
+#And Octave since we don't build against it yet
+rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{samples/octave/,ChangeLog,THANKS}
 
 
 %check
-make check
+#Check fails since we don't support most video 
+#read/write capability and we don't provide a display
+make check || :
 
 
 %clean
@@ -131,11 +145,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Apr 24 2009 kwizart < kwizart at gmail.com > - 1.1.0-0.1.pre1
+- Update to 1.1pre1
+- Disable CXXFLAGS hardcoded optimization
+- Add BR: python-imaging, numpy
+- Disable make check failure for now
+
 * Wed Apr 22 2009 kwizart < kwizart at gmail.com > - 1.0.0-14
 - Fix for gcc44
 - Enable BR jasper-devel
-- Disable ldconfig run on python modules (uneeded)
-- Prevent timestamp change on install
 
 * Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.0-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
