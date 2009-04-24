@@ -1,14 +1,15 @@
---- opencv-1.0.0.orig/interfaces/swig/python/Makefile.am	2006-08-10 15:29:20.000000000 +0200
-+++ opencv-1.0.0/interfaces/swig/python/Makefile.am	2007-03-22 04:04:45.000000000 +0100
-@@ -92,9 +92,9 @@
- 
+diff -up opencv-1.1.0/interfaces/swig/python/Makefile.am.pydir opencv-1.1.0/interfaces/swig/python/Makefile.am
+--- opencv-1.1.0/interfaces/swig/python/Makefile.am.pydir	2009-04-24 10:48:47.000000000 +0200
++++ opencv-1.1.0/interfaces/swig/python/Makefile.am	2009-04-24 10:49:49.000000000 +0200
+@@ -107,9 +107,9 @@ endif
  if BUILD_PYTHON_WRAPPERS
  
--pkgpython_LTLIBRARIES = _cv.la _highgui.la
-+pkgpyexec_LTLIBRARIES = _cv.la _highgui.la
+ #pkgpython_LTLIBRARIES = _cv.la _highgui.la
+-pkgpython_LTLIBRARIES = _cv.la _ml.la _highgui.la
++pkgpyexec_LTLIBRARIES = _cv.la _ml.la _highgui.la
  
 -pkgpython_PYTHON = \
 +pkgpyexec_PYTHON = \
    __init__.py    \
    cv.py          \
-   adaptors.py    \
+   ml.py          \

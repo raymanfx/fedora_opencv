@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.1.pre1%{?dist}
+Release:        0.1.pre1%{?dist}.1
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
