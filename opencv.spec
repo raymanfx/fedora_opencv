@@ -154,6 +154,8 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Apr 22 2009 kwizart < kwizart at gmail.com > - 1.0.0-14
 - Fix for gcc44
 - Enable BR jasper-devel
+- Disable ldconfig run on python modules (uneeded)
+- Prevent timestamp change on install
 
 * Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.0-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
