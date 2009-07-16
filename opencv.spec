@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.2.pre1%{?dist}
+Release:        0.3.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -17,6 +17,7 @@ Patch1:         opencv-1.1-nooptim.patch
 Patch2:         opencv-1.1.0-pythondir.diff
 Patch3:         opencv-1.1.0-conflicts.patch
 Patch4:         opencv-1.1pre1-automake.patch
+Patch5:         opencv-1.1pre1-backport_gcc43.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -31,6 +32,8 @@ BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
 BuildRequires:  python-devel
 BuildRequires:  python-imaging, numpy
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
+%{!?_without_gstreamer:BuildRequires:  gstreamer-devel}
+%{?_with_xine:BuildRequires:  xine-lib-devel}
 
 
 %description
@@ -70,6 +73,7 @@ This package contains Python bindings for the OpenCV library.
 #autotools conflicts between AC_CONFIG_MACRO_DIR and AM_FLAGS
 %patch3 -p1 -b .conflicts
 %patch4 -p1 -b .automake
+%patch5 -p1 -b .gcc43
 
 
 #Renew the autotools (and remove rpath).
@@ -78,6 +82,9 @@ autoreconf -vif
 %build
 export SWIG_PYTHON_LIBS=%{_libdir}
 %configure --disable-static --enable-apps \
+  %{?_with_ffmpeg:--with-ffmpeg}%{!?_with_ffmpeg:--without-ffmpeg} \
+  %{!?_without_gstreamer:--with-gstreamer} \
+  %{?_with_xine:--with-xine --without-quicktime} \
 %ifarch i386 i586
   --disable-sse2 \
 %endif
@@ -148,6 +155,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jul 16 2009 kwizart < kwizart at gmail.com > - 1.1.0-0.3.pre1
+- Build with gstreamer support - #491223
+- Backport gcc43 fix from trunk
+
 * Thu Jul 16 2009 kwizart < kwizart at gmail.com > - 1.1.0-0.2.pre1
 - Fix FTBFS #511705
 

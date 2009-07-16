@@ -1,0 +1,40 @@
+diff -up opencv-1.1.0/otherlibs/highgui/cvcap_xine.cpp.gcc43 opencv-1.1.0/otherlibs/highgui/cvcap_xine.cpp
+--- opencv-1.1.0/otherlibs/highgui/cvcap_xine.cpp.gcc43	2008-05-03 20:20:57.000000000 +0200
++++ opencv-1.1.0/otherlibs/highgui/cvcap_xine.cpp	2009-07-16 12:30:58.000000000 +0200
+@@ -784,7 +784,7 @@ public:
+     CvCaptureAVI_XINE_CPP() { captureXINE = 0; }
+     virtual ~CvCaptureAVI_XINE_CPP() { close(); }
+ 
+-    virtual bool open( int index );
++    virtual bool open( const char* filename );
+     virtual void close();
+ 
+     virtual double getProperty(int);
+@@ -796,10 +796,10 @@ protected:
+     CvCaptureAVI_XINE* captureXINE;
+ };
+ 
+-bool CvCaptureAVI_XINE_CPP::open( int index )
++bool CvCaptureAVI_XINE_CPP::open( const char* filename )
+ {
+     close();
+-    captureXINE = icvCaptureFromFile_XINE(index);
++    captureXINE = icvCaptureFromFile_XINE(filename);
+     return captureXINE != 0;
+ }
+ 
+@@ -832,11 +832,11 @@
+     return captureXINE ? icvSetPropertyAVI_XINE( captureXINE, propId, value ) != 0 : false;
+ }
+ 
+-CvCapture* cvCreateCameraCapture_XINE( int index )
++CvCapture* cvCreateFileCapture_XINE(const char* filename)
+ {
+     CvCaptureAVI_XINE_CPP* capture = new CvCaptureAVI_XINE_CPP;
+ 
+-    if( capture->open( index ))
++    if( capture->open(filename))
+         return capture;
+ 
+     delete capture;
+
