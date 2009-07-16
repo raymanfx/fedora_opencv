@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.1.pre1%{?dist}.1
+Release:        0.2.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -16,6 +16,7 @@ Patch0:         opencv-1.0.0-gcc44.patch
 Patch1:         opencv-1.1-nooptim.patch
 Patch2:         opencv-1.1.0-pythondir.diff
 Patch3:         opencv-1.1.0-conflicts.patch
+Patch4:         opencv-1.1pre1-automake.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -68,6 +69,7 @@ This package contains Python bindings for the OpenCV library.
 %patch2 -p1 -b .pydir
 #autotools conflicts between AC_CONFIG_MACRO_DIR and AM_FLAGS
 %patch3 -p1 -b .conflicts
+%patch4 -p1 -b .automake
 
 
 #Renew the autotools (and remove rpath).
@@ -146,6 +148,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jul 16 2009 kwizart < kwizart at gmail.com > - 1.1.0-0.2.pre1
+- Fix FTBFS #511705
+
 * Fri Apr 24 2009 kwizart < kwizart at gmail.com > - 1.1.0-0.1.pre1
 - Update to 1.1pre1
 - Disable CXXFLAGS hardcoded optimization
