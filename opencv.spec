@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.3.pre1%{?dist}
+Release:        0.4.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -155,6 +155,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.0-0.4.pre1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Thu Jul 16 2009 kwizart < kwizart at gmail.com > - 1.1.0-0.3.pre1
 - Build with gstreamer support - #491223
 - Backport gcc43 fix from trunk
