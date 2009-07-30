@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.5.pre1%{?dist}
+Release:        0.6.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -91,7 +91,7 @@ export SWIG_PYTHON_LIBS=%{_libdir}
   %{!?_without_gstreamer:--with-gstreamer} \
   %{?_with_xine:--with-xine --without-quicktime} \
   --with-unicap \
-  --with-1394libs --without-quicktime
+  --with-1394libs --without-quicktime \
 %ifarch i386 i586
   --disable-sse2 \
 %endif
@@ -162,6 +162,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> 1.1.0.0.6.pre1
+- Fix typo I introduced that prevented build on i386/i586
+
 * Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> 1.1.0.0.5.pre1
 - Added 1394libs and unicap support
 
