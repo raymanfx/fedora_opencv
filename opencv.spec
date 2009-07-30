@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.4.pre1%{?dist}
+Release:        0.5.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -23,6 +23,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  libtool
 
 BuildRequires:  gtk2-devel
+BuildRequires:  unicap-devel
+BuildRequires:  libtheora-devel
+BuildRequires:  libvorbis-devel
+BuildRequires:  libraw1394-devel
+BuildRequires:  libdc1394-devel
 BuildRequires:  jasper-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
@@ -85,6 +90,8 @@ export SWIG_PYTHON_LIBS=%{_libdir}
   %{?_with_ffmpeg:--with-ffmpeg}%{!?_with_ffmpeg:--without-ffmpeg} \
   %{!?_without_gstreamer:--with-gstreamer} \
   %{?_with_xine:--with-xine --without-quicktime} \
+  --with-unicap \
+  --with-1394libs --without-quicktime
 %ifarch i386 i586
   --disable-sse2 \
 %endif
@@ -155,6 +162,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> 1.1.0.0.5.pre1
+- Added 1394libs and unicap support
+
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.0-0.4.pre1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
