@@ -3,7 +3,7 @@
 
 Name:           opencv
 Version:        1.1.0
-Release:        0.6.pre1%{?dist}
+Release:        0.7.pre1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -26,8 +26,10 @@ BuildRequires:  gtk2-devel
 BuildRequires:  unicap-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
+%ifnarch s390 s390x
 BuildRequires:  libraw1394-devel
 BuildRequires:  libdc1394-devel
+%endif
 BuildRequires:  jasper-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
@@ -162,6 +164,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 10 2009 Karsten Hopp <karsten@redhat.com> 1.1.0-0.7.pre1
+- fix build on s390x where we don't have libraw1394 and devel
+
 * Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> 1.1.0.0.6.pre1
 - Fix typo I introduced that prevented build on i386/i586
 
