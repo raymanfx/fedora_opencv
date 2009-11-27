@@ -1,23 +1,18 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+%define tar_name OpenCV
 
 Name:           opencv
-Version:        1.1.0
-Release:        0.7.pre1%{?dist}
+Version:        2.0.0
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
-Source0:        http://prdownloads.sourceforge.net/opencvlibrary/opencv-1.1pre1.tar.gz
+Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
-Patch0:         opencv-1.0.0-gcc44.patch
-Patch1:         opencv-1.1-nooptim.patch
-Patch2:         opencv-1.1.0-pythondir.diff
-Patch3:         opencv-1.1.0-conflicts.patch
-Patch4:         opencv-1.1pre1-automake.patch
-Patch5:         opencv-1.1pre1-backport_gcc43.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -73,16 +68,7 @@ This package contains Python bindings for the OpenCV library.
 
 
 %prep
-%setup -q
-%patch0 -p1 -b .gcc44
-%patch1 -p1 -b .nooptim
-%patch2 -p1 -b .pydir
-#autotools conflicts between AC_CONFIG_MACRO_DIR and AM_FLAGS
-%patch3 -p1 -b .conflicts
-%patch4 -p1 -b .automake
-%patch5 -p1 -b .gcc43
-
-
+%setup -q -n %{tar_name}-%{version}
 #Renew the autotools (and remove rpath).
 autoreconf -vif
 
@@ -101,19 +87,17 @@ export SWIG_PYTHON_LIBS=%{_libdir}
 make %{?_smp_mflags}
 
 
-
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
-rm -f $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/build_all.sh \
-      $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.dsp \
-      $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/cvsample.vcproj \
-      $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/facedetect.cmd \
-      $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gcc \
-      $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/makefile.gen
-install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/opencv/samples/c/GNUmakefile
+rm -f $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/build_all.sh \
+      $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/cvsample.dsp \
+      $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/cvsample.vcproj \
+      $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/facedetect.cmd
+install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefile
+install -m644 cvconfig.h $RPM_BUILD_ROOT%{_includedir}/%{name}/cvconfig.h
 
 #Remove unversioned documentation
 rm -rf $RPM_BUILD_ROOT%{_docdir}/opencv
@@ -122,10 +106,11 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{samples/octave/,ChangeLog,THANKS}
 
 
 %check
-#Check fails since we don't support most video 
+#Check fails since we don't support most video
 #read/write capability and we don't provide a display
-make check || :
-
+%ifnarch ppc64
+    make check || :
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -150,11 +135,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_includedir}/opencv
 %{_libdir}/lib*.so
-%{_libdir}/lib*.a
 %{_libdir}/pkgconfig/opencv.pc
-%doc %{_datadir}/opencv/doc
+%doc %{_datadir}/doc/opencv-2.0.0/
 %doc %dir %{_datadir}/opencv/samples
 %doc %{_datadir}/opencv/samples/c
+%doc %{_datadir}/opencv/samples/CMake
 
 
 %files python
@@ -164,13 +149,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Sep 10 2009 Karsten Hopp <karsten@redhat.com> 1.1.0-0.7.pre1
+* Fri Nov 27 2009 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-1
+- Updated to 2.0.0
+- Removed upstream-ed patches
+- Ugly hack (added cvconfig.h)
+- disable %check on ppc64
+
+* Thu Sep 10 2009 Karsten Hopp <karsten@redhat.com> - 1.1.0-0.7.pre1
 - fix build on s390x where we don't have libraw1394 and devel
 
-* Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> 1.1.0.0.6.pre1
+* Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> - 1.1.0.0.6.pre1
 - Fix typo I introduced that prevented build on i386/i586
 
-* Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> 1.1.0.0.5.pre1
+* Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> - 1.1.0.0.5.pre1
 - Added 1394libs and unicap support
 
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.0-0.4.pre1
