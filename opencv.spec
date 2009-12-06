@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -13,6 +13,8 @@ License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
+Patch0:         opencv-2.0.0-data-automake.patch
+Patch1:	        opencv-2.0.0-apps-automake.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -69,6 +71,8 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q -n %{tar_name}-%{version}
+%patch0 -p1 -b .automake
+%patch1 -p1 -b .automake
 #Renew the autotools (and remove rpath).
 autoreconf -vif
 
@@ -128,6 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.so.*
 %dir %{_datadir}/opencv
 %{_datadir}/opencv/haarcascades
+%{_datadir}/opencv/lbpcascades
 %{_datadir}/opencv/readme.txt
 
 
@@ -149,11 +154,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Dec 06 2009 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-2
+- Fix autotools scripts (missing LBP features) - #544167 
+
 * Fri Nov 27 2009 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-1
 - Updated to 2.0.0
 - Removed upstream-ed patches
 - Ugly hack (added cvconfig.h)
-- disable %check on ppc64
+- Disable %check on ppc64
 
 * Thu Sep 10 2009 Karsten Hopp <karsten@redhat.com> - 1.1.0-0.7.pre1
 - fix build on s390x where we don't have libraw1394 and devel
@@ -162,7 +170,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fix typo I introduced that prevented build on i386/i586
 
 * Fri Jul 30 2009 Haïkel Guémar <karlthered@gmail.com> - 1.1.0.0.5.pre1
-- Added 1394libs and unicap support
+- Added 1394 libs and unicap support
 
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.0-0.4.pre1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
