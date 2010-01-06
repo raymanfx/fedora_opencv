@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -14,7 +14,7 @@ URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-2.0.0-data-automake.patch
-Patch1:	        opencv-2.0.0-apps-automake.patch
+Patch1:         opencv-2.0.0-apps-automake.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -50,7 +50,7 @@ and Computer Vision algorithms.
 Summary:        Development files for using the OpenCV library
 Group:          Development/Libraries
 Requires:       opencv = %{version}-%{release}
-Requires:	pkgconfig
+Requires:       pkgconfig
 
 %description devel
 This package contains the OpenCV C/C++ library and header files, as well as
@@ -148,12 +148,16 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files python
+%defattr(-,root,root,-)
 %{python_sitearch}/opencv
 %doc %dir %{_datadir}/opencv/samples
 %doc %{_datadir}/opencv/samples/python
 
 
 %changelog
+* Wed Jan 06 2010 Karel Klic <kklic@redhat.com> - 2.0.0-3
+- Fixed spec file issues detected by rpmlint
+
 * Sun Dec 06 2009 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-2
 - Fix autotools scripts (missing LBP features) - #544167 
 
@@ -161,7 +165,7 @@ rm -rf $RPM_BUILD_ROOT
 - Updated to 2.0.0
 - Removed upstream-ed patches
 - Ugly hack (added cvconfig.h)
-- Disable %check on ppc64
+- Disable %%check on ppc64
 
 * Thu Sep 10 2009 Karsten Hopp <karsten@redhat.com> - 1.1.0-0.7.pre1
 - fix build on s390x where we don't have libraw1394 and devel
