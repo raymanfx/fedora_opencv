@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -155,6 +155,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jan 09 2010 Rakesh Pandit <rakesh@fedoraproject.org> - 2.0.0-4
+- Updated opencv-samples-Makefile (Thanks Scott Tsai) #553697
+
 * Wed Jan 06 2010 Karel Klic <kklic@redhat.com> - 2.0.0-3
 - Fixed spec file issues detected by rpmlint
 
