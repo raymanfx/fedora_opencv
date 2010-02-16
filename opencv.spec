@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -38,7 +38,6 @@ BuildRequires:  python-imaging, numpy
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel}
 %{?_with_xine:BuildRequires:  xine-lib-devel}
-
 
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
@@ -77,6 +76,11 @@ This package contains Python bindings for the OpenCV library.
 autoreconf -vif
 
 %build
+
+%ifarch i386
+export CXXFLAGS="%{__global_cflags} -m32 -fasynchronous-unwind-tables"
+%endif
+
 export SWIG_PYTHON_LIBS=%{_libdir}
 %configure --disable-static --enable-apps \
   %{?_with_ffmpeg:--with-ffmpeg}%{!?_with_ffmpeg:--without-ffmpeg} \
@@ -155,6 +159,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 16 2010 Karel Klic <kklic@redhat.com> - 2.0.0-5
+- Set CXXFLAXS without -match=i386 for i386 architecture #565074
+
 * Sat Jan 09 2010 Rakesh Pandit <rakesh@fedoraproject.org> - 2.0.0-4
 - Updated opencv-samples-Makefile (Thanks Scott Tsai) #553697
 
