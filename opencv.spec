@@ -1,10 +1,10 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-%define tar_name OpenCV
+%global tar_name OpenCV
 
 Name:           opencv
 Version:        2.0.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -13,11 +13,12 @@ License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
-Patch0:         opencv-2.0.0-data-automake.patch
-Patch1:         opencv-2.0.0-apps-automake.patch
+# Fedora cmake macros define -DLIB_SUFFIX=64 on 64 bits platforms
+Patch0:         opencv-cmake-libdir.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
+BuildRequires:  cmake >= 2.4
 
 BuildRequires:  gtk2-devel
 BuildRequires:  unicap-devel
@@ -32,9 +33,9 @@ BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  libtool
-BuildRequires:  swig >= 1.3.24, zlib-devel, pkgconfig
+BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
-BuildRequires:  python-imaging, numpy
+BuildRequires:  python-imaging, numpy, swig >= 1.3.24
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel}
 %{?_with_xine:BuildRequires:  xine-lib-devel}
@@ -54,8 +55,18 @@ Requires:       pkgconfig
 %description devel
 This package contains the OpenCV C/C++ library and header files, as well as
 documentation. It should be installed if you want to develop programs that
-will use the OpenCV library.
+will use the OpenCV library. You should consider installing opencv-devel-docs
+package.
 
+%package devel-docs
+Summary:        Development files for using the OpenCV library
+Group:          Development/Libraries
+Requires:       opencv-devel = %{version}-%{release}
+Requires:       pkgconfig
+BuildArch:      noarch
+
+%description devel-docs
+This package contains the OpenCV documentation and examples programs.
 
 %package python
 Summary:        Python bindings for apps which use OpenCV
@@ -70,10 +81,7 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q -n %{tar_name}-%{version}
-%patch0 -p1 -b .automake
-%patch1 -p1 -b .automake
-#Renew the autotools (and remove rpath).
-autoreconf -vif
+%patch0 -p1
 
 %build
 
@@ -81,18 +89,20 @@ autoreconf -vif
 export CXXFLAGS="%{__global_cflags} -m32 -fasynchronous-unwind-tables"
 %endif
 
-export SWIG_PYTHON_LIBS=%{_libdir}
-%configure --disable-static --enable-apps \
-  %{?_with_ffmpeg:--with-ffmpeg}%{!?_with_ffmpeg:--without-ffmpeg} \
-  %{!?_without_gstreamer:--with-gstreamer} \
-  %{?_with_xine:--with-xine --without-quicktime} \
-  --with-unicap \
-  --with-1394libs --without-quicktime \
-%ifarch i386 i586
-  --disable-sse2 \
-%endif
 
-make %{?_smp_mflags}
+# enabled by default if libraries are presents at build time:
+# GTK, GSTREAMER, UNICAP, 1394, V4L
+# non available on Fedora: FFMPEG, XINE
+%cmake -DENABLE_OPENMP=1\
+ %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
+ %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
+ %{!?_with_xine:-DWITH_XINE=0} \
+ -DBUILD_SWIG_PYTHON_SUPPORT=1 \
+ -DINSTALL_C_EXAMPLES=1 \
+ -DINSTALL_PYTHON_EXAMPLES=1 \
+.
+make VERBOSE=1 %{?_smp_mflags}
+
 
 
 %install
@@ -106,16 +116,19 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/build_all.sh \
       $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/facedetect.cmd
 install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefile
 install -m644 cvconfig.h $RPM_BUILD_ROOT%{_includedir}/%{name}/cvconfig.h
+mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/
+# install documentation
+install -m644 doc/%{name}.pdf $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/%{name}.pdf
+install -m644 doc/*.{htm,png,jpg} $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/
 
-#Remove unversioned documentation
-rm -rf $RPM_BUILD_ROOT%{_docdir}/opencv
-#And Octave since we don't build against it yet
-rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{samples/octave/,ChangeLog,THANKS}
-
+# fix dos end of lines
+sed -i 's|\r||g'  $RPM_BUILD_ROOT/%{_datadir}/%{name}/samples/c/adaptiveskindetector.cpp
+# remove unnecessary documentation
+rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
 
 %check
-#Check fails since we don't support most video
-#read/write capability and we don't provide a display
+# Check fails since we don't support most video
+# read/write capability and we don't provide a display
 %ifnarch ppc64
     make check || :
 %endif
@@ -132,12 +145,11 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS ChangeLog COPYING THANKS TODO
-%{_bindir}/opencv-*
+%{_bindir}/opencv_*
 %{_libdir}/lib*.so.*
 %dir %{_datadir}/opencv
 %{_datadir}/opencv/haarcascades
 %{_datadir}/opencv/lbpcascades
-%{_datadir}/opencv/readme.txt
 
 
 %files devel
@@ -145,20 +157,37 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/opencv
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
+%{_datadir}/opencv/OpenCVConfig.cmake
+
+%files devel-docs
+%defattr(-,root,root,-)
 %doc %{_datadir}/doc/opencv-2.0.0/
 %doc %dir %{_datadir}/opencv/samples
 %doc %{_datadir}/opencv/samples/c
-%doc %{_datadir}/opencv/samples/CMake
-
+%doc %{_docdir}/%{name}-doc-%{version}/%{name}.pdf
+%doc %{_docdir}/%{name}-doc-%{version}/*.htm
+%doc %{_docdir}/%{name}-doc-%{version}/%{name}.jpg
+%doc %{_docdir}/%{name}-doc-%{version}/%{name}-logo*.png
 
 %files python
 %defattr(-,root,root,-)
-%{python_sitearch}/opencv
+%{python_sitearch}/cv.so
 %doc %dir %{_datadir}/opencv/samples
 %doc %{_datadir}/opencv/samples/python
+# old SWIG wrappers
+%{python_sitearch}/opencv
 
 
 %changelog
+* Thu Feb 25 2010 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-6
+- use cmake build system
+- applications renamed to opencv_xxx instead of opencv-xxx
+- add devel-docs subpackage #546605
+- add OpenCVConfig.cmake
+- enable openmp build
+- enable old SWIG based python wrappers
+- opencv package is a good boy and use global instead of define
+
 * Tue Feb 16 2010 Karel Klic <kklic@redhat.com> - 2.0.0-5
 - Set CXXFLAXS without -match=i386 for i386 architecture #565074
 
@@ -169,7 +198,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fixed spec file issues detected by rpmlint
 
 * Sun Dec 06 2009 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-2
-- Fix autotools scripts (missing LBP features) - #544167 
+- Fix autotools scripts (missing LBP features) - #544167
 
 * Fri Nov 27 2009 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-1
 - Updated to 2.0.0
