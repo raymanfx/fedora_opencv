@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -21,7 +21,7 @@ BuildRequires:  libtool
 BuildRequires:  cmake >= 2.4
 
 BuildRequires:  gtk2-devel
-BuildRequires:  unicap-devel
+BuildRequires:  libucil-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
 %ifnarch s390 s390x
@@ -179,6 +179,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Feb 27 2010 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-7
+- replaced BR unicap-devel by libucil-devel (unicap split)
+
 * Thu Feb 25 2010 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-6
 - use cmake build system
 - applications renamed to opencv_xxx instead of opencv-xxx
