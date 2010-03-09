@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -15,6 +15,9 @@ Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{v
 Source1:        opencv-samples-Makefile
 # Fedora cmake macros define -DLIB_SUFFIX=64 on 64 bits platforms
 Patch0:         opencv-cmake-libdir.patch
+# Fixes memory corruption in the gaussian random number generator.
+# Fixed in the revision 2282 of the upstream svn repository.
+Patch1:         opencv-2.0.0-gaussianrng.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -129,8 +132,9 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
 %check
 # Check fails since we don't support most video
 # read/write capability and we don't provide a display
+# ARGS=-V increases output verbosity
 %ifnarch ppc64
-    make check || :
+    LD_LIBRARY_PATH=%{_builddir}/%{tar_name}-%{version}/lib:$LD_LIBARY_PATH make test ARGS=-V || :
 %endif
 
 %clean
@@ -179,6 +183,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Mar 08 2010 Karel Klic <kklic@redhat.com> - 2.0.0-8
+- re-enable testing on CMake build system
+- fix memory corruption in the gaussian random number generator
+
 * Sat Feb 27 2010 Haïkel Guémar <karlthered@gmail.com> - 2.0.0-7
 - replaced BR unicap-devel by libucil-devel (unicap split)
 
