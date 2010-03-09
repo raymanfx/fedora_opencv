@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -85,6 +85,7 @@ This package contains Python bindings for the OpenCV library.
 %prep
 %setup -q -n %{tar_name}-%{version}
 %patch0 -p1
+%patch1 -p2 -b .gaussianrng
 
 %build
 
@@ -183,6 +184,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Mar 09 2010 Karel Klic <kklic@redhat.com> - 2.0.0-9
+- apply the previously added patch
+
 * Mon Mar 08 2010 Karel Klic <kklic@redhat.com> - 2.0.0-8
 - re-enable testing on CMake build system
 - fix memory corruption in the gaussian random number generator
