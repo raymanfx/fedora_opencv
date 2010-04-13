@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.0.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -130,6 +130,12 @@ sed -i 's|\r||g'  $RPM_BUILD_ROOT/%{_datadir}/%{name}/samples/c/adaptiveskindete
 # remove unnecessary documentation
 rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
 
+# Fix nonstandard executable permissions
+chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
+chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
+chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
+
+
 %check
 # Check fails since we don't support most video
 # read/write capability and we don't provide a display
@@ -184,6 +190,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Apr 13 2010 Karel Klic <kklic@redhat.com> - 2.0.0-10
+- Fix nonstandard executable permissions
+
 * Mon Mar 09 2010 Karel Klic <kklic@redhat.com> - 2.0.0-9
 - apply the previously added patch
 
