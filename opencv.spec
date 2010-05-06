@@ -3,8 +3,8 @@
 %global tar_name OpenCV
 
 Name:           opencv
-Version:        2.0.0
-Release:        10%{?dist}
+Version:        2.1.0
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -14,16 +14,14 @@ URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
 # Fedora cmake macros define -DLIB_SUFFIX=64 on 64 bits platforms
-Patch0:         opencv-cmake-libdir.patch
-# Fixes memory corruption in the gaussian random number generator.
-# Fixed in the revision 2282 of the upstream svn repository.
-Patch1:         opencv-2.0.0-gaussianrng.patch
+Patch0:         opencv-cmake-libdir-2.1.0.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.4
 
 BuildRequires:  gtk2-devel
+BuildRequires:  imlib2-devel
 BuildRequires:  libucil-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
@@ -32,6 +30,7 @@ BuildRequires:  libraw1394-devel
 BuildRequires:  libdc1394-devel
 %endif
 BuildRequires:  jasper-devel
+BuildRequires:  lapack-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
@@ -40,7 +39,7 @@ BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
 BuildRequires:  python-imaging, numpy, swig >= 1.3.24
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
-%{!?_without_gstreamer:BuildRequires:  gstreamer-devel}
+%{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
 %{?_with_xine:BuildRequires:  xine-lib-devel}
 
 %description
@@ -85,10 +84,9 @@ This package contains Python bindings for the OpenCV library.
 %prep
 %setup -q -n %{tar_name}-%{version}
 %patch0 -p1
-%patch1 -p2 -b .gaussianrng
+
 
 %build
-
 %ifarch i386
 export CXXFLAGS="%{__global_cflags} -m32 -fasynchronous-unwind-tables"
 %endif
@@ -110,7 +108,7 @@ make VERBOSE=1 %{?_smp_mflags}
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT  __devel-doc
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
@@ -135,6 +133,17 @@ chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
 chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
 chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
 
+#Remove uneeded README.txt (howto install related)
+rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/opencv-%{version}/
+#Use appropriate _docdir
+mkdir -p  __devel-doc
+cp -apR $RPM_BUILD_ROOT%{_datadir}/doc/opencv-doc-%{version}/  __devel-doc
+rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/opencv-doc-%{version}/
+
+#This file is wrong - not redistributed
+rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/OpenCVConfig.cmake
+
+
 
 %check
 # Check fails since we don't support most video
@@ -155,7 +164,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc AUTHORS ChangeLog COPYING THANKS TODO
+%doc doc/README.txt
 %{_bindir}/opencv_*
 %{_libdir}/lib*.so.*
 %dir %{_datadir}/opencv
@@ -168,17 +177,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/opencv
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
-%{_datadir}/opencv/OpenCVConfig.cmake
+
 
 %files devel-docs
 %defattr(-,root,root,-)
-%doc %{_datadir}/doc/opencv-2.0.0/
-%doc %dir %{_datadir}/opencv/samples
-%doc %{_datadir}/opencv/samples/c
-%doc %{_docdir}/%{name}-doc-%{version}/%{name}.pdf
-%doc %{_docdir}/%{name}-doc-%{version}/*.htm
-%doc %{_docdir}/%{name}-doc-%{version}/%{name}.jpg
-%doc %{_docdir}/%{name}-doc-%{version}/%{name}-logo*.png
+%doc __devel-doc/*
+%{_datadir}/opencv/samples
 
 %files python
 %defattr(-,root,root,-)
@@ -190,6 +194,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Apr 23 2010 Nicolas Chauvet <kwizart@fedoraproject.org> - 2.1.0-1
+- Update to 2.1.0
+- Update libdir patch 
+
 * Tue Apr 13 2010 Karel Klic <kklic@redhat.com> - 2.0.0-10
 - Fix nonstandard executable permissions
 
