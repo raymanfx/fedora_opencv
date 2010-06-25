@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.1.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -15,10 +15,14 @@ Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{v
 Source1:        opencv-samples-Makefile
 # Fedora cmake macros define -DLIB_SUFFIX=64 on 64 bits platforms
 Patch0:         opencv-cmake-libdir-2.1.0.patch
+Patch1:         OpenCV-2.1-nointrernal.patch
+Patch2:         OpenCV-2.1-lapack.patch
+Patch3:         OpenCV-2.1-rpath.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.4
+BuildRequires:  chrpath
 
 BuildRequires:  gtk2-devel
 BuildRequires:  imlib2-devel
@@ -34,7 +38,8 @@ BuildRequires:  lapack-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
-BuildRequires:  libtool
+BuildRequires:  OpenEXR-devel
+BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
 BuildRequires:  python-imaging, numpy, swig >= 1.3.24
@@ -84,18 +89,37 @@ This package contains Python bindings for the OpenCV library.
 %prep
 %setup -q -n %{tar_name}-%{version}
 %patch0 -p1
+%patch1 -p1 -b .nointernal
+%patch2 -p1 -b .lapack
+%patch3 -p1 -b .rpath
+
+#Remove several bundled libraries.
+rm -rf 3rdparty/lapack
+rm -rf 3rdparty/zlib
+rm -rf 3rdparty/libjasper
+rm -rf 3rdparty/libpng
+rm -rf 3rdparty/libjpeg
+rm -rf 3rdparty/libtiff
+
+#Fix spurious perm:
+find -perm 755 -name "*.cpp" -exec chmod -x  {} ';'
+find -perm 755 -name "*.c" -exec chmod -x  {} ';'
+
+# fix dos end of lines
+sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 
 
 %build
-%ifarch i386
-export CXXFLAGS="%{__global_cflags} -m32 -fasynchronous-unwind-tables"
-%endif
-
-
 # enabled by default if libraries are presents at build time:
 # GTK, GSTREAMER, UNICAP, 1394, V4L
 # non available on Fedora: FFMPEG, XINE
-%cmake -DENABLE_OPENMP=1\
+#BUILD_TEST is broken
+%cmake -DENABLE_OPENMP=1 \
+ -DUSE_O3=0 \
+ -DUSE_FAST_MATH=0 \
+ -DUSE_OMIT_FRAME_POINTER=0 \
+ -DCMAKE_BUILD_TYPE=Release \
+ -DBUILD_TESTS=0 \
  %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
  %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
  %{!?_with_xine:-DWITH_XINE=0} \
@@ -103,6 +127,7 @@ export CXXFLAGS="%{__global_cflags} -m32 -fasynchronous-unwind-tables"
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
 .
+
 make VERBOSE=1 %{?_smp_mflags}
 
 
@@ -112,19 +137,13 @@ rm -rf $RPM_BUILD_ROOT  __devel-doc
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
+
 rm -f $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/build_all.sh \
       $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/cvsample.dsp \
       $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/cvsample.vcproj \
       $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/facedetect.cmd
-install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefile
-install -m644 cvconfig.h $RPM_BUILD_ROOT%{_includedir}/%{name}/cvconfig.h
-mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/
-# install documentation
-install -m644 doc/%{name}.pdf $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/%{name}.pdf
-install -m644 doc/*.{htm,png,jpg} $RPM_BUILD_ROOT%{_docdir}/%{name}-doc-%{version}/
+install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefile
 
-# fix dos end of lines
-sed -i 's|\r||g'  $RPM_BUILD_ROOT/%{_datadir}/%{name}/samples/c/adaptiveskindetector.cpp
 # remove unnecessary documentation
 rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
 
@@ -133,15 +152,11 @@ chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
 chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
 chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
 
-#Remove uneeded README.txt (howto install related)
-rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/opencv-%{version}/
-#Use appropriate _docdir
-mkdir -p  __devel-doc
-cp -apR $RPM_BUILD_ROOT%{_datadir}/doc/opencv-doc-%{version}/  __devel-doc
-rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/opencv-doc-%{version}/
-
 #This file is wrong - not redistributed
 rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/OpenCVConfig.cmake
+
+# Remove Rpath in python shared objects:
+find $RPM_BUILD_ROOT%{python_sitearch} -name "*.so" -exec chrpath -d {} ';'
 
 
 
@@ -168,6 +183,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/opencv_*
 %{_libdir}/lib*.so.*
 %dir %{_datadir}/opencv
+%exclude %{_datadir}/opencv/samples
 %{_datadir}/opencv/haarcascades
 %{_datadir}/opencv/lbpcascades
 
@@ -181,22 +197,27 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel-docs
 %defattr(-,root,root,-)
-%doc __devel-doc/*
-%{_datadir}/opencv/samples
+%doc doc/%{name}.pdf
+%doc doc/*.{htm,png,jpg}
+%doc %{_datadir}/opencv/samples
 
 %files python
 %defattr(-,root,root,-)
 %{python_sitearch}/cv.so
-%doc %dir %{_datadir}/opencv/samples
-%doc %{_datadir}/opencv/samples/python
 # old SWIG wrappers
 %{python_sitearch}/opencv
 
 
 %changelog
+* Fri Jun 25 2010 Nicolas Chauvet <kwizart@gmail.com> - 2.1.0-2
+- Move samples from main to -devel
+- Fix spurious permission
+- Add BR tbb-devel
+- Fix CFLAGS
+
 * Fri Apr 23 2010 Nicolas Chauvet <kwizart@fedoraproject.org> - 2.1.0-1
 - Update to 2.1.0
-- Update libdir patch 
+- Update libdir patch
 
 * Tue Apr 13 2010 Karel Klic <kklic@redhat.com> - 2.0.0-10
 - Fix nonstandard executable permissions
