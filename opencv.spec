@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.1.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -209,6 +209,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 2.1.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+
 * Fri Jun 25 2010 Nicolas Chauvet <kwizart@gmail.com> - 2.1.0-2
 - Move samples from main to -devel
 - Fix spurious permission
