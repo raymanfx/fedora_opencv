@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.1.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -39,7 +39,9 @@ BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  OpenEXR-devel
+%ifarch %{ix86} x86_64 ia64
 BuildRequires:  tbb-devel
+%endif
 BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
 BuildRequires:  python-imaging, numpy, swig >= 1.3.24
@@ -209,6 +211,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jul 22 2010 Dan Horák <dan[at]danny.cz> - 2.1.0-4
+- TBB is available only on x86/x86_64 and ia64
+
 * Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 2.1.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
