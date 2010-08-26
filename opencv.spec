@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.1.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -18,10 +18,14 @@ Patch0:         opencv-cmake-libdir-2.1.0.patch
 Patch1:         OpenCV-2.1-nointrernal.patch
 Patch2:         OpenCV-2.1-lapack.patch
 Patch3:         OpenCV-2.1-rpath.patch
+# put OpenCVConfig.cmake into %{_libdir}/cmake/opencv/ instead of %{_datadir}/opencv/
+# upstreamable, up's cmake req to 2.6.3 though.  Can do just %{_libdir}/opencv/ without
+# the cmake bump, if that's preferable -- Rex
+Patch4:         opencv-2.1.0-opencvconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
-BuildRequires:  cmake >= 2.4
+BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
 
 BuildRequires:  gtk2-devel
@@ -94,6 +98,7 @@ This package contains Python bindings for the OpenCV library.
 %patch1 -p1 -b .nointernal
 %patch2 -p1 -b .lapack
 %patch3 -p1 -b .rpath
+%patch4 -p1 -b .opencvconfig
 
 #Remove several bundled libraries.
 rm -rf 3rdparty/lapack
@@ -154,9 +159,6 @@ chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
 chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
 chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
 
-#This file is wrong - not redistributed
-rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/OpenCVConfig.cmake
-
 # Remove Rpath in python shared objects:
 find $RPM_BUILD_ROOT%{python_sitearch} -name "*.so" -exec chrpath -d {} ';'
 
@@ -195,6 +197,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/opencv
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
+# own cmake dir avoiding dep on cmake
+%{_libdir}/cmake/
 
 
 %files devel-docs
@@ -211,6 +215,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Aug 25 2010 Rex Dieter <rdieter@fedoraproject.org> - 2.1.0-5
+- -devel: include OpenCVConfig.cmake (#627359)
+
 * Thu Jul 22 2010 Dan Horák <dan[at]danny.cz> - 2.1.0-4
 - TBB is available only on x86/x86_64 and ia64
 
