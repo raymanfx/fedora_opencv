@@ -184,10 +184,6 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
 # Remove Rpath in python shared objects:
 find $RPM_BUILD_ROOT%{python_sitearch} -name "*.so" -exec chrpath -d {} ';'
 
-#Move opencv2 headers into the appropriate directory
-mv $RPM_BUILD_ROOT%{_includedir}/opencv2 \
-  $RPM_BUILD_ROOT%{_includedir}/opencv
-
 
 %check
 # Check fails since we don't support most video
@@ -220,6 +216,7 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/opencv
+%{_includedir}/opencv2
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
 # own cmake dir avoiding dep on cmake
