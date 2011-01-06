@@ -3,8 +3,8 @@
 %global tar_name OpenCV
 
 Name:           opencv
-Version:        2.1.0
-Release:        5%{?dist}
+Version:        2.2.0
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -14,20 +14,22 @@ URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
 # Fedora cmake macros define -DLIB_SUFFIX=64 on 64 bits platforms
-Patch0:         opencv-cmake-libdir-2.1.0.patch
-Patch1:         OpenCV-2.1-nointrernal.patch
-Patch2:         OpenCV-2.1-lapack.patch
-Patch3:         OpenCV-2.1-rpath.patch
+Patch0:         OpenCV-2.2-libdir.patch
+Patch1:         OpenCV-2.2-nointrernal.patch
+Patch3:         OpenCV-2.2-fixpc.patch
 # put OpenCVConfig.cmake into %{_libdir}/cmake/opencv/ instead of %{_datadir}/opencv/
 # upstreamable, up's cmake req to 2.6.3 though.  Can do just %{_libdir}/opencv/ without
 # the cmake bump, if that's preferable -- Rex
 Patch4:         opencv-2.1.0-opencvconfig.patch
+Patch5:         OpenCV-2.2-numpy.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
+BuildRequires:  f2c
 
+BuildRequires:  eigen2-devel
 BuildRequires:  gtk2-devel
 BuildRequires:  imlib2-devel
 BuildRequires:  libucil-devel
@@ -94,11 +96,15 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q -n %{tar_name}-%{version}
-%patch0 -p1
+%patch0 -p1 -b .libdir
 %patch1 -p1 -b .nointernal
-%patch2 -p1 -b .lapack
-%patch3 -p1 -b .rpath
+%patch3 -p1 -b .fixpc
 %patch4 -p1 -b .opencvconfig
+%patch5 -p1 -b .numpy
+
+#Save some convant headers for now:
+cp -p 3rdparty/include/cblas.h 3rdparty
+cp -p 3rdparty/include/clapack.h 3rdparty
 
 #Remove several bundled libraries.
 rm -rf 3rdparty/lapack
@@ -107,6 +113,13 @@ rm -rf 3rdparty/libjasper
 rm -rf 3rdparty/libpng
 rm -rf 3rdparty/libjpeg
 rm -rf 3rdparty/libtiff
+rm -rf 3rdparty/ilmimf
+rm -rf 3rdparty/include/*
+
+# Put back
+cp -p 3rdparty/cblas.h 3rdparty/include
+cp -p 3rdparty/clapack.h 3rdparty/include
+
 
 #Fix spurious perm:
 find -perm 755 -name "*.cpp" -exec chmod -x  {} ';'
@@ -115,13 +128,21 @@ find -perm 755 -name "*.c" -exec chmod -x  {} ';'
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 
+#Fix Flags
+sed -i -e 's/USE_O3 ON/USE_O3 OFF/' CMakeLists.txt
+%ifarch %{ix86}
+sed -i -e 's/ENABLE_SSE ON/ENABLE_SSE OFF/' CMakeLists.txt
+sed -i -e 's/ENABLE_SSE2 ON/ENABLE_SSE2 OFF/' CMakeLists.txt
+%endif
+
 
 %build
 # enabled by default if libraries are presents at build time:
 # GTK, GSTREAMER, UNICAP, 1394, V4L
 # non available on Fedora: FFMPEG, XINE
 #BUILD_TEST is broken
-%cmake -DENABLE_OPENMP=1 \
+%cmake CMAKE_VERBOSE=1 \
+ -DENABLE_OPENMP=1 \
  -DUSE_O3=0 \
  -DUSE_FAST_MATH=0 \
  -DUSE_OMIT_FRAME_POINTER=0 \
@@ -133,7 +154,8 @@ sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
  -DBUILD_SWIG_PYTHON_SUPPORT=1 \
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
-.
+ -DWITH_LAPACK=1 \
+ .
 
 make VERBOSE=1 %{?_smp_mflags}
 
@@ -155,13 +177,16 @@ install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefi
 rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
 
 # Fix nonstandard executable permissions
-chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
-chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
-chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
+#chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
+#chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
+#chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
 
 # Remove Rpath in python shared objects:
 find $RPM_BUILD_ROOT%{python_sitearch} -name "*.so" -exec chrpath -d {} ';'
 
+#Move opencv2 headers into the appropriate directory
+mv $RPM_BUILD_ROOT%{_includedir}/opencv2 \
+  $RPM_BUILD_ROOT%{_includedir}/opencv
 
 
 %check
@@ -211,10 +236,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{python_sitearch}/cv.so
 # old SWIG wrappers
-%{python_sitearch}/opencv
+#{python_sitearch}/opencv
 
 
 %changelog
+* Thu Jan 06 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-1
+- Update to 2.2.0
+
 * Wed Aug 25 2010 Rex Dieter <rdieter@fedoraproject.org> - 2.1.0-5
 - -devel: include OpenCVConfig.cmake (#627359)
 
