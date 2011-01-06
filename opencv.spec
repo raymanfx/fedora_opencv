@@ -239,6 +239,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Jan 06 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-1
 - Update to 2.2.0
+- Disable -msse and -msse2 on x86_32
 
 * Wed Aug 25 2010 Rex Dieter <rdieter@fedoraproject.org> - 2.1.0-5
 - -devel: include OpenCVConfig.cmake (#627359)
