@@ -247,7 +247,6 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Feb 02 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-2
 - Fix with gcc46
 - Disable V4L as V4L1 is disabled for Fedora 15
-  This still needs work to escape from FTBFS
 
 * Thu Jan 06 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-1
 - Update to 2.2.0
