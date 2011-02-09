@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.2.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -244,6 +244,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Wed Feb 02 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-2
 - Fix with gcc46
 - Disable V4L as V4L1 is disabled for Fedora 15
