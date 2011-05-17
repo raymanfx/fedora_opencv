@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.2.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -23,7 +23,6 @@ Patch3:         OpenCV-2.2-fixpc.patch
 Patch4:         opencv-2.1.0-opencvconfig.patch
 Patch5:         OpenCV-2.2-numpy.patch
 Patch6:         OpenCV-2.2-gcc46.patch
-Patch7:         OpenCV-2.2-nov4l1.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -46,6 +45,7 @@ BuildRequires:  lapack-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
+BuildRequires:  libv4l-devel
 BuildRequires:  OpenEXR-devel
 %ifarch %{ix86} x86_64 ia64
 BuildRequires:  tbb-devel
@@ -104,7 +104,6 @@ This package contains Python bindings for the OpenCV library.
 %patch4 -p1 -b .opencvconfig
 %patch5 -p1 -b .numpy
 %patch6 -p1 -b .gcc46
-%patch7 -p1 -b .nov4l1
 
 #Save some convant headers for now:
 cp -p 3rdparty/include/cblas.h 3rdparty
@@ -159,9 +158,6 @@ sed -i -e 's/ENABLE_SSE2 ON/ENABLE_SSE2 OFF/' CMakeLists.txt
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
  -DWITH_LAPACK=1 \
-%if 0%{?fedora} >= 15
- -DWITH_V4L=0 \
-%endif
  .
 
 make VERBOSE=1 %{?_smp_mflags}
@@ -244,6 +240,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue May 17 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-4
+- Re-enabled v4l on f15
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
