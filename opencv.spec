@@ -23,6 +23,7 @@ Patch3:         OpenCV-2.2-fixpc.patch
 Patch4:         opencv-2.1.0-opencvconfig.patch
 Patch5:         OpenCV-2.2-numpy.patch
 Patch6:         OpenCV-2.2-gcc46.patch
+Patch7:         OpenCV-2.2-backport-v4l.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -104,6 +105,7 @@ This package contains Python bindings for the OpenCV library.
 %patch4 -p1 -b .opencvconfig
 %patch5 -p1 -b .numpy
 %patch6 -p1 -b .gcc46
+%patch7 -p0
 
 #Save some convant headers for now:
 cp -p 3rdparty/include/cblas.h 3rdparty

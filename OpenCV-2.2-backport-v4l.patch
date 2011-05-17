@@ -1,0 +1,26 @@
+Index: modules/highgui/src/cap.cpp
+===================================================================
+--- modules/highgui/src/cap.cpp	(révision 4961)
++++ modules/highgui/src/cap.cpp	(révision 4964)
+@@ -173,7 +173,7 @@
+             if (capture)
+                 return capture;
+         #endif
+-        #if defined (HAVE_CAMV4L) || defined (HAVE_CAMV4L2)
++        #if defined (HAVE_CAMV4L) && defined (HAVE_CAMV4L2)
+             capture = cvCreateCameraCapture_V4L (index);
+             if (capture)
+                 return capture;
+Index: modules/highgui/src/cap_v4l.cpp
+===================================================================
+--- modules/highgui/src/cap_v4l.cpp	(révision 4961)
++++ modules/highgui/src/cap_v4l.cpp	(révision 4964)
+@@ -202,7 +202,7 @@
+ 
+ #include "precomp.hpp"
+ 
+-#if !defined WIN32 && (defined HAVE_CAMV4L || defined HAVE_CAMV4L2)
++#if !defined WIN32 && defined HAVE_CAMV4L && defined HAVE_CAMV4L2
+ 
+ #define CLEAR(x) memset (&(x), 0, sizeof (x))
+ 
