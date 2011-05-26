@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.2.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -23,7 +23,7 @@ Patch3:         OpenCV-2.2-fixpc.patch
 Patch4:         opencv-2.1.0-opencvconfig.patch
 Patch5:         OpenCV-2.2-numpy.patch
 Patch6:         OpenCV-2.2-gcc46.patch
-Patch7:         OpenCV-2.2-backport-v4l.patch
+Patch7:         OpenCV-2.2-b22-backport_20110526.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -105,7 +105,7 @@ This package contains Python bindings for the OpenCV library.
 %patch4 -p1 -b .opencvconfig
 %patch5 -p1 -b .numpy
 %patch6 -p1 -b .gcc46
-%patch7 -p0
+%patch7 -p1
 
 #Save some convant headers for now:
 cp -p 3rdparty/include/cblas.h 3rdparty
@@ -242,6 +242,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu May 26 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-6
+- Backport fixes from branch 2.2 to date
+
 * Tue May 17 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-5
 - Re-enable v4l on f15
 - Remove unused cmake options
