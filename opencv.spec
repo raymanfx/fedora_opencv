@@ -105,6 +105,7 @@ This package contains Python bindings for the OpenCV library.
 %patch4 -p1 -b .opencvconfig
 %patch5 -p1 -b .numpy
 %patch6 -p1 -b .gcc46
+%global _default_patch_fuzz 2
 %patch7 -p1
 
 #Save some convant headers for now:
