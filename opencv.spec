@@ -3,8 +3,8 @@
 %global tar_name OpenCV
 
 Name:           opencv
-Version:        2.2.0
-Release:        6%{?dist}
+Version:        2.3.1
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -13,17 +13,8 @@ License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
 Source1:        opencv-samples-Makefile
-# Fedora cmake macros define -DLIB_SUFFIX=64 on 64 bits platforms
-Patch0:         OpenCV-2.2-libdir.patch
-Patch1:         OpenCV-2.2-nointrernal.patch
-Patch3:         OpenCV-2.2-fixpc.patch
-# put OpenCVConfig.cmake into %{_libdir}/cmake/opencv/ instead of %{_datadir}/opencv/
-# upstreamable, up's cmake req to 2.6.3 though.  Can do just %{_libdir}/opencv/ without
-# the cmake bump, if that's preferable -- Rex
-Patch4:         opencv-2.1.0-opencvconfig.patch
-Patch5:         OpenCV-2.2-numpy.patch
-Patch6:         OpenCV-2.2-gcc46.patch
-Patch7:         OpenCV-2.2-b22-backport_20110526.patch
+Patch0:         OpenCV-2.3.1-numpy.patch
+Patch1:         OpenCV-2.3.1-opencvconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -99,47 +90,11 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q -n %{tar_name}-%{version}
-%patch0 -p1 -b .libdir
-%patch1 -p1 -b .nointernal
-%patch3 -p1 -b .fixpc
-%patch4 -p1 -b .opencvconfig
-%patch5 -p1 -b .numpy
-%patch6 -p1 -b .gcc46
-%global _default_patch_fuzz 2
-%patch7 -p1
-
-#Save some convant headers for now:
-cp -p 3rdparty/include/cblas.h 3rdparty
-cp -p 3rdparty/include/clapack.h 3rdparty
-
-#Remove several bundled libraries.
-rm -rf 3rdparty/lapack
-rm -rf 3rdparty/zlib
-rm -rf 3rdparty/libjasper
-rm -rf 3rdparty/libpng
-rm -rf 3rdparty/libjpeg
-rm -rf 3rdparty/libtiff
-rm -rf 3rdparty/ilmimf
-rm -rf 3rdparty/include/*
-
-# Put back
-cp -p 3rdparty/cblas.h 3rdparty/include
-cp -p 3rdparty/clapack.h 3rdparty/include
-
-
-#Fix spurious perm:
-find -perm 755 -name "*.cpp" -exec chmod -x  {} ';'
-find -perm 755 -name "*.c" -exec chmod -x  {} ';'
+%patch0 -p1 -b .numpy
+%patch1 -p1 -b .opencvconfig
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
-
-#Fix Flags
-sed -i -e 's/USE_O3 ON/USE_O3 OFF/' CMakeLists.txt
-%ifarch %{ix86}
-sed -i -e 's/ENABLE_SSE ON/ENABLE_SSE OFF/' CMakeLists.txt
-sed -i -e 's/ENABLE_SSE2 ON/ENABLE_SSE2 OFF/' CMakeLists.txt
-%endif
 
 
 %build
@@ -148,6 +103,8 @@ sed -i -e 's/ENABLE_SSE2 ON/ENABLE_SSE2 OFF/' CMakeLists.txt
 # non available on Fedora: FFMPEG, XINE
 #BUILD_TEST is broken
 %cmake CMAKE_VERBOSE=1 \
+ -DPYTHON_PACKAGES_PATH=%{python_sitearch} \
+ -DCMAKE_SKIP_RPATH=ON \
  -DENABLE_OPENMP=1 \
  -DUSE_O3=0 \
  -DUSE_FAST_MATH=0 \
@@ -180,15 +137,8 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/build_all.sh \
 install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefile
 
 # remove unnecessary documentation
-rm -rf $RPM_BUILD_ROOT%{_datadir}/opencv/{doc/,samples/octave/}
+rm -rf $RPM_BUILD_ROOT%{_datadir}/OpenCV/doc
 
-# Fix nonstandard executable permissions
-#chmod 0755 $RPM_BUILD_ROOT%{_datadir}/opencv/samples/python/*.py
-#chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/cv.so
-#chmod 0755 $RPM_BUILD_ROOT%{python_sitearch}/opencv/*.so
-
-# Remove Rpath in python shared objects:
-find $RPM_BUILD_ROOT%{python_sitearch} -name "*.so" -exec chrpath -d {} ';'
 
 
 %check
@@ -210,13 +160,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc doc/README.txt
+%doc doc/license.txt
 %{_bindir}/opencv_*
 %{_libdir}/lib*.so.*
-%dir %{_datadir}/opencv
-%exclude %{_datadir}/opencv/samples
-%{_datadir}/opencv/haarcascades
-%{_datadir}/opencv/lbpcascades
+%dir %{_datadir}/OpenCV
+%{_datadir}/OpenCV/haarcascades
+%{_datadir}/OpenCV/lbpcascades
 
 
 %files devel
@@ -231,18 +180,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel-docs
 %defattr(-,root,root,-)
-%doc doc/%{name}.pdf
+%doc doc/opencv_tutorials.pdf
 %doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/opencv/samples
 
 %files python
 %defattr(-,root,root,-)
-%{python_sitearch}/cv.so
-# old SWIG wrappers
-#{python_sitearch}/opencv
+%{python_sitearch}/cv.py*
+%{python_sitearch}/cv2.so
 
 
 %changelog
+* Fri Aug 19 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-1
+- Update to 2.3.1
+
 * Thu May 26 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-6
 - Backport fixes from branch 2.2 to date
 
