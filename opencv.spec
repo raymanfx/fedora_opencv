@@ -33,18 +33,20 @@ BuildRequires:  libraw1394-devel
 BuildRequires:  libdc1394-devel
 %endif
 BuildRequires:  jasper-devel
-BuildRequires:  lapack-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  OpenEXR-devel
+BuildRequires:  openni-devel
+BuildRequires:  openni-primesense
 %ifarch %{ix86} x86_64 ia64
 BuildRequires:  tbb-devel
 %endif
 BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
 BuildRequires:  python-imaging, numpy, swig >= 1.3.24
+BuildRequires:  python-sphinx
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
 %{?_with_xine:BuildRequires:  xine-lib-devel}
@@ -101,31 +103,46 @@ sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 # enabled by default if libraries are presents at build time:
 # GTK, GSTREAMER, UNICAP, 1394, V4L
 # non available on Fedora: FFMPEG, XINE
-#BUILD_TEST is broken
+mkdir -p build
+pushd build
 %cmake CMAKE_VERBOSE=1 \
  -DPYTHON_PACKAGES_PATH=%{python_sitearch} \
  -DCMAKE_SKIP_RPATH=ON \
- -DENABLE_OPENMP=1 \
- -DUSE_O3=0 \
+%ifnarch x86_64 ia64
+ -DENABLE_SSE=0 \
+ -DENABLE_SSE2=0 \
+%endif
  -DUSE_FAST_MATH=0 \
  -DUSE_OMIT_FRAME_POINTER=0 \
  -DCMAKE_BUILD_TYPE=Release \
- -DBUILD_TESTS=0 \
+ -DBUILD_TEST=1 \
+%ifarch %{ix86} x86_64 ia64
+ -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
+%endif
+%ifnarch x86_64 ia64
+  
+%endif
  %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
  %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
+%{?_with_cuda: \
+ -DCUDA_TOOLKIT_ROOT_DIR=%{?_cuda_topdir} \
+ -DCUDA_VERBOSE_BUILD=1 \
+ -DCUDA_PROPAGATE_HOST_FLAGS=0 \
+} \
+ -DWITH_OPENNI=ON \
  %{!?_with_xine:-DWITH_XINE=0} \
- -DBUILD_SWIG_PYTHON_SUPPORT=1 \
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
- -DWITH_LAPACK=1 \
- .
+ ..
 
 make VERBOSE=1 %{?_smp_mflags}
 
+popd
 
 
 %install
 rm -rf $RPM_BUILD_ROOT  __devel-doc
+pushd build
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
@@ -139,14 +156,19 @@ install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefi
 # remove unnecessary documentation
 rm -rf $RPM_BUILD_ROOT%{_datadir}/OpenCV/doc
 
+popd
 
 
 %check
 # Check fails since we don't support most video
 # read/write capability and we don't provide a display
 # ARGS=-V increases output verbosity
-%ifnarch ppc64
+# Make test is unavailble as of 2.3.1
+%if 0
+#ifnarch ppc64
+pushd build
     LD_LIBRARY_PATH=%{_builddir}/%{tar_name}-%{version}/lib:$LD_LIBARY_PATH make test ARGS=-V || :
+popd
 %endif
 
 %clean
@@ -193,6 +215,10 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Aug 19 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-1
 - Update to 2.3.1
+- Add BR openni-devel python-sphinx
+- Remove deprecated cmake options
+- Add --with cuda conditional (wip)
+- Disable make test (unavailable)
 
 * Thu May 26 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.2.0-6
 - Backport fixes from branch 2.2 to date
