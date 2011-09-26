@@ -4,7 +4,7 @@
 
 Name:           opencv
 Version:        2.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -38,8 +38,10 @@ BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  OpenEXR-devel
+%ifarch %{ix86} x86_64
 BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
+%endif
 %ifarch %{ix86} x86_64 ia64
 BuildRequires:  tbb-devel
 %endif
@@ -126,7 +128,9 @@ pushd build
  -DCUDA_VERBOSE_BUILD=1 \
  -DCUDA_PROPAGATE_HOST_FLAGS=0 \
 } \
+%ifarch %{ix86} x86_64
  -DWITH_OPENNI=ON \
+%endif
  %{!?_with_xine:-DWITH_XINE=0} \
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
@@ -210,6 +214,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Sep 26 2011 Dan Horák <dan[at]danny.cz> - 2.3.1-2
+- openni is exclusive for x86/x86_64
+
 * Fri Aug 19 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-1
 - Update to 2.3.1
 - Add BR openni-devel python-sphinx
