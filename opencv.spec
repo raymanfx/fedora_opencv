@@ -1,17 +1,18 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %global tar_name OpenCV
+%global indice   a
 
 Name:           opencv
 Version:        2.3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
-Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}.tar.bz2
+Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
 Source1:        opencv-samples-Makefile
 Patch0:         OpenCV-2.3.1-numpy.patch
 Patch1:         OpenCV-2.3.1-opencvconfig.patch
@@ -98,7 +99,7 @@ This package contains Python bindings for the OpenCV library.
 %patch1 -p1 -b .opencvconfig
 
 # fix dos end of lines
-sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
+#sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 
 
 %build
@@ -214,6 +215,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 10 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-3
+- Update to 2.3.1a
+
 * Mon Sep 26 2011 Dan Horák <dan[at]danny.cz> - 2.3.1-2
 - openni is exclusive for x86/x86_64
 
