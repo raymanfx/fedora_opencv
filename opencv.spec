@@ -99,7 +99,7 @@ This package contains Python bindings for the OpenCV library.
 %patch1 -p1 -b .opencvconfig
 
 # fix dos end of lines
-#sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
+sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 
 
 %build
