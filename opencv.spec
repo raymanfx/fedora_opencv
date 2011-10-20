@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -215,6 +215,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Oct 20 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-4
+- Rebuilt for tbb silent ABI change
+
 * Mon Oct 10 2011 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-3
 - Update to 2.3.1a
 
