@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.3.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -16,6 +16,7 @@ Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{v
 Source1:        opencv-samples-Makefile
 Patch0:         OpenCV-2.3.1-numpy.patch
 Patch1:         OpenCV-2.3.1-opencvconfig.patch
+Patch2:         OpenCV-2.2-gcc46.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -97,6 +98,7 @@ This package contains Python bindings for the OpenCV library.
 %setup -q -n %{tar_name}-%{version}
 %patch0 -p1 -b .numpy
 %patch1 -p1 -b .opencvconfig
+%patch2 -p1 -b .gcc46
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -215,6 +217,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 16 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-7
+- Update gcc46 patch for ARM FTBFS
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.1-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
