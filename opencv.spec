@@ -1,11 +1,11 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %global tar_name OpenCV
-%global indice   a
+#global indice   a
 
 Name:           opencv
-Version:        2.3.1
-Release:        7%{?dist}
+Version:        2.4.1
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -14,20 +14,15 @@ License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
 Source1:        opencv-samples-Makefile
-Patch0:         OpenCV-2.3.1-numpy.patch
-Patch1:         OpenCV-2.3.1-opencvconfig.patch
-Patch2:         OpenCV-2.2-gcc46.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
-BuildRequires:  f2c
 
-BuildRequires:  eigen2-devel
+%{?_with_eigen2:BuildRequires:  eigen2-devel}
+%{?_with_eigen3:BuildRequires:  eigen3-devel}
 BuildRequires:  gtk2-devel
-BuildRequires:  imlib2-devel
-BuildRequires:  libucil-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
 %ifnarch s390 s390x
@@ -40,13 +35,17 @@ BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  OpenEXR-devel
+%{?_with_openni:
 %ifarch %{ix86} x86_64
 BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
 %endif
+}
+%{?_with_ttb:
 %ifarch %{ix86} x86_64 ia64
 BuildRequires:  tbb-devel
 %endif
+}
 BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
 BuildRequires:  python-imaging, numpy, swig >= 1.3.24
@@ -96,9 +95,6 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q -n %{tar_name}-%{version}
-%patch0 -p1 -b .numpy
-%patch1 -p1 -b .opencvconfig
-%patch2 -p1 -b .gcc46
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -117,13 +113,13 @@ pushd build
  -DENABLE_SSE=0 \
  -DENABLE_SSE2=0 \
 %endif
- -DUSE_FAST_MATH=0 \
- -DUSE_OMIT_FRAME_POINTER=0 \
  -DCMAKE_BUILD_TYPE=Release \
  -DBUILD_TEST=1 \
+%{?_with_ttb:
 %ifarch %{ix86} x86_64 ia64
  -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
 %endif
+}
  %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
  %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
 %{?_with_cuda: \
@@ -132,7 +128,9 @@ pushd build
  -DCUDA_PROPAGATE_HOST_FLAGS=0 \
 } \
 %ifarch %{ix86} x86_64
+%{?_with_openni: \
  -DWITH_OPENNI=ON \
+} \
 %endif
  %{!?_with_xine:-DWITH_XINE=0} \
  -DINSTALL_C_EXAMPLES=1 \
@@ -217,6 +215,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.1-1
+- Update to 2.4.1
+- Rework dependencies - rhbz#828087
+  Re-enable using --with tbb,opennpi,eigen2,eigen3
+
+* Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.1-8
+- Rebuilt for c++ ABI breakage
+
 * Mon Jan 16 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-7
 - Update gcc46 patch for ARM FTBFS
 
