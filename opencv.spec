@@ -119,7 +119,7 @@ pushd build
 %ifarch %{ix86} x86_64 ia64
  -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
 %endif
-}
+} \
  %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
  %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
 %{?_with_cuda: \
