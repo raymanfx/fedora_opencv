@@ -160,6 +160,11 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/OpenCV/doc
 
 popd
 
+#Cmake mess
+mkdir -p  $RPM_BUILD_ROOT%{_libdir}/cmake/OpenCV
+mv $RPM_BUILD_ROOT%{_datadir}/OpenCV/*.cmake \
+  $RPM_BUILD_ROOT%{_libdir}/cmake/OpenCV
+
 
 %check
 # Check fails since we don't support most video
