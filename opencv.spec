@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -14,6 +14,7 @@ License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
 Source1:        opencv-samples-Makefile
+Patch0:         opencv-pkgcmake.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -95,6 +96,7 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q -n %{tar_name}-%{version}
+%patch0 -p1 -b .pkgcmake
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -220,6 +222,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jun 29 2012 Honza Horak <hhorak@redhat.com> - 2.4.1-2
+- Fixed cmake script for generating opencv.pc file
+- Fixed OpenCVConfig script file
+
 * Mon Jun 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.1-1
 - Update to 2.4.1
 - Rework dependencies - rhbz#828087
