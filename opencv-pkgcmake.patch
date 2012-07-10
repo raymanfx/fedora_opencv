@@ -1,13 +1,13 @@
-diff -up OpenCV-2.4.1/cmake/OpenCVGenPkgconfig.cmake.pkgcmake OpenCV-2.4.1/cmake/OpenCVGenPkgconfig.cmake
---- OpenCV-2.4.1/cmake/OpenCVGenPkgconfig.cmake.pkgcmake	2012-05-31 16:05:39.000000000 +0200
-+++ OpenCV-2.4.1/cmake/OpenCVGenPkgconfig.cmake	2012-07-03 15:00:40.127943903 +0200
+diff -up OpenCV-2.4.2/cmake/OpenCVGenPkgconfig.cmake.pkgcmake OpenCV-2.4.2/cmake/OpenCVGenPkgconfig.cmake
+--- OpenCV-2.4.2/cmake/OpenCVGenPkgconfig.cmake.pkgcmake	2012-06-29 00:55:15.000000000 +0200
++++ OpenCV-2.4.2/cmake/OpenCVGenPkgconfig.cmake	2012-07-09 14:53:33.338597708 +0200
 @@ -10,7 +10,7 @@
  # -------------------------------------------------------------------------------------------
  set(prefix      "${CMAKE_INSTALL_PREFIX}")
  set(exec_prefix "\${prefix}")
 -set(libdir      "") #TODO: need link paths for OpenCV_EXTRA_COMPONENTS
 +set(libdir      "\${prefix}/${OPENCV_LIB_INSTALL_PATH}")
- set(includedir  "\${prefix}/${OPENCV_INCLUDE_PREFIX}")
+ set(includedir  "\${prefix}/${OPENCV_INCLUDE_INSTALL_PATH}")
  set(VERSION     ${OPENCV_VERSION})
  
 @@ -36,7 +36,7 @@ ocv_list_reverse(OpenCV_LIB_COMPONENTS)
@@ -32,18 +32,3 @@ diff -up OpenCV-2.4.1/cmake/OpenCVGenPkgconfig.cmake.pkgcmake OpenCV-2.4.1/cmake
  endforeach()
  
  # add extra dependencies required for OpenCV
-diff -up OpenCV-2.4.1/cmake/templates/OpenCVConfig.cmake.in.pkgcmake OpenCV-2.4.1/cmake/templates/OpenCVConfig.cmake.in
---- OpenCV-2.4.1/cmake/templates/OpenCVConfig.cmake.in.pkgcmake	2012-07-03 15:01:44.060358547 +0200
-+++ OpenCV-2.4.1/cmake/templates/OpenCVConfig.cmake.in	2012-07-03 15:02:12.787669436 +0200
-@@ -55,9 +55,9 @@ get_filename_component(OpenCV_CONFIG_PAT
- if(NOT WIN32)
-   # Get the absolute path with no ../.. relative marks, to eliminate implicit linker warnings
-   if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_LESS 2.8)
--    get_filename_component(OpenCV_INSTALL_PATH "${OpenCV_CONFIG_PATH}/../.." ABSOLUTE)
-+    get_filename_component(OpenCV_INSTALL_PATH "${OpenCV_CONFIG_PATH}/../../.." ABSOLUTE)
-   else()
--    get_filename_component(OpenCV_INSTALL_PATH "${OpenCV_CONFIG_PATH}/../.." REALPATH)
-+    get_filename_component(OpenCV_INSTALL_PATH "${OpenCV_CONFIG_PATH}/../../.." REALPATH)
-   endif()
- endif()
- 

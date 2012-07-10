@@ -4,8 +4,8 @@
 #global indice   a
 
 Name:           opencv
-Version:        2.4.1
-Release:        2%{?dist}
+Version:        2.4.2
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -15,6 +15,7 @@ URL:            http://opencv.willowgarage.com/wiki/
 Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
+Patch1:         opencv-pkgcmake2.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -97,6 +98,7 @@ This package contains Python bindings for the OpenCV library.
 %prep
 %setup -q -n %{tar_name}-%{version}
 %patch0 -p1 -b .pkgcmake
+%patch1 -p1 -b .pkgcmake2
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -151,11 +153,11 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 
-rm -f $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/build_all.sh \
-      $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/cvsample.dsp \
-      $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/cvsample.vcproj \
-      $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/facedetect.cmd
-install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{name}/samples/c/GNUmakefile
+rm -f $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/build_all.sh \
+      $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/cvsample.dsp \
+      $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/cvsample.vcproj \
+      $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/facedetect.cmd
+install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/GNUmakefile
 
 # remove unnecessary documentation
 rm -rf $RPM_BUILD_ROOT%{_datadir}/OpenCV/doc
@@ -213,7 +215,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc doc/opencv_tutorials.pdf
 %doc doc/*.{htm,png,jpg}
-%doc %{_datadir}/opencv/samples
+%doc %{_datadir}/OpenCV/samples
 
 %files python
 %defattr(-,root,root,-)
@@ -222,6 +224,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jul 09 2012 Honza Horak <kwizart@gmail.com> - 2.4.2-1
+- Update to 2.4.2
+
 * Fri Jun 29 2012 Honza Horak <hhorak@redhat.com> - 2.4.1-2
 - Fixed cmake script for generating opencv.pc file
 - Fixed OpenCVConfig script file
