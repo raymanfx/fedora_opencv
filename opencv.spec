@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -117,6 +117,7 @@ pushd build
  -DENABLE_SSE=0 \
  -DENABLE_SSE2=0 \
 %endif
+ %{!?_with_sse3:-DENABLE_SSE3=0} \
  -DCMAKE_BUILD_TYPE=Release \
  -DBUILD_TEST=1 \
 %{?_with_ttb:
@@ -126,6 +127,8 @@ pushd build
 } \
  %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
  %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
+ -DBUILD_opencv_nonfree=0 \
+%{!?_with_cuda:-DBUILD_opencv_gpu=0} \
 %{?_with_cuda: \
  -DCUDA_TOOLKIT_ROOT_DIR=%{?_cuda_topdir} \
  -DCUDA_VERBOSE_BUILD=1 \
@@ -225,7 +228,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Sun Nov 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-1
+* Sun Nov 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-2
+- Disable SSE3 and allow --with sse3 build conditional.
+- Disable gpu module as we don't build cuda
 - Update to 2.4.3
 
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.2-2
