@@ -4,8 +4,8 @@
 #global indice   a
 
 Name:           opencv
-Version:        2.4.2
-Release:        2%{?dist}
+Version:        2.4.3
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -216,6 +216,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc/opencv_tutorials.pdf
 %doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/OpenCV/samples
+%doc %{_datadir}/opencv/samples
 
 %files python
 %defattr(-,root,root,-)
@@ -224,6 +225,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Nov 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-1
+- Update to 2.4.3
+
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
