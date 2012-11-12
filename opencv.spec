@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -118,7 +118,7 @@ pushd build
  -DENABLE_SSE2=0 \
 %endif
  %{!?_with_sse3:-DENABLE_SSE3=0} \
- -DCMAKE_BUILD_TYPE=Release \
+ -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_TEST=1 \
 %{?_with_ttb:
 %ifarch %{ix86} x86_64 ia64
@@ -228,6 +228,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Nov 12 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-3
+- Switch Build Type to ReleaseWithDebInfo to avoid -03
+
 * Sun Nov 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-2
 - Disable SSE3 and allow --with sse3 build conditional.
 - Disable gpu module as we don't build cuda
