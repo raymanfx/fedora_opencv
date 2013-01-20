@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.3
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -16,7 +16,10 @@ Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{v
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
+#http://code.opencv.org/issues/2720
 Patch2:         opencv-pillow.patch
+#http://code.opencv.org/issues/2721
+Patch3:         OpenCV-2.4.3-codecs.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -101,6 +104,7 @@ This package contains Python bindings for the OpenCV library.
 %patch0 -p1 -b .pkgcmake
 %patch1 -p1 -b .pkgcmake2
 %patch2 -p1 -b .pillow
+%patch3 -p1 -b .codecs
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -230,6 +234,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Jan 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-5
+- Add more FourCC for gstreamer
+
 * Sun Jan 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-4
 - Allow to use python-pillow - rhbz#895767
 
