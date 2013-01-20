@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -16,6 +16,7 @@ Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{v
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
+Patch2:         opencv-pillow.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -99,6 +100,7 @@ This package contains Python bindings for the OpenCV library.
 %setup -q -n %{tar_name}-%{version}
 %patch0 -p1 -b .pkgcmake
 %patch1 -p1 -b .pkgcmake2
+%patch2 -p1 -b .pillow
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -228,6 +230,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Jan 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-4
+- Allow to use python-pillow - rhbz#895767
+
 * Mon Nov 12 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-3
 - Switch Build Type to ReleaseWithDebInfo to avoid -03
 
