@@ -235,9 +235,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Jan 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-5
-- Add more FourCC for gstreamer
-
-* Sun Jan 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-4
+- Add more FourCC for gstreamer - rhbz#812628
 - Allow to use python-pillow - rhbz#895767
 
 * Mon Nov 12 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-3
