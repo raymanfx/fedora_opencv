@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.3
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -234,6 +234,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 21 2013 Adam Tkac <atkac redhat com> - 2.4.3-6
+- rebuild due to "jpeg8-ABI" feature drop
+
 * Sun Jan 20 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.3-5
 - Add more FourCC for gstreamer - rhbz#812628
 - Allow to use python-pillow - rhbz#895767
