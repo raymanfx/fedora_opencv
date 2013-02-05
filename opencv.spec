@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.3
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -31,9 +31,11 @@ BuildRequires:  chrpath
 BuildRequires:  gtk2-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
+%if 0%{?fedora} >= 1
 %ifnarch s390 s390x
 BuildRequires:  libraw1394-devel
 BuildRequires:  libdc1394-devel
+%endif
 %endif
 BuildRequires:  jasper-devel
 BuildRequires:  libpng-devel
@@ -234,6 +236,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jan 25 2013 Honza Horak <hhorak@redhat.com> - 2.4.3-7
+- Do not build with 1394 libs in rhel
+
 * Mon Jan 21 2013 Adam Tkac <atkac redhat com> - 2.4.3-6
 - rebuild due to "jpeg8-ABI" feature drop
 
@@ -252,7 +257,7 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
-* Mon Jul 09 2012 Honza Horak <kwizart@gmail.com> - 2.4.2-1
+* Mon Jul 09 2012 Honza Horak <hhorak@redhat.com> - 2.4.2-1
 - Update to 2.4.2
 
 * Fri Jun 29 2012 Honza Horak <hhorak@redhat.com> - 2.4.1-2
