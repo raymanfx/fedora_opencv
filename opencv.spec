@@ -1,11 +1,11 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %global tar_name OpenCV
-#global indice   a
+%global indice   -beta
 
 Name:           opencv
-Version:        2.4.3
-Release:        7%{?dist}
+Version:        2.4.4
+Release:        0.1.beta%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -17,9 +17,7 @@ Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
 #http://code.opencv.org/issues/2720
-Patch2:         opencv-pillow.patch
-#http://code.opencv.org/issues/2721
-Patch3:         OpenCV-2.4.3-codecs.patch
+Patch2:         OpenCV-2.4.4-pillow.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
@@ -56,7 +54,7 @@ BuildRequires:  tbb-devel
 }
 BuildRequires:  zlib-devel, pkgconfig
 BuildRequires:  python-devel
-BuildRequires:  python-imaging, numpy, swig >= 1.3.24
+BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python-sphinx
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
@@ -94,7 +92,6 @@ This package contains the OpenCV documentation and examples programs.
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv = %{version}-%{release}
-Requires:       python-imaging
 Requires:       numpy
 
 %description python
@@ -106,7 +103,6 @@ This package contains Python bindings for the OpenCV library.
 %patch0 -p1 -b .pkgcmake
 %patch1 -p1 -b .pkgcmake2
 %patch2 -p1 -b .pillow
-%patch3 -p1 -b .codecs
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -128,6 +124,7 @@ pushd build
  %{!?_with_sse3:-DENABLE_SSE3=0} \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_TEST=1 \
+ -DBUILD_opencv_java=0 \
 %{?_with_ttb:
 %ifarch %{ix86} x86_64 ia64
  -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
@@ -224,7 +221,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel-docs
 %defattr(-,root,root,-)
-%doc doc/opencv_tutorials.pdf
 %doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/OpenCV/samples
 %doc %{_datadir}/opencv/samples
@@ -236,6 +232,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 18 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.4-0.1.beta
+- Update to 2.4.4 beta
+- Drop python-imaging also from requires
+- Drop merged patch for additionals codecs
+- Disable the java binding for now (untested)
+
 * Fri Jan 25 2013 Honza Horak <hhorak@redhat.com> - 2.4.3-7
 - Do not build with 1394 libs in rhel
 
