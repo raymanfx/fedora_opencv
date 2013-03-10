@@ -5,7 +5,7 @@
 
 Name:           opencv
 Version:        2.4.4
-Release:        0.1.beta%{?dist}
+Release:        0.2.beta%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -232,6 +232,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Mar 10 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.4-0.2.beta
+- rebuild (OpenEXR)
+
 * Mon Feb 18 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.4-0.1.beta
 - Update to 2.4.4 beta
 - Drop python-imaging also from requires
