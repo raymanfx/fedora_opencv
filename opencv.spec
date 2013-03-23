@@ -1,18 +1,18 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 %global tar_name OpenCV
-%global indice   -beta
+%global indice   a
 
 Name:           opencv
 Version:        2.4.4
-Release:        0.2.beta%{?dist}
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
-Source0:        http://prdownloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
+Source0:        http://downloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
@@ -48,7 +48,7 @@ BuildRequires:  openni-primesense
 %endif
 }
 %{?_with_ttb:
-%ifarch %{ix86} x86_64 ia64
+%ifarch %{ix86} x86_64 ia64 ppc ppc64
 BuildRequires:  tbb-devel
 %endif
 }
@@ -99,7 +99,7 @@ This package contains Python bindings for the OpenCV library.
 
 
 %prep
-%setup -q -n %{tar_name}-%{version}
+%setup -q
 %patch0 -p1 -b .pkgcmake
 %patch1 -p1 -b .pkgcmake2
 %patch2 -p1 -b .pillow
@@ -232,6 +232,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Mar 23 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.4-1
+- Update to 2.4.4a
+- Fix ttb-devel architecture conditionals
+
 * Sun Mar 10 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.4-0.2.beta
 - rebuild (OpenEXR)
 
