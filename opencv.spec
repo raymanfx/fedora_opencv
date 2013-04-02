@@ -5,14 +5,18 @@
 
 Name:           opencv
 Version:        2.4.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.willowgarage.com/wiki/
-Source0:        http://downloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
+# Need to remove SIFT/SURF from source tarball, due to legal concerns
+# rm -rf opencv-2.4.4/modules/nonfree/src/sift.cpp 
+# rm -rf opencv-2.4.4/modules/nonfree/src/surf.cpp
+# Source0:        http://downloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
+Source0:	%{tar_name}-%{version}%{?indice}-clean.tar.bz2
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
@@ -232,6 +236,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Apr  2 2013 Tom Callaway <spot@fedoraproject.org> - 2.4.4-2
+- make clean source without SIFT/SURF
+
 * Sat Mar 23 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.4-1
 - Update to 2.4.4a
 - Fix ttb-devel architecture conditionals
