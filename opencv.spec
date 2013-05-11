@@ -5,13 +5,13 @@
 
 Name:           opencv
 Version:        2.4.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
-URL:            http://opencv.willowgarage.com/wiki/
+URL:            http://opencv.org/
 # Need to remove SIFT/SURF from source tarball, due to legal concerns
 # rm -rf opencv-2.4.4/modules/nonfree/src/sift.cpp 
 # rm -rf opencv-2.4.4/modules/nonfree/src/surf.cpp
@@ -236,7 +236,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Tue Apr  2 2013 Tom Callaway <spot@fedoraproject.org> - 2.4.4-2
+* Sat May 11 2013 François Cami <fcami@fedoraproject.org> - 2.4.4-3
+- change project URL.
+
+* Tue Apr 02 2013 Tom Callaway <spot@fedoraproject.org> - 2.4.4-2
 - make clean source without SIFT/SURF
 
 * Sat Mar 23 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.4-1
