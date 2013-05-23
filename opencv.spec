@@ -1,28 +1,24 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-%global tar_name OpenCV
-%global indice   a
+#global indice   a
 
 Name:           opencv
-Version:        2.4.4
-Release:        3%{?dist}
+Version:        2.4.5
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
-URL:            http://opencv.org/
+URL:            http://opencv.org
 # Need to remove SIFT/SURF from source tarball, due to legal concerns
-# rm -rf opencv-2.4.4/modules/nonfree/src/sift.cpp 
-# rm -rf opencv-2.4.4/modules/nonfree/src/surf.cpp
-# Source0:        http://downloads.sourceforge.net/opencvlibrary/%{tar_name}-%{version}%{?indice}.tar.bz2
-Source0:	%{tar_name}-%{version}%{?indice}-clean.tar.bz2
+# rm -rf opencv-%%{version}/modules/nonfree/src/sift.cpp
+# rm -rf opencv-%%{version}/modules/nonfree/src/surf.cpp
+# Source0:        http://downloads.sourceforge.net/opencvlibrary/%{name}-%{version}%{?indice}.tar.bz2
+Source0:	%{name}-%{version}%{?indice}-clean.tar.xz
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -64,16 +60,27 @@ BuildRequires:  python-sphinx
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
 %{?_with_xine:BuildRequires:  xine-lib-devel}
 
+
+Requires:       opencv-core%{_isa} = %{version}-%{release}
+
+
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
 C functions and a few C++ classes that implement some popular Image Processing
 and Computer Vision algorithms.
 
 
+%package core
+Summary:        OpenCV core libraries
+Group:          Development/Libraries
+
+%description core
+This package contains the OpenCV C/C++ core libraries.
+
 %package devel
 Summary:        Development files for using the OpenCV library
 Group:          Development/Libraries
-Requires:       opencv = %{version}-%{release}
+Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       pkgconfig
 
 %description devel
@@ -159,7 +166,7 @@ popd
 
 
 %install
-rm -rf $RPM_BUILD_ROOT  __devel-doc
+rm -rf __devel-doc
 pushd build
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
@@ -194,9 +201,9 @@ pushd build
 popd
 %endif
 
-%clean
-rm -rf $RPM_BUILD_ROOT
 
+%post core -p /sbin/ldconfig
+%postun core -p /sbin/ldconfig
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -204,17 +211,32 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%defattr(-,root,root,-)
 %doc doc/license.txt
 %{_bindir}/opencv_*
-%{_libdir}/lib*.so.*
+%{_libdir}/libopencv_calib3d.so.2.4*
+%{_libdir}/libopencv_contrib.so.2.4*
+%{_libdir}/libopencv_features2d.so.2.4*
+%{_libdir}/libopencv_highgui.so.2.4*
+%{_libdir}/libopencv_legacy.so.2.4*
+%{_libdir}/libopencv_objdetect.so.2.4*
+%{_libdir}/libopencv_stitching.so.2.4*
+%{_libdir}/libopencv_ts.so.2.4*
+%{_libdir}/libopencv_superres.so.2.4*
+%{_libdir}/libopencv_videostab.so.2.4*
 %dir %{_datadir}/OpenCV
 %{_datadir}/OpenCV/haarcascades
 %{_datadir}/OpenCV/lbpcascades
 
+%files core
+%{_libdir}/libopencv_core.so.2.4*
+%{_libdir}/libopencv_flann.so.2.4*
+%{_libdir}/libopencv_imgproc.so.2.4*
+%{_libdir}/libopencv_ml.so.2.4*
+%{_libdir}/libopencv_photo.so.2.4*
+%{_libdir}/libopencv_video.so.2.4*
+
 
 %files devel
-%defattr(-,root,root,-)
 %{_includedir}/opencv
 %{_includedir}/opencv2
 %{_libdir}/lib*.so
@@ -224,18 +246,21 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files devel-docs
-%defattr(-,root,root,-)
 %doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/OpenCV/samples
 %doc %{_datadir}/opencv/samples
 
 %files python
-%defattr(-,root,root,-)
 %{python_sitearch}/cv.py*
 %{python_sitearch}/cv2.so
 
 
 %changelog
+* Thu May 23 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.5-1
+- Update to 2.4.5-clean
+- Spec file clean-up
+- Split core libraries into a sub-package
+
 * Sat May 11 2013 François Cami <fcami@fedoraproject.org> - 2.4.4-3
 - change project URL.
 
