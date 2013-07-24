@@ -1,7 +1,7 @@
 #global indice   a
 
 Name:           opencv
-Version:        2.4.5
+Version:        2.4.6.1
 Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
@@ -12,7 +12,7 @@ URL:            http://opencv.org
 # Need to remove SIFT/SURF from source tarball, due to legal concerns
 # rm -rf opencv-%%{version}/modules/nonfree/src/sift.cpp
 # rm -rf opencv-%%{version}/modules/nonfree/src/surf.cpp
-# Source0:        http://downloads.sourceforge.net/opencvlibrary/%{name}-%{version}%{?indice}.tar.bz2
+#Source0:        http://downloads.sourceforge.net/opencvlibrary/opencv-unix/%{version}/%{name}-%{version}%{?indice}.tar.gz
 Source0:	%{name}-%{version}%{?indice}-clean.tar.xz
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
@@ -256,6 +256,9 @@ popd
 
 
 %changelog
+* Wed Jul 24 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.6.1-1
+- Update to 2.4.6.1
+
 * Thu May 23 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.5-1
 - Update to 2.4.5-clean
 - Spec file clean-up
