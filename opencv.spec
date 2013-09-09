@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -256,6 +256,9 @@ popd
 
 
 %changelog
+* Sun Sep 08 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.6.1-2
+- rebuild (openexr)
+
 * Wed Jul 24 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.6.1-1
 - Update to 2.4.6.1
 
