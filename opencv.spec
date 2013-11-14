@@ -1,8 +1,8 @@
 #global indice   a
 
 Name:           opencv
-Version:        2.4.6.1
-Release:        2%{?dist}
+Version:        2.4.7
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -12,6 +12,8 @@ URL:            http://opencv.org
 # Need to remove SIFT/SURF from source tarball, due to legal concerns
 # rm -rf opencv-%%{version}/modules/nonfree/src/sift.cpp
 # rm -rf opencv-%%{version}/modules/nonfree/src/surf.cpp
+# Removed because we don't use pre-built contribs
+# rm -rf 3rdparty
 #Source0:        http://downloads.sourceforge.net/opencvlibrary/opencv-unix/%{version}/%{name}-%{version}%{?indice}.tar.gz
 Source0:	%{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
@@ -19,6 +21,7 @@ Patch0:         opencv-pkgcmake.patch
 Patch1:         opencv-pkgcmake2.patch
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
+Patch3:         opencv-2.4.7-ts_static.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -40,6 +43,8 @@ BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libtiff-devel
 BuildRequires:  libv4l-devel
+BuildRequires:  libGL-devel
+BuildRequires:  gtkglext-devel
 BuildRequires:  OpenEXR-devel
 %{?_with_openni:
 %ifarch %{ix86} x86_64
@@ -114,6 +119,7 @@ This package contains Python bindings for the OpenCV library.
 %patch0 -p1 -b .pkgcmake
 %patch1 -p1 -b .pkgcmake2
 %patch2 -p1 -b .pillow
+%patch3 -p1 -b .ts_static
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -220,8 +226,8 @@ popd
 %{_libdir}/libopencv_legacy.so.2.4*
 %{_libdir}/libopencv_objdetect.so.2.4*
 %{_libdir}/libopencv_stitching.so.2.4*
-%{_libdir}/libopencv_ts.so.2.4*
 %{_libdir}/libopencv_superres.so.2.4*
+%{_libdir}/libopencv_ts.so.2.4*
 %{_libdir}/libopencv_videostab.so.2.4*
 %dir %{_datadir}/OpenCV
 %{_datadir}/OpenCV/haarcascades
@@ -248,7 +254,6 @@ popd
 %files devel-docs
 %doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/OpenCV/samples
-%doc %{_datadir}/opencv/samples
 
 %files python
 %{python_sitearch}/cv.py*
@@ -256,6 +261,9 @@ popd
 
 
 %changelog
+* Wed Nov 13 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.7-1
+- Update to 2.4.7
+
 * Sun Sep 08 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.6.1-2
 - rebuild (openexr)
 
