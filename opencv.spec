@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -22,6 +22,9 @@ Patch1:         opencv-pkgcmake2.patch
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
 Patch3:         opencv-2.4.7-ts_static.patch
+# fix/simplify cmake config install location (upstreamable)
+# https://bugzilla.redhat.com/1031312
+Patch4:         opencv-2.4.7-cmake_paths.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -120,6 +123,7 @@ This package contains Python bindings for the OpenCV library.
 %patch1 -p1 -b .pkgcmake2
 %patch2 -p1 -b .pillow
 %patch3 -p1 -b .ts_static
+%patch4 -p1 -b .cmake_paths
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -189,11 +193,6 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/OpenCV/doc
 
 popd
 
-#Cmake mess
-mkdir -p  $RPM_BUILD_ROOT%{_libdir}/cmake/OpenCV
-mv $RPM_BUILD_ROOT%{_datadir}/OpenCV/*.cmake \
-  $RPM_BUILD_ROOT%{_libdir}/cmake/OpenCV
-
 
 %check
 # Check fails since we don't support most video
@@ -247,8 +246,8 @@ popd
 %{_includedir}/opencv2
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
-# own cmake dir avoiding dep on cmake
-%{_libdir}/cmake/
+%dir %{_libdir}/OpenCV/
+%{_libdir}/OpenCV/*.cmake
 
 
 %files devel-docs
@@ -261,6 +260,9 @@ popd
 
 
 %changelog
+* Mon Nov 18 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.7-2
+- OpenCV cmake configuration broken (#1031312)
+
 * Wed Nov 13 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.7-1
 - Update to 2.4.7
 
