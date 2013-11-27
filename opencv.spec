@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.7
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 
 Group:          Development/Libraries
@@ -260,6 +260,9 @@ popd
 
 
 %changelog
+* Wed Nov 27 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.7-3
+- rebuild (openexr)
+
 * Mon Nov 18 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.7-2
 - OpenCV cmake configuration broken (#1031312)
 
