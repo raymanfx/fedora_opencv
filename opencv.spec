@@ -2,9 +2,8 @@
 
 Name:           opencv
 Version:        2.4.7
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
-
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
@@ -60,14 +59,14 @@ BuildRequires:  openni-primesense
 BuildRequires:  tbb-devel
 %endif
 }
-BuildRequires:  zlib-devel, pkgconfig
-BuildRequires:  python-devel
+BuildRequires:  zlib-devel pkgconfig
+BuildRequires:  python2-devel
 BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python-sphinx
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
 %{?_with_xine:BuildRequires:  xine-lib-devel}
-
+BuildRequires:  opencl-headers
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -78,42 +77,40 @@ C functions and a few C++ classes that implement some popular Image Processing
 and Computer Vision algorithms.
 
 
-%package core
+%package        core
 Summary:        OpenCV core libraries
 Group:          Development/Libraries
 
-%description core
+%description    core
 This package contains the OpenCV C/C++ core libraries.
 
-%package devel
+%package        devel
 Summary:        Development files for using the OpenCV library
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
-Requires:       pkgconfig
 
-%description devel
+%description    devel
 This package contains the OpenCV C/C++ library and header files, as well as
 documentation. It should be installed if you want to develop programs that
 will use the OpenCV library. You should consider installing opencv-devel-docs
 package.
 
-%package devel-docs
+%package        devel-docs
 Summary:        Development files for using the OpenCV library
 Group:          Development/Libraries
 Requires:       opencv-devel = %{version}-%{release}
-Requires:       pkgconfig
 BuildArch:      noarch
 
-%description devel-docs
+%description    devel-docs
 This package contains the OpenCV documentation and examples programs.
 
-%package python
+%package        python
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
-Requires:       opencv = %{version}-%{release}
+Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       numpy
 
-%description python
+%description    python
 This package contains Python bindings for the OpenCV library.
 
 
@@ -168,6 +165,7 @@ pushd build
  %{!?_with_xine:-DWITH_XINE=0} \
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
+ -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
  ..
 
 make VERBOSE=1 %{?_smp_mflags}
@@ -178,18 +176,18 @@ popd
 %install
 rm -rf __devel-doc
 pushd build
-make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" CPPROG="cp -p"
-find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
+make install DESTDIR=%{buildroot} INSTALL="install -p" CPPROG="cp -p"
+find %{buildroot} -name '*.la' -exec rm -f {} ';'
 
 
-rm -f $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/build_all.sh \
-      $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/cvsample.dsp \
-      $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/cvsample.vcproj \
-      $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/facedetect.cmd
-install -pm644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/OpenCV/samples/c/GNUmakefile
+rm -f %{buildroot}%{_datadir}/OpenCV/samples/c/build_all.sh \
+      %{buildroot}%{_datadir}/OpenCV/samples/c/cvsample.dsp \
+      %{buildroot}%{_datadir}/OpenCV/samples/c/cvsample.vcproj \
+      %{buildroot}%{_datadir}/OpenCV/samples/c/facedetect.cmd
+install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/c/GNUmakefile
 
 # remove unnecessary documentation
-rm -rf $RPM_BUILD_ROOT%{_datadir}/OpenCV/doc
+rm -rf %{buildroot}%{_datadir}/OpenCV/doc
 
 popd
 
@@ -239,7 +237,7 @@ popd
 %{_libdir}/libopencv_ml.so.2.4*
 %{_libdir}/libopencv_photo.so.2.4*
 %{_libdir}/libopencv_video.so.2.4*
-
+%{_libdir}/libopencv_ocl.so.2.4*
 
 %files devel
 %{_includedir}/opencv
@@ -249,17 +247,19 @@ popd
 %dir %{_libdir}/OpenCV/
 %{_libdir}/OpenCV/*.cmake
 
-
 %files devel-docs
 %doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/OpenCV/samples
 
 %files python
-%{python_sitearch}/cv.py*
-%{python_sitearch}/cv2.so
-
+%{python2_sitearch}/cv.py*
+%{python2_sitearch}/cv2.
 
 %changelog
+* Thu Jan 16 2014 Christopher Meng <rpm@cicku.me> - 2.4.7-4
+- Enable OpenCL support.
+- SPEC small cleanup.
+
 * Wed Nov 27 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.7-3
 - rebuild (openexr)
 
