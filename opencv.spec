@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.7
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -217,6 +217,7 @@ popd
 %{_libdir}/libopencv_highgui.so.2.4*
 %{_libdir}/libopencv_legacy.so.2.4*
 %{_libdir}/libopencv_objdetect.so.2.4*
+%{_libdir}/libopencv_ocl.so.2.4*
 %{_libdir}/libopencv_stitching.so.2.4*
 %{_libdir}/libopencv_superres.so.2.4*
 %{_libdir}/libopencv_ts.so.2.4*
@@ -232,7 +233,6 @@ popd
 %{_libdir}/libopencv_ml.so.2.4*
 %{_libdir}/libopencv_photo.so.2.4*
 %{_libdir}/libopencv_video.so.2.4*
-%{_libdir}/libopencv_ocl.so.2.4*
 
 %files devel
 %{_includedir}/opencv
@@ -251,6 +251,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Fri Jan 17 2014 Nicolas Chauvet <kwizart@gmail.com> - 2.4.7-5
+- Fix opencv_ocl isn't part of -core
+
 * Thu Jan 16 2014 Christopher Meng <rpm@cicku.me> - 2.4.7-4
 - Enable OpenCL support.
 - SPEC small cleanup.
