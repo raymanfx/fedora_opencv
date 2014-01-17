@@ -177,8 +177,7 @@ popd
 rm -rf __devel-doc
 pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p" CPPROG="cp -p"
-find %{buildroot} -name '*.la' -exec rm -f {} ';'
-
+find %{buildroot} -name '*.la' -delete
 
 rm -f %{buildroot}%{_datadir}/OpenCV/samples/c/build_all.sh \
       %{buildroot}%{_datadir}/OpenCV/samples/c/cvsample.dsp \
@@ -190,7 +189,6 @@ install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/c/GNUmakefile
 rm -rf %{buildroot}%{_datadir}/OpenCV/doc
 
 popd
-
 
 %check
 # Check fails since we don't support most video
@@ -204,14 +202,11 @@ pushd build
 popd
 %endif
 
-
 %post core -p /sbin/ldconfig
 %postun core -p /sbin/ldconfig
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
-
-
 
 %files
 %doc doc/license.txt
@@ -253,7 +248,7 @@ popd
 
 %files python
 %{python2_sitearch}/cv.py*
-%{python2_sitearch}/cv2.
+%{python2_sitearch}/cv2.so
 
 %changelog
 * Thu Jan 16 2014 Christopher Meng <rpm@cicku.me> - 2.4.7-4
