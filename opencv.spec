@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.7
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -17,7 +17,6 @@ URL:            http://opencv.org
 Source0:	%{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
 Patch0:         opencv-pkgcmake.patch
-Patch1:         opencv-pkgcmake2.patch
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
 Patch3:         opencv-2.4.7-ts_static.patch
@@ -117,7 +116,6 @@ This package contains Python bindings for the OpenCV library.
 %prep
 %setup -q
 %patch0 -p1 -b .pkgcmake
-%patch1 -p1 -b .pkgcmake2
 %patch2 -p1 -b .pillow
 %patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
@@ -251,6 +249,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Sat Apr 26 2014 Rex Dieter <rdieter@fedoraproject.org> 2.4.7-6
+- revert pkgcmake2 patch (#1070428)
+
 * Fri Jan 17 2014 Nicolas Chauvet <kwizart@gmail.com> - 2.4.7-5
 - Fix opencv_ocl isn't part of -core
 
