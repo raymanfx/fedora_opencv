@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.9
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -23,6 +23,17 @@ Patch3:         opencv-2.4.9-ts_static.patch
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch4:         opencv-2.4.7-cmake_paths.patch
+
+# relevant gst1-related patches from upstream master branch
+%if 0%{?fedora} > 20
+%global gst1 1
+%endif
+# 0550 needed slight rebasing -- rex
+Patch10: 0550-bomb-commit-of-gstreamer-videocapture-and-videowrite.patch
+Patch11: 0552-eliminated-warnings.patch
+Patch12: 0587-Fix-build-with-gstreamer-0.10.28.patch
+Patch13: 0865-gstreamer-cleaning-up-resources.patch
+Patch14: 0871-allow-for-arbitraty-number-of-sources-and-sinks.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -63,7 +74,11 @@ BuildRequires:  python2-devel
 BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python-sphinx
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
+%if 0%{?gst1}
+%{!?_without_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
+%else
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
+%endif
 %{?_with_xine:BuildRequires:  xine-lib-devel}
 BuildRequires:  opencl-headers
 
@@ -119,6 +134,14 @@ This package contains Python bindings for the OpenCV library.
 %patch2 -p1 -b .pillow
 %patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
+
+%if 0%{?gst1}
+%patch10 -p1 -b .10
+%patch11 -p1 -b .11
+%patch12 -p1 -b .12
+%patch13 -p1 -b .13
+%patch14 -p1 -b .14
+%endif
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -250,6 +273,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Fri Jul 25 2014 Rex Dieter <rdieter@fedoraproject.org> 2.4.9-2
+- backport support for GStreamer 1 (#1123078)
+
 * Thu Jul 03 2014 Nicolas Chauvet <kwizart@gmail.com> - 2.4.9-1
 - Update to 2.4.9
 
