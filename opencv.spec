@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.9
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -273,6 +273,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Mon Feb 23 2015 Rex Dieter <rdieter@fedoraproject.org> 2.4.9-5
+- rebuild (gcc5)
+
 * Tue Nov 25 2014 Rex Dieter <rdieter@fedoraproject.org> 2.4.9-4
 - rebuild (openexr)
 
