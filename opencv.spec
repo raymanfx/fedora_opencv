@@ -1,8 +1,8 @@
 #global indice   a
 
 Name:           opencv
-Version:        2.4.9
-Release:        6%{?dist}
+Version:        2.4.11
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -16,7 +16,6 @@ URL:            http://opencv.org
 #Source0:        http://downloads.sourceforge.net/opencvlibrary/opencv-unix/%{version}/%{name}-%{version}%{?indice}.zip
 Source0:	%{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
-Patch0:         opencv-pkgcmake.patch
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
 Patch3:         opencv-2.4.9-ts_static.patch
@@ -24,16 +23,9 @@ Patch3:         opencv-2.4.9-ts_static.patch
 # https://bugzilla.redhat.com/1031312
 Patch4:         opencv-2.4.7-cmake_paths.patch
 
-# relevant gst1-related patches from upstream master branch
 %if 0%{?fedora} > 20
 %global gst1 1
 %endif
-# 0550 needed slight rebasing -- rex
-Patch10: 0550-bomb-commit-of-gstreamer-videocapture-and-videowrite.patch
-Patch11: 0552-eliminated-warnings.patch
-Patch12: 0587-Fix-build-with-gstreamer-0.10.28.patch
-Patch13: 0865-gstreamer-cleaning-up-resources.patch
-Patch14: 0871-allow-for-arbitraty-number-of-sources-and-sinks.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -130,18 +122,9 @@ This package contains Python bindings for the OpenCV library.
 
 %prep
 %setup -q
-%patch0 -p1 -b .pkgcmake
 %patch2 -p1 -b .pillow
 %patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
-
-%if 0%{?gst1}
-%patch10 -p1 -b .10
-%patch11 -p1 -b .11
-%patch12 -p1 -b .12
-%patch13 -p1 -b .13
-%patch14 -p1 -b .14
-%endif
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -201,11 +184,7 @@ pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p" CPPROG="cp -p"
 find %{buildroot} -name '*.la' -delete
 
-rm -f %{buildroot}%{_datadir}/OpenCV/samples/c/build_all.sh \
-      %{buildroot}%{_datadir}/OpenCV/samples/c/cvsample.dsp \
-      %{buildroot}%{_datadir}/OpenCV/samples/c/cvsample.vcproj \
-      %{buildroot}%{_datadir}/OpenCV/samples/c/facedetect.cmd
-install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/c/GNUmakefile
+install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/GNUmakefile
 
 # remove unnecessary documentation
 rm -rf %{buildroot}%{_datadir}/OpenCV/doc
@@ -273,6 +252,10 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Mon May 11 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-1
+- Update to 2.4.11 .
+- Dropped patches 0, 10, 11, 12, 13 and 14 .
+
 * Sat Apr 11 2015 Rex Dieter <rdieter@fedoraproject.org> 2.4.9-6
 - rebuild (gcc5)
 
