@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -252,6 +252,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.11-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon May 11 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-1
 - Update to 2.4.11 .
 - Dropped patches 0, 10, 11, 12, 13 and 14 .
