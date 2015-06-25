@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.11
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -210,7 +210,7 @@ popd
 %postun -p /sbin/ldconfig
 
 %files
-%doc LICENSE
+%license LICENSE
 %{_bindir}/opencv_*
 %{_libdir}/libopencv_calib3d.so.2.4*
 %{_libdir}/libopencv_contrib.so.2.4*
@@ -252,6 +252,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Thu Jun 25 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-3
+- Fix license tag
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.4.11-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
