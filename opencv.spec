@@ -56,7 +56,7 @@ BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
 %endif
 }
-%{?_with_ttb:
+%{?_with_tbb:
 %ifarch %{ix86} x86_64 ia64 ppc ppc64
 BuildRequires:  tbb-devel
 %endif
@@ -148,7 +148,7 @@ pushd build
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_TEST=1 \
  -DBUILD_opencv_java=0 \
-%{?_with_ttb:
+%{?_with_tbb: \
 %ifarch %{ix86} x86_64 ia64
  -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
 %endif
@@ -162,11 +162,11 @@ pushd build
  -DCUDA_VERBOSE_BUILD=1 \
  -DCUDA_PROPAGATE_HOST_FLAGS=0 \
 } \
-%ifarch %{ix86} x86_64
 %{?_with_openni: \
+%ifarch %{ix86} x86_64
  -DWITH_OPENNI=ON \
-} \
 %endif
+} \
  %{!?_with_xine:-DWITH_XINE=0} \
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
@@ -321,7 +321,7 @@ popd
 
 * Sat Mar 23 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4.4-1
 - Update to 2.4.4a
-- Fix ttb-devel architecture conditionals
+- Fix tbb-devel architecture conditionals
 
 * Sun Mar 10 2013 Rex Dieter <rdieter@fedoraproject.org> 2.4.4-0.2.beta
 - rebuild (OpenEXR)
@@ -363,7 +363,7 @@ popd
 * Mon Jun 04 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.4.1-1
 - Update to 2.4.1
 - Rework dependencies - rhbz#828087
-  Re-enable using --with tbb,opennpi,eigen2,eigen3
+  Re-enable using --with tbb,openni,eigen2,eigen3
 
 * Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.1-8
 - Rebuilt for c++ ABI breakage
