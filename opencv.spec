@@ -14,7 +14,7 @@ URL:            http://opencv.org
 # Removed because we don't use pre-built contribs
 # rm -rf 3rdparty
 #Source0:        http://downloads.sourceforge.net/opencvlibrary/opencv-unix/%{version}/%{name}-%{version}%{?indice}.zip
-Source0:	%{name}-clean-%{version}%{?indice}.tar.xz
+Source0:    %{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
