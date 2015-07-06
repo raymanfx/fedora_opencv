@@ -2,7 +2,7 @@
 
 Name:           opencv
 Version:        2.4.11
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -22,10 +22,9 @@ Patch3:         opencv-2.4.9-ts_static.patch
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch4:         opencv-2.4.7-cmake_paths.patch
-
-%if 0%{?fedora} > 20
-%global gst1 1
-%endif
+# Fix macro usage of "list_filterout"
+# https://github.com/pld-linux/opencv/commit/dadee4672641272b129410bc097f5c199bb4fb43
+Patch5:         opencv-2.4.11-listfilterout.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -36,7 +35,7 @@ BuildRequires:  chrpath
 BuildRequires:  gtk2-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
-%if 0%{?fedora} >= 1
+%if 0%{?fedora}
 %ifnarch s390 s390x
 BuildRequires:  libraw1394-devel
 BuildRequires:  libdc1394-devel
@@ -66,7 +65,7 @@ BuildRequires:  python2-devel
 BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python-sphinx
 %{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
-%if 0%{?gst1}
+%if 0%{?fedora} > 20
 %{!?_without_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
 %else
 %{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
@@ -125,6 +124,7 @@ This package contains Python bindings for the OpenCV library.
 %patch2 -p1 -b .pillow
 %patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
+%patch5 -p1 -b .listfilterout
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -156,7 +156,6 @@ pushd build
  %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
  %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
  -DBUILD_opencv_nonfree=0 \
-%{!?_with_cuda:-DBUILD_opencv_gpu=0} \
 %{?_with_cuda: \
  -DCUDA_TOOLKIT_ROOT_DIR=%{?_cuda_topdir} \
  -DCUDA_VERBOSE_BUILD=1 \
@@ -215,6 +214,7 @@ popd
 %{_libdir}/libopencv_calib3d.so.2.4*
 %{_libdir}/libopencv_contrib.so.2.4*
 %{_libdir}/libopencv_features2d.so.2.4*
+%{_libdir}/libopencv_gpu.so.2.4*
 %{_libdir}/libopencv_highgui.so.2.4*
 %{_libdir}/libopencv_legacy.so.2.4*
 %{_libdir}/libopencv_objdetect.so.2.4*
@@ -252,6 +252,10 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Mon Jul 06 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-4
+- Enable-gpu-module, rhbz #1236417, thanks to Rich Mattes.
+- Deleted the global gst1 because it is no longer needed.
+
 * Thu Jun 25 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-3
 - Fix license tag
 
