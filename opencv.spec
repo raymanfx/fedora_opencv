@@ -1,8 +1,18 @@
+%global optflags %(echo %{optflags} -Wl,--as-needed )
 #global indice   a
+%bcond_with    ffmpeg
+%bcond_without gstreamer
+%bcond_with    eigen2
+%bcond_with    eigen3
+%bcond_with    openni
+%bcond_with    tbb
+%bcond_with    sse3
+%bcond_with    cuda
+%bcond_with    xine
 
 Name:           opencv
 Version:        2.4.11
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -14,7 +24,7 @@ URL:            http://opencv.org
 # Removed because we don't use pre-built contribs
 # rm -rf 3rdparty
 #Source0:        http://downloads.sourceforge.net/opencvlibrary/opencv-unix/%{version}/%{name}-%{version}%{?indice}.zip
-Source0:    %{name}-clean-%{version}%{?indice}.tar.xz
+Source0:        %{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
 #http://code.opencv.org/issues/2720
 Patch2:         OpenCV-2.4.4-pillow.patch
@@ -30,8 +40,8 @@ BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
 
-%{?_with_eigen2:BuildRequires:  eigen2-devel}
-%{?_with_eigen3:BuildRequires:  eigen3-devel}
+%{?with_eigen2:BuildRequires:  eigen2-devel}
+%{?with_eigen3:BuildRequires:  eigen3-devel}
 BuildRequires:  gtk2-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
@@ -49,13 +59,13 @@ BuildRequires:  libv4l-devel
 BuildRequires:  libGL-devel
 BuildRequires:  gtkglext-devel
 BuildRequires:  OpenEXR-devel
-%{?_with_openni:
+%{?with_openni:
 %ifarch %{ix86} x86_64
 BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
 %endif
 }
-%{?_with_tbb:
+%{?with_tbb:
 %ifarch %{ix86} x86_64 ia64 ppc ppc64
 BuildRequires:  tbb-devel
 %endif
@@ -64,13 +74,13 @@ BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
 BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python-sphinx
-%{?_with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
+%{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} > 20
-%{!?_without_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
+%{?with_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
 %else
-%{!?_without_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
+%{?with_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
 %endif
-%{?_with_xine:BuildRequires:  xine-lib-devel}
+%{?with_xine:BuildRequires:  xine-lib-devel}
 BuildRequires:  opencl-headers
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
@@ -144,29 +154,29 @@ pushd build
  -DENABLE_SSE=0 \
  -DENABLE_SSE2=0 \
 %endif
- %{!?_with_sse3:-DENABLE_SSE3=0} \
+ %{!?with_sse3:-DENABLE_SSE3=0} \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_TEST=1 \
  -DBUILD_opencv_java=0 \
-%{?_with_tbb: \
-%ifarch %{ix86} x86_64 ia64
+%{?with_tbb: \
+%ifarch %{ix86} x86_64 ia64 ppc ppc64
  -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
 %endif
 } \
- %{?_without_gstreamer:-DWITH_GSTREAMER=0} \
- %{!?_with_ffmpeg:-DWITH_FFMPEG=0} \
+ %{!?with_gstreamer:-DWITH_GSTREAMER=0} \
+ %{!?with_ffmpeg:-DWITH_FFMPEG=0} \
  -DBUILD_opencv_nonfree=0 \
-%{?_with_cuda: \
+%{?with_cuda: \
  -DCUDA_TOOLKIT_ROOT_DIR=%{?_cuda_topdir} \
  -DCUDA_VERBOSE_BUILD=1 \
  -DCUDA_PROPAGATE_HOST_FLAGS=0 \
 } \
-%{?_with_openni: \
+%{?with_openni: \
 %ifarch %{ix86} x86_64
  -DWITH_OPENNI=ON \
 %endif
 } \
- %{!?_with_xine:-DWITH_XINE=0} \
+ %{!?with_xine:-DWITH_XINE=0} \
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
  -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
@@ -174,11 +184,20 @@ pushd build
 
 make VERBOSE=1 %{?_smp_mflags}
 
+#make html_docs
+
+# We may build html_docs with: make html_docs
+# we also got 234 rst files that are valid documentation.
+# find opencv-2.4.11/ -name *rst | wc -l
+# 234
+# but make install does not install any doc (except OpenCV/samples), so I just added
+# README.md index.rst with references to online documentation.
+# Conclusion I think we miss one sub-package opencv-docs.noarch , but we got opencv-devel-docs.noarch
+
 popd
 
 
 %install
-rm -rf __devel-doc
 pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p" CPPROG="cp -p"
 find %{buildroot} -name '*.la' -delete
@@ -195,12 +214,11 @@ popd
 # read/write capability and we don't provide a display
 # ARGS=-V increases output verbosity
 # Make test is unavailble as of 2.3.1
-%if 0
 #ifnarch ppc64
-pushd build
-    LD_LIBRARY_PATH=%{_builddir}/%{tar_name}-%{version}/lib:$LD_LIBARY_PATH make test ARGS=-V || :
-popd
-%endif
+#pushd build
+#    LD_LIBRARY_PATH=%{_builddir}/%{tar_name}-%{version}/lib:$LD_LIBARY_PATH make test ARGS=-V || :
+#popd
+#endif
 
 %post core -p /sbin/ldconfig
 %postun core -p /sbin/ldconfig
@@ -209,6 +227,7 @@ popd
 %postun -p /sbin/ldconfig
 
 %files
+%doc README.md index.rst
 %license LICENSE
 %{_bindir}/opencv_*
 %{_libdir}/libopencv_calib3d.so.2.4*
@@ -244,7 +263,6 @@ popd
 %{_libdir}/OpenCV/*.cmake
 
 %files devel-docs
-%doc doc/*.{htm,png,jpg}
 %doc %{_datadir}/OpenCV/samples
 
 %files python
@@ -252,6 +270,13 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Tue Jul 14 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-5
+- Use bcond tags to easily enable or disable modules.
+- Package review, more cleaning in the spec file.
+- Fixed unused-direct-shlib-dependency in cmake with global optflags.
+- Added README.md index.rst with references to online documentation.
+- Investigation on the documentation, added a few notes.
+
 * Mon Jul 06 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-4
 - Enable-gpu-module, rhbz #1236417, thanks to Rich Mattes.
 - Deleted the global gst1 because it is no longer needed.
