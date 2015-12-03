@@ -11,19 +11,21 @@
 %bcond_with    xine
 
 Name:           opencv
-Version:        2.4.11
-Release:        5%{?dist}
+Version:        2.4.12.3
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.org
 # Need to remove SIFT/SURF from source tarball, due to legal concerns
-# rm -f opencv-%%{version}/modules/nonfree/src/sift.cpp
-# rm -f opencv-%%{version}/modules/nonfree/src/surf.cpp
+# cd opencv-%%{version}/
+# rm -f modules/nonfree/src/sift.cpp
+# rm -f modules/nonfree/src/surf.cpp
 # Removed because we don't use pre-built contribs
 # rm -rf 3rdparty
-#Source0:        http://downloads.sourceforge.net/opencvlibrary/opencv-unix/%{version}/%{name}-%{version}%{?indice}.zip
+# cd ..; tar Jcf opencv-clean-%%{version}.tar.xz opencv-%%{version}/
+#Source0:        https://github.com/Itseez/opencv/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source0:        %{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
 #http://code.opencv.org/issues/2720
@@ -66,7 +68,7 @@ BuildRequires:  openni-primesense
 %endif
 }
 %{?with_tbb:
-%ifarch %{ix86} x86_64 ia64 ppc ppc64
+%ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
 BuildRequires:  tbb-devel
 %endif
 }
@@ -159,7 +161,7 @@ pushd build
  -DBUILD_TEST=1 \
  -DBUILD_opencv_java=0 \
 %{?with_tbb: \
-%ifarch %{ix86} x86_64 ia64 ppc ppc64
+%ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
  -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
 %endif
 } \
@@ -270,6 +272,10 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Wed Dec 02 2015 Sérgio Basto <sergio@serjux.com> - 2.4.12.3-1
+- Update opencv to 2.4.12.3 (#1271460).
+- Add aarch64 and ppc64le to list of architectures where TBB is supported (#1262788).
+
 * Tue Jul 14 2015 Sérgio Basto <sergio@serjux.com> - 2.4.11-5
 - Use bcond tags to easily enable or disable modules.
 - Package review, more cleaning in the spec file.
