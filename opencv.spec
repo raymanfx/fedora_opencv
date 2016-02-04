@@ -12,7 +12,7 @@
 
 Name:           opencv
 Version:        2.4.12.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -272,6 +272,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.4.12.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Wed Dec 02 2015 Sérgio Basto <sergio@serjux.com> - 2.4.12.3-1
 - Update opencv to 2.4.12.3 (#1271460).
 - Add aarch64 and ppc64le to list of architectures where TBB is supported (#1262788).
