@@ -12,7 +12,7 @@
 
 Name:           opencv
 Version:        2.4.12.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -25,7 +25,7 @@ URL:            http://opencv.org
 # Removed because we don't use pre-built contribs
 # rm -rf 3rdparty
 # cd ..; tar Jcf opencv-clean-%%{version}.tar.xz opencv-%%{version}/
-#Source0:        https://github.com/Itseez/opencv/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+#Source0:        https://github.com/Itseez/opencv/archive/%%{version}.tar.gz#/%%{name}-%%{version}.tar.gz
 Source0:        %{name}-clean-%{version}%{?indice}.tar.xz
 Source1:        opencv-samples-Makefile
 #http://code.opencv.org/issues/2720
@@ -37,6 +37,7 @@ Patch4:         opencv-2.4.7-cmake_paths.patch
 # Fix macro usage of "list_filterout"
 # https://github.com/pld-linux/opencv/commit/dadee4672641272b129410bc097f5c199bb4fb43
 Patch5:         opencv-2.4.11-listfilterout.patch
+Patch6:         Fix-FTBFS-with-GCC-6-1307821.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -137,6 +138,7 @@ This package contains Python bindings for the OpenCV library.
 %patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
 %patch5 -p1 -b .listfilterout
+%patch6 -p1 -b .gcc6
 
 # fix dos end of lines
 sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -272,6 +274,9 @@ popd
 %{python2_sitearch}/cv2.so
 
 %changelog
+* Wed Mar 02 2016 Sérgio Basto <sergio@serjux.com> - 2.4.12.3-3
+- Fix FTBFS with GCC 6 (#1307821), patch made by Yaakov Selkowitz.
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.4.12.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
