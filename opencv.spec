@@ -11,35 +11,28 @@
 %bcond_with    xine
 
 Name:           opencv
-Version:        2.4.12.3
-Release:        3%{?dist}
+Version:        3.1.0
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.org
 # Need to remove SIFT/SURF from source tarball, due to legal concerns
-# cd opencv-%%{version}/
-# rm -f modules/nonfree/src/sift.cpp
-# rm -f modules/nonfree/src/surf.cpp
+# No more sift.cpp or surf.cpp in source tarball.
 # Removed because we don't use pre-built contribs
 # rm -rf 3rdparty
-# cd ..; tar Jcf opencv-clean-%%{version}.tar.xz opencv-%%{version}/
-#Source0:       https://github.com/Itseez/opencv/archive/%%{version}.tar.gz#/%%{name}-%%{version}.tar.gz
-Source0:        %{name}-clean-%{version}%{?indice}.tar.xz
+#Source0:	%{version}.zip
+Source0:        https://github.com/Itseez/opencv/archive/%{version}/opencv-%{version}.tar.gz
 Source1:        opencv-samples-Makefile
+Source2:        https://github.com/Itseez/opencv_contrib/archive/%{version}/opencv_contrib-%{version}.tar.gz
 #http://code.opencv.org/issues/2720
-Patch2:         OpenCV-2.4.4-pillow.patch
-Patch3:         opencv-2.4.9-ts_static.patch
+#Patch2:         OpenCV-2.4.4-pillow.patch
+#Patch3:         opencv-2.4.9-ts_static.patch
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch4:         opencv-2.4.7-cmake_paths.patch
-# Fix macro usage of "list_filterout"
-# https://github.com/pld-linux/opencv/commit/dadee4672641272b129410bc097f5c199bb4fb43
-Patch5:         opencv-2.4.11-listfilterout.patch
-# fix build with gcc6
-# https://github.com/Itseez/opencv/commit/eebd4cad665f4f1270ca58bb13e9708e130f9b30
-Patch6:         opencv-2.4.12.3-gcc6.patch
+Patch5:         opencv-3.1.0-cmake_example.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -47,7 +40,7 @@ BuildRequires:  chrpath
 
 %{?with_eigen2:BuildRequires:  eigen2-devel}
 %{?with_eigen3:BuildRequires:  eigen3-devel}
-BuildRequires:  gtk2-devel
+BuildRequires:  gtk3-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
 %if 0%{?fedora}
@@ -57,11 +50,11 @@ BuildRequires:  libdc1394-devel
 %endif
 %endif
 BuildRequires:  jasper-devel
-BuildRequires:  libpng-devel
 BuildRequires:  libjpeg-devel
+BuildRequires:  libpng-devel
 BuildRequires:  libtiff-devel
-BuildRequires:  libv4l-devel
 BuildRequires:  libGL-devel
+BuildRequires:  libv4l-devel
 BuildRequires:  gtkglext-devel
 BuildRequires:  OpenEXR-devel
 %{?with_openni:
@@ -77,6 +70,7 @@ BuildRequires:  tbb-devel
 }
 BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
+BuildRequires:  python3-devel
 BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
@@ -87,6 +81,10 @@ BuildRequires:  python-sphinx
 %endif
 %{?with_xine:BuildRequires:  xine-lib-devel}
 BuildRequires:  opencl-headers
+BuildRequires:  libgphoto2-devel
+BuildRequires:  python3-numpy
+BuildRequires:  vtk-devel
+BuildRequires:  libwebp-devel
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -133,17 +131,38 @@ Requires:       numpy
 %description    python
 This package contains Python bindings for the OpenCV library.
 
+%package        python3
+Summary:        Python3 bindings for apps which use OpenCV
+Group:          Development/Libraries
+Requires:       opencv%{_isa} = %{version}-%{release}
+Requires:       numpy
+
+%description    python3
+This package contains Python3 bindings for the OpenCV library.
+
+
+%package        contrib
+Summary:        OpenCV contributed functionality
+Group:          Development/Libraries
+
+%description    contrib
+This package is intended for development of so-called "extra" modules, contributed
+functionality. New modules quite often do not have stable API, and they are not
+well-tested. Thus, they shouldn't be released as a part of official OpenCV
+distribution, since the library maintains binary compatibility, and tries
+to provide decent performance and stability.
 
 %prep
-%setup -q
-%patch2 -p1 -b .pillow
-%patch3 -p1 -b .ts_static
+%setup -q -a2
+# we don't use pre-built contribs
+rm -rf 3rdparty/
+#patch2 -p1 -b .pillow
+#patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
-%patch5 -p1 -b .listfilterout
-%patch6 -p1 -b .gcc6
+%patch5 -p1 -b .cmake_example
 
 # fix dos end of lines
-sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
+#sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 
 
 %build
@@ -152,7 +171,11 @@ sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
 # non available on Fedora: FFMPEG, XINE
 mkdir -p build
 pushd build
+
+# disabling IPP because it is closed source library from intel
+
 %cmake CMAKE_VERBOSE=1 \
+ -DWITH_IPP=OFF \
  -DPYTHON_PACKAGES_PATH=%{python_sitearch} \
  -DCMAKE_SKIP_RPATH=ON \
  -DENABLE_PRECOMPILED_HEADERS:BOOL=OFF \
@@ -186,6 +209,7 @@ pushd build
  -DINSTALL_C_EXAMPLES=1 \
  -DINSTALL_PYTHON_EXAMPLES=1 \
  -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
+ -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  ..
 
 make VERBOSE=1 %{?_smp_mflags}
@@ -208,10 +232,10 @@ pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p" CPPROG="cp -p"
 find %{buildroot} -name '*.la' -delete
 
-install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/GNUmakefile
+# install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/GNUmakefile
 
 # remove unnecessary documentation
-rm -rf %{buildroot}%{_datadir}/OpenCV/doc
+#rm -rf %{buildroot}%{_datadir}/OpenCV/doc
 
 popd
 
@@ -233,49 +257,91 @@ popd
 %postun -p /sbin/ldconfig
 
 %files
-%doc README.md index.rst
+%doc README.md
 %license LICENSE
 %{_bindir}/opencv_*
-%{_libdir}/libopencv_calib3d.so.2.4*
-%{_libdir}/libopencv_contrib.so.2.4*
-%{_libdir}/libopencv_features2d.so.2.4*
-%{_libdir}/libopencv_gpu.so.2.4*
-%{_libdir}/libopencv_highgui.so.2.4*
-%{_libdir}/libopencv_legacy.so.2.4*
-%{_libdir}/libopencv_objdetect.so.2.4*
-%{_libdir}/libopencv_ocl.so.2.4*
-%{_libdir}/libopencv_stitching.so.2.4*
-%{_libdir}/libopencv_superres.so.2.4*
-%{_libdir}/libopencv_ts.so.2.4*
-%{_libdir}/libopencv_videostab.so.2.4*
+%{_libdir}/libopencv_ts*
 %dir %{_datadir}/OpenCV
 %{_datadir}/OpenCV/haarcascades
 %{_datadir}/OpenCV/lbpcascades
 
 %files core
-%{_libdir}/libopencv_core.so.2.4*
-%{_libdir}/libopencv_flann.so.2.4*
-%{_libdir}/libopencv_imgproc.so.2.4*
-%{_libdir}/libopencv_ml.so.2.4*
-%{_libdir}/libopencv_photo.so.2.4*
-%{_libdir}/libopencv_video.so.2.4*
+%{_libdir}/libopencv_core.so.3.1*
+%{_libdir}/libopencv_features2d.so.3.1*
+%{_libdir}/libopencv_flann.so.3.1*
+%{_libdir}/libopencv_highgui.so.3.1*
+%{_libdir}/libopencv_imgcodecs.so.3.1*
+%{_libdir}/libopencv_imgproc.so.3.1*
+%{_libdir}/libopencv_ml.so.3.1*
+%{_libdir}/libopencv_objdetect.so.3.1*
+%{_libdir}/libopencv_photo.so.3.1*
+%{_libdir}/libopencv_shape.so.3.1*
+%{_libdir}/libopencv_stitching.so.3.1*
+%{_libdir}/libopencv_superres.so.3.1*
+%{_libdir}/libopencv_video.so.3.1*
+%{_libdir}/libopencv_videoio.so.3.1*
+%{_libdir}/libopencv_videostab.so.3.1*
+%{_libdir}/libopencv_viz.so.3.1*
 
 %files devel
 %{_includedir}/opencv
 %{_includedir}/opencv2
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
-%dir %{_libdir}/OpenCV/
 %{_libdir}/OpenCV/*.cmake
 
 %files devel-docs
 %doc %{_datadir}/OpenCV/samples
 
 %files python
-%{python2_sitearch}/cv.py*
 %{python2_sitearch}/cv2.so
 
+%files python3
+%{python3_sitearch}/cv2.cpython-3*.so
+
+
+%files contrib
+%{_libdir}/libopencv_aruco.so.3.1*
+%{_libdir}/libopencv_bgsegm.so.3.1*
+%{_libdir}/libopencv_bioinspired.so.3.1*
+%{_libdir}/libopencv_calib3d.so.3.1*
+%{_libdir}/libopencv_ccalib.so.3.1*
+%{_libdir}/libopencv_datasets.so.3.1*
+%{_libdir}/libopencv_dnn.so.3.1*
+%{_libdir}/libopencv_dpm.so.3.1*
+%{_libdir}/libopencv_face.so.3.1*
+%{_libdir}/libopencv_fuzzy.so.3.1*
+%{_libdir}/libopencv_hdf.so.3.1*
+%{_libdir}/libopencv_line_descriptor.so.3.1*
+%{_libdir}/libopencv_optflow.so.3.1*
+%{_libdir}/libopencv_plot.so.3.1*
+%{_libdir}/libopencv_reg.so.3.1*
+%{_libdir}/libopencv_rgbd.so.3.1*
+%{_libdir}/libopencv_saliency.so.3.1*
+%{_libdir}/libopencv_stereo.so.3.1*
+%{_libdir}/libopencv_structured_light.so.3.1*
+%{_libdir}/libopencv_surface_matching.so.3.1*
+%{_libdir}/libopencv_text.so.3.1*
+%{_libdir}/libopencv_tracking.so.3.1*
+%{_libdir}/libopencv_xfeatures2d.so.3.1*
+%{_libdir}/libopencv_ximgproc.so.3.1*
+%{_libdir}/libopencv_xobjdetect.so.3.1*
+%{_libdir}/libopencv_xphoto.so.3.1*
+
 %changelog
+* Wed Apr 20 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-2
+- Add BR:libwebp-devel .
+- Merge from 2.4.12.3 package: 
+  Add aarch64 and ppc64le to list of architectures where TBB is supported (#1262788).
+  Use bcond tags to easily enable or disable modules.
+  Fix unused-direct-shlib-dependency in cmake with global optflags.
+  Added README.md with references to online documentation.
+  Investigation on the documentation, added a few notes.
+- Update to 3.1.0 (Fri Mar 25 2016 Pavel Kajaba <pkajaba@redhat.com> - 3.1.0-1)
+- Added opencv_contrib (Thu Jul 09 2015 Sérgio Basto <sergio@serjux.com> -
+  3.0.0-2)
+- Update to 3.0.0 (Fri Jun 05 2015 Jozef Mlich <jmlich@redhat.com> - 3.0.0-1)
+
 * Tue Mar 01 2016 Yaakov Selkowitz <yselkowi@redhat.com> - 2.4.12.3-3
 - Fix FTBFS with GCC 6 (#1307821)
 
