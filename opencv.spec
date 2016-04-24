@@ -12,7 +12,7 @@
 
 Name:           opencv
 Version:        3.1.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -72,6 +72,7 @@ BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
 BuildRequires:  python3-devel
 BuildRequires:  numpy, swig >= 1.3.24
+BuildRequires:  python3-numpy
 BuildRequires:  python-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} > 20
@@ -82,9 +83,23 @@ BuildRequires:  python-sphinx
 %{?with_xine:BuildRequires:  xine-lib-devel}
 BuildRequires:  opencl-headers
 BuildRequires:  libgphoto2-devel
-BuildRequires:  python3-numpy
-BuildRequires:  vtk-devel
 BuildRequires:  libwebp-devel
+BuildRequires:  tesseract-devel
+BuildRequires:  protobuf-devel
+BuildRequires:  gdal-devel
+BuildRequires:  glog-devel
+BuildRequires:  doxygen
+BuildRequires:  gflags-devel
+BuildRequires:  SFML-devel
+BuildRequires:  libucil-devel 
+#BuildRequires:  libunicap-devel
+BuildRequires:  qt5-qtbase-devel
+BuildRequires:  mesa-libGL-devel mesa-libGLU-devel
+BuildRequires:  hdf5-devel
+#ceres-solver-devel push eigen3-devel and tbb-devel, maybe we should enable all
+#by default.
+#BuildRequires:  ceres-solver-devel
+#BuildRequires:  plantuml
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -105,7 +120,8 @@ This package contains the OpenCV C/C++ core libraries.
 %package        devel
 Summary:        Development files for using the OpenCV library
 Group:          Development/Libraries
-Requires:       opencv%{_isa} = %{version}-%{release}
+Requires:       %{name}%{_isa} = %{version}-%{release}
+Requires:       %{name}-contrib%{_isa} = %{version}-%{release}
 
 %description    devel
 This package contains the OpenCV C/C++ library and header files, as well as
@@ -167,7 +183,7 @@ rm -rf 3rdparty/
 
 %build
 # enabled by default if libraries are presents at build time:
-# GTK, GSTREAMER, UNICAP, 1394, V4L
+# GTK, GSTREAMER, 1394, V4L, eigen3
 # non available on Fedora: FFMPEG, XINE
 mkdir -p build
 pushd build
@@ -176,38 +192,42 @@ pushd build
 
 %cmake CMAKE_VERBOSE=1 \
  -DWITH_IPP=OFF \
+ -DWITH_QT=ON \
+ -DWITH_OPENGL=ON \
+ -DWITH_GDAL=ON \
+ -DWITH_UNICAP=ON \
  -DPYTHON_PACKAGES_PATH=%{python_sitearch} \
  -DCMAKE_SKIP_RPATH=ON \
  -DENABLE_PRECOMPILED_HEADERS:BOOL=OFF \
 %ifnarch x86_64 ia64
- -DENABLE_SSE=0 \
- -DENABLE_SSE2=0 \
+ -DENABLE_SSE=OFF \
+ -DENABLE_SSE2=OFF \
 %endif
- %{!?with_sse3:-DENABLE_SSE3=0} \
+ %{!?with_sse3:-DENABLE_SSE3=OFF} \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
- -DBUILD_TEST=1 \
- -DBUILD_opencv_java=0 \
+ -DBUILD_opencv_java=OFF \
 %{?with_tbb: \
 %ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
- -DWITH_TBB=1 -DTBB_LIB_DIR=%{_libdir} \
+ -DWITH_TBB=ON \
 %endif
 } \
- %{!?with_gstreamer:-DWITH_GSTREAMER=0} \
- %{!?with_ffmpeg:-DWITH_FFMPEG=0} \
- -DBUILD_opencv_nonfree=0 \
+ %{!?with_gstreamer:-DWITH_GSTREAMER=OFF} \
+ %{!?with_ffmpeg:-DWITH_FFMPEG=OFF} \
 %{?with_cuda: \
+ -DWITH_CUDA=ON \
  -DCUDA_TOOLKIT_ROOT_DIR=%{?_cuda_topdir} \
- -DCUDA_VERBOSE_BUILD=1 \
- -DCUDA_PROPAGATE_HOST_FLAGS=0 \
+ -DCUDA_VERBOSE_BUILD=ON \
+ -DCUDA_PROPAGATE_HOST_FLAGS=OFF \
 } \
 %{?with_openni: \
 %ifarch %{ix86} x86_64
  -DWITH_OPENNI=ON \
 %endif
 } \
- %{!?with_xine:-DWITH_XINE=0} \
- -DINSTALL_C_EXAMPLES=1 \
- -DINSTALL_PYTHON_EXAMPLES=1 \
+ %{!?with_xine:-DWITH_XINE=OFF} \
+ -DBUILD_EXAMPLES=ON \
+ -DINSTALL_C_EXAMPLES=ON \
+ -DINSTALL_PYTHON_EXAMPLES=ON \
  -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  ..
@@ -281,7 +301,8 @@ popd
 %{_libdir}/libopencv_video.so.3.1*
 %{_libdir}/libopencv_videoio.so.3.1*
 %{_libdir}/libopencv_videostab.so.3.1*
-%{_libdir}/libopencv_viz.so.3.1*
+%{_libdir}/libopencv_cvv.so.3.1*
+#{_libdir}/libopencv_viz.so.3.1*
 
 %files devel
 %{_includedir}/opencv
@@ -329,6 +350,19 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Fri Apr 22 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-3
+- Use always ON and OFF instead 0 and 1 in cmake command.
+- Remove BUILD_TEST and TBB_LIB_DIR variables not used by cmake.
+- Add BRs: tesseract-devel, protobuf-devel, glog-devel, doxygen,
+  gflags-devel, SFML-devel, libucil-devel, qt5-qtbase-devel, mesa-libGL-devel,
+  mesa-libGLU-devel and hdf5-devel.
+- Remove BR: vtk-devel because VTK support is disabled. Incompatible 
+  combination: OpenCV + Qt5 and VTK ver.6.2.0 + Qt4
+- Enable build with Qt5.
+- Enable build with OpenGL.
+- Enable build with UniCap.
+- Also requires opencv-contrib when install opencv-devel (#1329790).
+
 * Wed Apr 20 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-2
 - Add BR:libwebp-devel .
 - Merge from 2.4.12.3 package: 
