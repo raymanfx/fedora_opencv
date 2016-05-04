@@ -12,7 +12,7 @@
 
 Name:           opencv
 Version:        3.1.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -57,17 +57,17 @@ BuildRequires:  libGL-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  gtkglext-devel
 BuildRequires:  OpenEXR-devel
-%{?with_openni:
 %ifarch %{ix86} x86_64
+%{?with_openni:
 BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
-%endif
 }
-%{?with_tbb:
+%endif
 %ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
+%{?with_tbb: 
 BuildRequires:  tbb-devel
-%endif
 }
+%endif
 BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
 BuildRequires:  python3-devel
@@ -206,11 +206,9 @@ pushd build
  %{!?with_sse3:-DENABLE_SSE3=OFF} \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_opencv_java=OFF \
-%{?with_tbb: \
 %ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
- -DWITH_TBB=ON \
+%{?with_tbb: -DWITH_TBB=ON } \
 %endif
-} \
  %{!?with_gstreamer:-DWITH_GSTREAMER=OFF} \
  %{!?with_ffmpeg:-DWITH_FFMPEG=OFF} \
 %{?with_cuda: \
@@ -219,11 +217,9 @@ pushd build
  -DCUDA_VERBOSE_BUILD=ON \
  -DCUDA_PROPAGATE_HOST_FLAGS=OFF \
 } \
-%{?with_openni: \
 %ifarch %{ix86} x86_64
- -DWITH_OPENNI=ON \
+%{?with_openni: -DWITH_OPENNI=ON } \
 %endif
-} \
  %{!?with_xine:-DWITH_XINE=OFF} \
  -DBUILD_EXAMPLES=ON \
  -DINSTALL_C_EXAMPLES=ON \
@@ -350,6 +346,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Wed May 04 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-4
+- Put all idefs and ifarchs outside the scope of rpm conditional builds, rather
+than vice versa, as had organized some time ago, it seems to me more correct.
+
 * Fri Apr 22 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-3
 - Use always ON and OFF instead 0 and 1 in cmake command.
 - Remove BUILD_TEST and TBB_LIB_DIR variables not used by cmake.
