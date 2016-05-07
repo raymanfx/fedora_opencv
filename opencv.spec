@@ -18,21 +18,25 @@ Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.org
-# Need to remove SIFT/SURF from source tarball, due to legal concerns
-# No more sift.cpp or surf.cpp in source tarball.
-# Removed because we don't use pre-built contribs
-# rm -rf 3rdparty
 #Source0:	%{version}.zip
 Source0:        https://github.com/Itseez/opencv/archive/%{version}/opencv-%{version}.tar.gz
-Source1:        opencv-samples-Makefile
-Source2:        https://github.com/Itseez/opencv_contrib/archive/%{version}/opencv_contrib-%{version}.tar.gz
+#Source1:        opencv-samples-Makefile
+# 
+# Need to remove SIFT/SURF from source tarball, due to legal concerns
+# export VERSION=3.1.0
+# cd opencv_contrib-${VERSION}/
+# rm -rf modules/xfeatures2d/
+# cd ..; tar zcf opencv_contrib-clean-${VERSION}.tar.gz opencv_contrib-${VERSION}/
+Source2:        opencv_contrib-clean-%{version}.tar.gz
+#Source2:       https://github.com/Itseez/opencv_contrib/archive/%%{version}/opencv_contrib-%%{version}.tar.gz
 #http://code.opencv.org/issues/2720
-#Patch2:         OpenCV-2.4.4-pillow.patch
+Patch2:         OpenCV-2.4.4-pillow.patch
 #Patch3:         opencv-2.4.9-ts_static.patch
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch4:         opencv-2.4.7-cmake_paths.patch
 Patch5:         opencv-3.1.0-cmake_example.patch
+Patch6:         OpenCV-3.1-pillow.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -143,6 +147,7 @@ Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       numpy
+%{?python_provide:%python_provide python2-%{srcname}}
 
 %description    python
 This package contains Python bindings for the OpenCV library.
@@ -152,6 +157,7 @@ Summary:        Python3 bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       numpy
+%{?python_provide:%python_provide python3-%{srcname}}
 
 %description    python3
 This package contains Python3 bindings for the OpenCV library.
@@ -172,10 +178,14 @@ to provide decent performance and stability.
 %setup -q -a2
 # we don't use pre-built contribs
 rm -rf 3rdparty/
-#patch2 -p1 -b .pillow
+%patch2 -p1 -b .pillow
+#patch3 breaks build, need investigation
 #patch3 -p1 -b .ts_static
 %patch4 -p1 -b .cmake_paths
 %patch5 -p1 -b .cmake_example
+pushd opencv_contrib-%{version}
+%patch6 -p1 -b .pillow
+popd
 
 # fix dos end of lines
 #sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
@@ -340,15 +350,18 @@ popd
 %{_libdir}/libopencv_surface_matching.so.3.1*
 %{_libdir}/libopencv_text.so.3.1*
 %{_libdir}/libopencv_tracking.so.3.1*
-%{_libdir}/libopencv_xfeatures2d.so.3.1*
 %{_libdir}/libopencv_ximgproc.so.3.1*
 %{_libdir}/libopencv_xobjdetect.so.3.1*
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
-* Wed May 04 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-4
+* Sat May 07 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-4
 - Put all idefs and ifarchs outside the scope of rpm conditional builds, rather
 than vice versa, as had organized some time ago, it seems to me more correct.
+- Remove SIFT/SURF from source tarball in opencv_contrib, due to legal concerns
+- Redo and readd OpenCV-2.4.4-pillow.patch .
+- Add OpenCV-3.1-pillow.patch to apply only opencv_contrib .
+- Add the %python_provide macro (Packaging:Python guidelines). 
 
 * Fri Apr 22 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-3
 - Use always ON and OFF instead 0 and 1 in cmake command.
