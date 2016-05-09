@@ -1,4 +1,3 @@
-%global optflags %(echo %{optflags} -Wl,--as-needed )
 #global indice   a
 %bcond_with    ffmpeg
 %bcond_without gstreamer
@@ -12,7 +11,7 @@
 
 Name:           opencv
 Version:        3.1.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -355,9 +354,13 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Mon May 09 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-5
+- Don't clean unneeded symbols (as recommended by fedora-review), fix undefined
+  symbol: cvLoadImage in Unknown on line 0 on php-facedetect package.
+
 * Sat May 07 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-4
 - Put all idefs and ifarchs outside the scope of rpm conditional builds, rather
-than vice versa, as had organized some time ago, it seems to me more correct.
+  than vice versa, as had organized some time ago, it seems to me more correct.
 - Remove SIFT/SURF from source tarball in opencv_contrib, due to legal concerns
 - Redo and readd OpenCV-2.4.4-pillow.patch .
 - Add OpenCV-3.1-pillow.patch to apply only opencv_contrib .
