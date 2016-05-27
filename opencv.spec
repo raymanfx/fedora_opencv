@@ -8,16 +8,17 @@
 %bcond_with    sse3
 %bcond_with    cuda
 %bcond_with    xine
+%global srcname opencv
 
 Name:           opencv
 Version:        3.1.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.org
-#Source0:	%{version}.zip
+#Source0:       %{version}.zip
 Source0:        https://github.com/Itseez/opencv/archive/%{version}/opencv-%{version}.tar.gz
 #Source1:        opencv-samples-Makefile
 # 
@@ -354,6 +355,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Fri May 27 2016 Till Maas <opensource@till.name> - 3.1.0-6
+- Define %%srcname for python subpackages
+- Fix whitespace
+
 * Mon May 09 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-5
 - Don't clean unneeded symbols (as recommended by fedora-review), fix undefined
   symbol: cvLoadImage in Unknown on line 0 on php-facedetect package.
