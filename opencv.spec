@@ -12,7 +12,7 @@
 
 Name:           opencv
 Version:        3.1.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -355,6 +355,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.0-7
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
 * Fri May 27 2016 Till Maas <opensource@till.name> - 3.1.0-6
 - Define %%srcname for python subpackages
 - Fix whitespace
