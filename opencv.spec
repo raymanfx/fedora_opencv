@@ -10,9 +10,15 @@
 %bcond_with    xine
 %global srcname opencv
 
+# Required because opencv-core has lot of spurious dependencies
+# (despite supposed to be "-core")
+# TODO: to be fixed properly upstream
+# https://github.com/opencv/opencv/issues/7001
+%global optflags %(echo %{optflags} -Wl,--as-needed )
+
 Name:           opencv
 Version:        3.1.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -355,6 +361,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Tue Jul 26 2016 Nicolas Chauvet <kwizart@gmail.com> - 3.1.0-8
+- Clean uneeded symbols until fixed upstream
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1.0-7
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
