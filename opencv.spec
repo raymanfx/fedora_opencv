@@ -18,7 +18,7 @@
 
 Name:           opencv
 Version:        3.1.0
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -361,6 +361,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Thu Jan 26 2017 Orion Poplawski <orion@cora.nwra.com> - 3.1.0-12
+- Rebuild for protobuf 3.2.0
+
 * Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 3.1.0-11
 - Rebuild for Python 3.6
 
