@@ -18,7 +18,7 @@
 
 Name:           opencv
 Version:        3.1.0
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -361,6 +361,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.3.1*
 
 %changelog
+* Tue Feb 21 2017 Sandro Mani <manisandro@gmail.com> - 3.1.0-15
+- Rebuild (tesseract)
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.0-14
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
