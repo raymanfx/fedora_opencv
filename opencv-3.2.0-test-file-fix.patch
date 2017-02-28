@@ -1,0 +1,13 @@
+diff -urNp old/modules/optflow/samples/motempl.py new/modules/optflow/samples/motempl.py
+--- old/modules/optflow/samples/motempl.py	2016-12-23 12:09:43.000000000 +0100
++++ new/modules/optflow/samples/motempl.py	2017-02-27 09:04:30.218887521 +0100
+@@ -37,7 +37,8 @@ if __name__ == '__main__':
+         sys.exit(1)
+     ret, frame = cam.read()
+     if ret == False:
+-        break
++        print("could not read from " + str(video_src) + " !\n")
++        sys.exit(1)
+     h, w = frame.shape[:2]
+     prev_frame = frame.copy()
+     motion_history = np.zeros((h, w), np.float32)
