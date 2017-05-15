@@ -21,7 +21,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -376,6 +376,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.2.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
+
 * Mon Feb 27 2017 Josef Ridky <jridky@redhat.com> - 3.2.0-1
 - Rebase to the latest version (3.2.0) - #1408880
 - Remove unused BuildRequires and patches
