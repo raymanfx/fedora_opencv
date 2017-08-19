@@ -21,7 +21,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -160,14 +160,18 @@ BuildArch:      noarch
 %description    devel-docs
 This package contains the OpenCV documentation and examples programs.
 
-%package        python
+%package        -n python2-opencv
+%{?python_provide:%python_provide python2-opencv}
+# Remove before F30
+Provides: %{name}-python%{?_isa} = %{version}-%{release}
+Obsoletes: %{name}-python < %{version}-%{release}
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       numpy
 %{?python_provide:%python_provide python2-%{srcname}}
 
-%description    python
+%description    -n python2-opencv
 This package contains Python bindings for the OpenCV library.
 
 %package        python3
@@ -337,7 +341,7 @@ popd
 %files devel-docs
 %doc %{_datadir}/OpenCV/samples
 
-%files python
+%files -n python2-opencv
 %{python2_sitearch}/cv2.so
 
 %files python3
@@ -376,6 +380,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sat Aug 19 2017 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 3.2.0-6
+- Python 2 binary package renamed to python2-opencv
+  See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.2.0-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
