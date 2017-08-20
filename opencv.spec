@@ -21,7 +21,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -163,6 +163,7 @@ This package contains the OpenCV documentation and examples programs.
 %package        -n python2-opencv
 %{?python_provide:%python_provide python2-opencv}
 # Remove before F30
+Provides: %{name}-python = %{version}-%{release}
 Provides: %{name}-python%{?_isa} = %{version}-%{release}
 Obsoletes: %{name}-python < %{version}-%{release}
 Summary:        Python bindings for apps which use OpenCV
@@ -380,6 +381,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun Aug 20 2017 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 3.2.0-7
+- Add Provides for the old name without %%_isa
+
 * Sat Aug 19 2017 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 3.2.0-6
 - Python 2 binary package renamed to python2-opencv
   See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3
