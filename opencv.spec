@@ -1,10 +1,10 @@
 #global indice   a
 %bcond_with    ffmpeg
-%bcond_with    gstreamer
+%bcond_without gstreamer
 %bcond_with    eigen2
 %bcond_with    eigen3
 %bcond_with    openni
-%bcond_with    tbb
+%bcond_without tbb
 %bcond_with    sse3
 %bcond_with    cuda
 %bcond_with    xine
@@ -21,7 +21,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -82,11 +82,9 @@ BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
 }
 %endif
-%ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
-%{?with_tbb: 
+%{?with_tbb:
 BuildRequires:  tbb-devel
 }
-%endif
 BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
 BuildRequires:  python3-devel
@@ -110,7 +108,7 @@ BuildRequires:  glog-devel
 BuildRequires:  doxygen
 BuildRequires:  gflags-devel
 BuildRequires:  SFML-devel
-BuildRequires:  libucil-devel 
+BuildRequires:  libucil-devel
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  mesa-libGL-devel mesa-libGLU-devel
 BuildRequires:  hdf5-devel
@@ -240,9 +238,7 @@ pushd build
  %{!?with_sse3:-DENABLE_SSE3=OFF} \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_opencv_java=OFF \
-%ifarch %{ix86} x86_64 ia64 ppc %{power64} aarch64
  %{?with_tbb: -DWITH_TBB=ON } \
-%endif
  %{!?with_gstreamer:-DWITH_GSTREAMER=OFF} \
  %{!?with_ffmpeg:-DWITH_FFMPEG=OFF} \
 %{?with_cuda: \
@@ -381,6 +377,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun Aug 20 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-8
+- Reenable gstreamer
+- Remove architecture checks for tbb and enable it, inspired on (#1262788)
+
 * Sun Aug 20 2017 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 3.2.0-7
 - Add Provides for the old name without %%_isa
 
