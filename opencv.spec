@@ -2,13 +2,21 @@
 %bcond_with    ffmpeg
 %bcond_without gstreamer
 %bcond_with    eigen2
+%ifnarch ppc64le
+%bcond_without eigen3
+%else
 %bcond_with    eigen3
-%bcond_with    openni
+%endif
+%bcond_without openni
 %bcond_without tbb
 %bcond_with    sse3
 %bcond_with    cuda
 %bcond_with    xine
+# Atlas need (missing: Atlas_CLAPACK_INCLUDE_DIR Atlas_CBLAS_LIBRARY Atlas_BLAS_LIBRARY Atlas_LAPACK_LIBRARY)
 %bcond_with    atlas
+# BLAS need LAPACK we may add -DWITH_LAPACK=OFF compiles but disable atlas and openblas
+%bcond_with    openblas
+#VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4
 %bcond_with    vtk
 %global srcname opencv
 %global abiver 3.2
@@ -21,7 +29,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -120,6 +128,8 @@ BuildRequires:  hdf5-devel
 BuildRequires:  ceres-solver-devel
   }
 }
+#BuildRequires:  plantuml
+%{?with_openblas:BuildRequires: openblas-devel}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -377,6 +387,11 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun Aug 20 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-9
+- Enable openni.
+- Enable eigen3 except in ppc64le because fails to build in OpenCL headers.
+- Documented why is not enabled atlas, openblas and vtk.
+
 * Sun Aug 20 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-8
 - Reenable gstreamer
 - Remove architecture checks for tbb and enable it, inspired on (#1262788)
