@@ -7,7 +7,12 @@
 %else
 %bcond_with    eigen3
 %endif
+%ifarch %{ix86} x86_64 %{arm}
 %bcond_without openni
+# no openni in other arches even with --with openni
+#else
+#bcond_with openni
+%endif
 %bcond_without tbb
 %bcond_with    sse3
 %bcond_with    cuda
@@ -29,7 +34,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -84,12 +89,10 @@ BuildRequires:  libGL-devel
 BuildRequires:  libv4l-devel
 BuildRequires:  gtkglext-devel
 BuildRequires:  OpenEXR-devel
-%ifarch %{ix86} x86_64 %{arm}
 %{?with_openni:
 BuildRequires:  openni-devel
 BuildRequires:  openni-primesense
 }
-%endif
 %{?with_tbb:
 BuildRequires:  tbb-devel
 }
@@ -257,9 +260,7 @@ pushd build
  -DCUDA_VERBOSE_BUILD=ON \
  -DCUDA_PROPAGATE_HOST_FLAGS=OFF \
 } \
-%ifarch %{ix86} x86_64
-%{?with_openni: -DWITH_OPENNI=ON } \
-%endif
+ %{?with_openni: -DWITH_OPENNI=ON } \
  %{!?with_xine:-DWITH_XINE=OFF} \
  -DBUILD_EXAMPLES=ON \
  -DINSTALL_C_EXAMPLES=ON \
@@ -387,6 +388,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon Aug 28 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-10
+- Better conditionals to enable openni only available in ix86, x86_64 and arm
+
 * Sun Aug 20 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-9
 - Enable openni.
 - Enable eigen3 except in ppc64le because fails to build in OpenCL headers.
