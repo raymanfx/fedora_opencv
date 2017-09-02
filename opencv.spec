@@ -34,7 +34,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -101,7 +101,7 @@ BuildRequires:  python2-devel
 BuildRequires:  python3-devel
 BuildRequires:  numpy, swig >= 1.3.24
 BuildRequires:  python3-numpy
-BuildRequires:  python-sphinx
+BuildRequires:  python2-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} > 20
 %{?with_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
@@ -314,6 +314,9 @@ popd
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
+%post contrib -p /sbin/ldconfig
+%postun contrib -p /sbin/ldconfig
+
 %files
 %doc README.md
 %license LICENSE
@@ -389,6 +392,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sat Sep 02 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-12
+- Fix 2 rpmlint errors
+
 * Sat Sep 02 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-11
 - Enable libv4l1 to fix open a video (#1487816)
 
