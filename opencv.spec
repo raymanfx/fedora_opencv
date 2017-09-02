@@ -34,7 +34,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -267,6 +267,7 @@ pushd build
  -DINSTALL_PYTHON_EXAMPLES=ON \
  -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
+ -DWITH_LIBV4L=ON \
  ..
 
 make VERBOSE=1 %{?_smp_mflags}
@@ -388,6 +389,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sat Sep 02 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-11
+- Enable libv4l1 to fix open a video (#1487816)
+
 * Mon Aug 28 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-10
 - Better conditionals to enable openni only available in ix86, x86_64 and arm
 
