@@ -34,7 +34,7 @@
 
 Name:           opencv
 Version:        3.2.0
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -99,8 +99,9 @@ BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
 BuildRequires:  python3-devel
-BuildRequires:  numpy, swig >= 1.3.24
+BuildRequires:  python2-numpy
 BuildRequires:  python3-numpy
+BuildRequires:  swig >= 1.3.24
 BuildRequires:  python2-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} > 20
@@ -180,7 +181,7 @@ Obsoletes: %{name}-python < %{version}-%{release}
 Summary:        Python bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
-Requires:       numpy
+Requires:       python2-numpy
 %{?python_provide:%python_provide python2-%{srcname}}
 
 %description    -n python2-opencv
@@ -190,7 +191,7 @@ This package contains Python bindings for the OpenCV library.
 Summary:        Python3 bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
-Requires:       numpy
+Requires:       python3-numpy
 %{?python_provide:%python_provide python3-%{srcname}}
 
 %description    python3
@@ -392,6 +393,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sat Oct 28 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-13
+- Require python3-numpy instead numpy for opencv-python3 (#1504555)
+
 * Sat Sep 02 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-12
 - Fix 2 rpmlint errors
 
