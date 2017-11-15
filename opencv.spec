@@ -2,29 +2,30 @@
 %bcond_with    ffmpeg
 %bcond_without gstreamer
 %bcond_with    eigen2
-%ifnarch ppc64le
 %bcond_without eigen3
+%ifnarch ppc64le
+%bcond_without opencl
 %else
-%bcond_with    eigen3
+# https://bugzilla.redhat.com/show_bug.cgi?id=1487174
+%bcond_with    opencl
 %endif
 %ifarch %{ix86} x86_64 %{arm}
 %bcond_without openni
-# no openni in other arches even with --with openni
-#else
-#bcond_with openni
+%else
+# we dont have openni in other archs
+%bcond_with openni
 %endif
 %bcond_without tbb
-%bcond_with    sse3
 %bcond_with    cuda
 %bcond_with    xine
 # Atlas need (missing: Atlas_CLAPACK_INCLUDE_DIR Atlas_CBLAS_LIBRARY Atlas_BLAS_LIBRARY Atlas_LAPACK_LIBRARY)
 %bcond_with    atlas
-# BLAS need LAPACK we may add -DWITH_LAPACK=OFF compiles but disable atlas and openblas
-%bcond_with    openblas
+%bcond_without openblas
+%bcond_without gdcm
 #VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4
 %bcond_with    vtk
 %global srcname opencv
-%global abiver 3.2
+%global abiver 3.3
 
 # Required because opencv-core has lot of spurious dependencies
 # (despite supposed to be "-core")
@@ -33,31 +34,18 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.2.0
-Release:        13%{?dist}
+Version:        3.3.1
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.org
-# HOW TO PREPARE TARBALLS FOR FEDORA
+# RUN opencv-clean.sh TO PREPARE TARBALLS FOR FEDORA
 #
 # Need to remove copyrighted lena.jpg images from tarball (rhbz#1295173)
 # and SIFT/SURF from tarball, due to legal concerns.
-# Upstream tarball is available on https://github.com/opencv/opencv/archive/${VERSION}/opencv-${VERSION}.tar.gz
-# 
-# export VERSION=3.2.0
-# wget https://github.com/opencv/opencv/archive/${VERSION}/opencv-${VERSION}.tar.gz
-# tar xvf opencv-${VERSION}.tar.gz
-# cd opencv-${VERSION}
-# find ./ -iname "len*.*" -exec rm {} \;
-# rm -rf modules/xfeatures2d/
-# cd ..; tar zcf opencv-clean-${VERSION}.tar.gz opencv-${VERSION}/
-# wget https://github.com/Itseez/opencv_contrib/archive/%%{version}/opencv_contrib-%%{version}.tar.gz
-# tar xvf opencv_contrib-${VERSION}.tar.gz
-# cd opencv_contrib-${VERSION}
-# rm -rf modules/xfeatures2d/
-# cd ..; tar zcf opencv_contrib-clean-${VERSION}.tar.gz opencv_contrib-${VERSION}/
+#
 Source0:        %{name}-clean-%{version}.tar.gz
 Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
@@ -110,7 +98,7 @@ BuildRequires:  python2-sphinx
 %{?with_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
 %endif
 %{?with_xine:BuildRequires:  xine-lib-devel}
-BuildRequires:  opencl-headers
+%{?with_opencl:BuildRequires:  opencl-headers}
 BuildRequires:  libgphoto2-devel
 BuildRequires:  libwebp-devel
 BuildRequires:  tesseract-devel
@@ -133,7 +121,17 @@ BuildRequires:  ceres-solver-devel
   }
 }
 #BuildRequires:  plantuml
-%{?with_openblas:BuildRequires: openblas-devel}
+%{?with_openblas:
+BuildRequires:  openblas-devel
+BuildRequires:  blas-devel
+BuildRequires:  lapack-devel
+#BuildRequires:  blas64-devel
+#BuildRequires:  lapack64-devel
+#BuildRequires: torch-devel (retired)
+}
+%{?with_gdcm:
+BuildRequires:  gdcm-devel
+}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -212,14 +210,13 @@ to provide decent performance and stability.
 %prep
 %setup -q -a1
 # we don't use pre-built contribs
-pwd
-rm -rf 3rdparty/
+rm -r 3rdparty/
 %patch1 -p1 -b .cmake_paths
-pushd %{name}_contrib-%{version}
 # missing dependecies for dnn module in Fedora (protobuf-cpp)
-rm -rf modules/dnn/
+rm -r modules/dnn/
+pushd %{name}_contrib-%{version}
+#rm -r modules/dnn_modern/
 %patch2 -p1 -b .pillow
-%patch3 -p1 -b .fixtest
 popd
 
 # fix dos end of lines
@@ -237,6 +234,7 @@ pushd build
 
 %cmake CMAKE_VERBOSE=1 \
  -DWITH_IPP=OFF \
+ -DWITH_ITT=OFF \
  -DWITH_QT=ON \
  -DWITH_OPENGL=ON \
  -DWITH_GDAL=ON \
@@ -245,11 +243,6 @@ pushd build
  -DCMAKE_SKIP_RPATH=ON \
  -DWITH_CAROTENE=OFF \
  -DENABLE_PRECOMPILED_HEADERS:BOOL=OFF \
-%ifnarch x86_64 ia64
- -DENABLE_SSE=OFF \
- -DENABLE_SSE2=OFF \
-%endif
- %{!?with_sse3:-DENABLE_SSE3=OFF} \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_opencv_java=OFF \
  %{?with_tbb: -DWITH_TBB=ON } \
@@ -269,9 +262,10 @@ pushd build
  -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  -DWITH_LIBV4L=ON \
+ %{?with_gdcm:-DWITH_GDCM=ON} \
  ..
 
-make VERBOSE=1 %{?_smp_mflags}
+%make_build VERBOSE=1
 
 #make html_docs
 
@@ -288,7 +282,7 @@ popd
 
 %install
 pushd build
-make install DESTDIR=%{buildroot} INSTALL="install -p" CPPROG="cp -p"
+%{make_install}
 find %{buildroot} -name '*.la' -delete
 
 # install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/GNUmakefile
@@ -325,6 +319,7 @@ popd
 %dir %{_datadir}/OpenCV
 %{_datadir}/OpenCV/haarcascades
 %{_datadir}/OpenCV/lbpcascades
+%{_datadir}/OpenCV/valgrind*
 
 %files core
 %{_libdir}/libopencv_core.so.%{abiver}*
@@ -367,7 +362,8 @@ popd
 %{_libdir}/libopencv_bioinspired.so.%{abiver}*
 %{_libdir}/libopencv_calib3d.so.%{abiver}*
 %{_libdir}/libopencv_ccalib.so.%{abiver}*
-%{_libdir}/libopencv_datasets.so.%{abiver}*
+#Module opencv_datasets disabled because opencv_text dependency can't be resolved!
+#{_libdir}/libopencv_datasets.so.%{abiver}*
 # Disabled because of missing dependency package in fedora (protobuf-cpp)
 #{_libdir}/libopencv_dnn.so.%{abiver}*
 %{_libdir}/libopencv_dpm.so.%{abiver}*
@@ -375,6 +371,7 @@ popd
 %{_libdir}/libopencv_freetype.so.%{abiver}*
 %{_libdir}/libopencv_fuzzy.so.%{abiver}*
 %{_libdir}/libopencv_hdf.so.%{abiver}*
+%{_libdir}/libopencv_img_hash.so.%{abiver}*
 %{_libdir}/libopencv_line_descriptor.so.%{abiver}*
 %{_libdir}/libopencv_optflow.so.%{abiver}*
 %{_libdir}/libopencv_phase_unwrapping.so.%{abiver}*
@@ -385,14 +382,29 @@ popd
 %{_libdir}/libopencv_stereo.so.%{abiver}*
 %{_libdir}/libopencv_structured_light.so.%{abiver}*
 %{_libdir}/libopencv_surface_matching.so.%{abiver}*
-%{_libdir}/libopencv_text.so.%{abiver}*
-# Disabled becouse of unable to solve dnn dependency
-#{_libdir}/libopencv_tracking.so.%{abiver}*
+#Module opencv_text disabled because opencv_dnn dependency can't be resolved!
+#{_libdir}/libopencv_text.so.%{abiver}*
+%{_libdir}/libopencv_tracking.so.%{abiver}*
 %{_libdir}/libopencv_ximgproc.so.%{abiver}*
 %{_libdir}/libopencv_xobjdetect.so.%{abiver}*
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Tue Nov 14 2017 Sérgio Basto <sergio@serjux.com> - 3.3.1-1
+- Update to 3.3.1
+- Fix WARNING: Option ENABLE_SSE='OFF' is deprecated and should not be used anymore
+-          Behaviour of this option is not backward compatible
+-          Refer to 'CPU_BASELINE'/'CPU_DISPATCH' CMake options documentation
+- Fix WARNING: Option ENABLE_SSE2='OFF' is deprecated and should not be used anymore
+-          Behaviour of this option is not backward compatible
+-          Refer to 'CPU_BASELINE'/'CPU_DISPATCH' CMake options documentation
+- Update opencv to 3.3.0
+- Patch3 is already in source code
+- Fix WARNING: Option ENABLE_SSE3='OFF' is deprecated and should not be used anymore
+- Enable openblas
+- Add conditonal to build with_gdcm
+- Disable "Intel ITT support" because source is in 3rdparty/ directory
+
 * Sat Oct 28 2017 Sérgio Basto <sergio@serjux.com> - 3.2.0-13
 - Require python3-numpy instead numpy for opencv-python3 (#1504555)
 
