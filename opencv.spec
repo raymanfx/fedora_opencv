@@ -35,7 +35,7 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -63,7 +63,7 @@ BuildRequires:  chrpath
 BuildRequires:  gtk3-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libvorbis-devel
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %ifnarch s390 s390x
 BuildRequires:  libraw1394-devel
 BuildRequires:  libdc1394-devel
@@ -92,7 +92,7 @@ BuildRequires:  python3-numpy
 BuildRequires:  swig >= 1.3.24
 BuildRequires:  python2-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
-%if 0%{?fedora} > 20
+%if 0%{?fedora} || 0%{?rhel} > 7
 %{?with_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
 %else
 %{?with_gstreamer:BuildRequires:  gstreamer-devel gstreamer-plugins-base-devel}
@@ -390,6 +390,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Jan 24 2018 Troy Dawson <tdawson@redhat.com> - 3.3.1-2
+- Update conditionals
+
 * Tue Nov 14 2017 Sérgio Basto <sergio@serjux.com> - 3.3.1-1
 - Update to 3.3.1
 - Fix WARNING: Option ENABLE_SSE='OFF' is deprecated and should not be used anymore
