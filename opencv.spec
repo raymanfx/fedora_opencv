@@ -1,4 +1,5 @@
 #global indice   a
+%bcond_with    tests
 %bcond_with    ffmpeg
 %bcond_without gstreamer
 %bcond_with    eigen2
@@ -35,7 +36,7 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -149,6 +150,7 @@ Group:          Development/Libraries
 %description    core
 This package contains the OpenCV C/C++ core libraries.
 
+
 %package        devel
 Summary:        Development files for using the OpenCV library
 Group:          Development/Libraries
@@ -158,41 +160,47 @@ Requires:       %{name}-contrib%{_isa} = %{version}-%{release}
 %description    devel
 This package contains the OpenCV C/C++ library and header files, as well as
 documentation. It should be installed if you want to develop programs that
-will use the OpenCV library. You should consider installing opencv-devel-docs
+will use the OpenCV library. You should consider installing opencv-doc
 package.
 
-%package        devel-docs
-Summary:        Development files for using the OpenCV library
+
+%package        doc
+Summary:        docs files
 Group:          Development/Libraries
 Requires:       opencv-devel = %{version}-%{release}
 BuildArch:      noarch
 
-%description    devel-docs
-This package contains the OpenCV documentation and examples programs.
+%description    doc
+This package contains the OpenCV documentation, samples and examples programs.
+
 
 %package        -n python2-opencv
-%{?python_provide:%python_provide python2-opencv}
-# Remove before F30
-Provides: %{name}-python = %{version}-%{release}
-Provides: %{name}-python%{?_isa} = %{version}-%{release}
-Obsoletes: %{name}-python < %{version}-%{release}
-Summary:        Python bindings for apps which use OpenCV
+Summary:        Python2 bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       python2-numpy
 %{?python_provide:%python_provide python2-%{srcname}}
+# Remove before F30
+Provides: %{name}-python = %{version}-%{release}
+Provides: %{name}-python%{?_isa} = %{version}-%{release}
+Obsoletes: %{name}-python < %{version}-%{release}
 
 %description    -n python2-opencv
 This package contains Python bindings for the OpenCV library.
 
-%package        python3
+
+%package        -n python3-opencv
 Summary:        Python3 bindings for apps which use OpenCV
 Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       python3-numpy
 %{?python_provide:%python_provide python3-%{srcname}}
+# Remove before F30
+Provides: %{name}-python3 = %{version}-%{release}
+Provides: %{name}-python3%{?_isa} = %{version}-%{release}
+Obsoletes: %{name}-python3 < %{version}-%{release}
 
-%description    python3
+%description    -n python3-opencv
 This package contains Python3 bindings for the OpenCV library.
 
 
@@ -215,7 +223,8 @@ rm -r 3rdparty/
 # missing dependecies for dnn module in Fedora (protobuf-cpp)
 rm -r modules/dnn/
 pushd %{name}_contrib-%{version}
-#rm -r modules/dnn_modern/
+# missing dependecies for dnn_modern module in Fedora (tiny-dnn)
+rm -r modules/dnn_modern/
 %patch2 -p1 -b .pillow
 popd
 
@@ -239,7 +248,6 @@ pushd build
  -DWITH_OPENGL=ON \
  -DWITH_GDAL=ON \
  -DWITH_UNICAP=ON \
- -DPYTHON_PACKAGES_PATH=%{python_sitearch} \
  -DCMAKE_SKIP_RPATH=ON \
  -DWITH_CAROTENE=OFF \
  -DENABLE_PRECOMPILED_HEADERS:BOOL=OFF \
@@ -267,15 +275,7 @@ pushd build
 
 %make_build VERBOSE=1
 
-#make html_docs
-
-# We may build html_docs with: make html_docs
-# we also got 234 rst files that are valid documentation.
-# find opencv-2.4.11/ -name *rst | wc -l
-# 234
-# but make install does not install any doc (except OpenCV/samples), so I just added
-# README.md index.rst with references to online documentation.
-# Conclusion I think we miss one sub-package opencv-docs.noarch , but we got opencv-devel-docs.noarch
+make doxygen
 
 popd
 
@@ -284,12 +284,6 @@ popd
 pushd build
 %{make_install}
 find %{buildroot} -name '*.la' -delete
-
-# install -pm644 %{SOURCE1} %{buildroot}%{_datadir}/OpenCV/samples/GNUmakefile
-
-# remove unnecessary documentation
-#rm -rf %{buildroot}%{_datadir}/OpenCV/doc
-
 popd
 
 %check
@@ -298,10 +292,13 @@ popd
 # ARGS=-V increases output verbosity
 # Make test is unavailble as of 2.3.1
 #ifnarch ppc64
-#pushd build
-#    LD_LIBRARY_PATH=%{_builddir}/%{tar_name}-%{version}/lib:$LD_LIBARY_PATH make test ARGS=-V || :
-#popd
+%if %{with tests}
+pushd build
+    LD_LIBRARY_PATH=%{_builddir}/%{name}-%{version}/build/lib:$LD_LIBARY_PATH make test ARGS=-V || :
+popd
+%endif
 #endif
+
 
 %post core -p /sbin/ldconfig
 %postun core -p /sbin/ldconfig
@@ -346,15 +343,15 @@ popd
 %{_libdir}/pkgconfig/opencv.pc
 %{_libdir}/OpenCV/*.cmake
 
-%files devel-docs
-%doc %{_datadir}/OpenCV/samples
+%files doc
+%{_datadir}/OpenCV/samples
+%{_datadir}/OpenCV/doc
 
 %files -n python2-opencv
 %{python2_sitearch}/cv2.so
 
-%files python3
+%files -n python3-opencv
 %{python3_sitearch}/cv2.cpython-3*.so
-
 
 %files contrib
 %{_libdir}/libopencv_aruco.so.%{abiver}*
@@ -390,6 +387,13 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu Jan 25 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-3
+- Rename sub-package opencv-python3 to python3-opencv and other minor fixes in
+  python packaging
+- Generate documentation
+- Rename sub-package devel-docs to doc
+- Cleanup some comments from opencv 2.4 packaging
+
 * Wed Jan 24 2018 Troy Dawson <tdawson@redhat.com> - 3.3.1-2
 - Update conditionals
 
