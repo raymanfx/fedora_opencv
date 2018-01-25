@@ -1,4 +1,5 @@
 #global indice   a
+%undefine _strict_symbol_defs_build
 %bcond_with    tests
 %bcond_with    ffmpeg
 %bcond_without gstreamer
