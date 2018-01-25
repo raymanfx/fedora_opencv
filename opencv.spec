@@ -1,33 +1,34 @@
 #global indice   a
 %undefine _strict_symbol_defs_build
-%bcond_with    tests
-%bcond_with    ffmpeg
-%bcond_without gstreamer
-%bcond_with    eigen2
-%bcond_without eigen3
+%bcond_with     tests
+%bcond_with     ffmpeg
+%bcond_without  gstreamer
+%bcond_with     eigen2
+%bcond_without  eigen3
 %ifnarch ppc64le
-%bcond_without opencl
+%bcond_without  opencl
 %else
 # https://bugzilla.redhat.com/show_bug.cgi?id=1487174
-%bcond_with    opencl
+%bcond_with     opencl
 %endif
 %ifarch %{ix86} x86_64 %{arm}
-%bcond_without openni
+%bcond_without  openni
 %else
 # we dont have openni in other archs
-%bcond_with openni
+%bcond_with     openni
 %endif
-%bcond_without tbb
-%bcond_with    cuda
-%bcond_with    xine
+%bcond_without  tbb
+%bcond_with     cuda
+%bcond_with     xine
 # Atlas need (missing: Atlas_CLAPACK_INCLUDE_DIR Atlas_CBLAS_LIBRARY Atlas_BLAS_LIBRARY Atlas_LAPACK_LIBRARY)
-%bcond_with    atlas
-%bcond_without openblas
-%bcond_without gdcm
+%bcond_with     atlas
+%bcond_without  openblas
+%bcond_without  gdcm
 #VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4
-%bcond_with    vtk
+%bcond_with     vtk
+
 %global srcname opencv
-%global abiver 3.3
+%global abiver  3.3
 
 # Required because opencv-core has lot of spurious dependencies
 # (despite supposed to be "-core")
