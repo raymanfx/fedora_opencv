@@ -21,11 +21,21 @@
 %bcond_with     cuda
 %bcond_with     xine
 # Atlas need (missing: Atlas_CLAPACK_INCLUDE_DIR Atlas_CBLAS_LIBRARY Atlas_BLAS_LIBRARY Atlas_LAPACK_LIBRARY)
+# LAPACK may use atlas or openblas since now it detect openblas, atlas is not used aanyway , more info please
+# check OpenCVFindLAPACK.cmake
 %bcond_with     atlas
 %bcond_without  openblas
 %bcond_without  gdcm
 #VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4
 %bcond_with     vtk
+%ifarch %{ix86} x86_64
+#disabled for now, maybe for opencv 3.4
+%bcond_with  mfx
+%else
+%bcond_with     mfx
+%endif
+%bcond_without  clp
+%bcond_without  va
 
 %global srcname opencv
 %global abiver  3.3
@@ -38,7 +48,7 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -56,6 +66,10 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 Patch1:         opencv-3.2.0-cmake_paths.patch
 Patch2:         opencv-3.1-pillow.patch
 Patch3:         opencv-3.2.0-test-file-fix.patch
+# Backport patch, update OpenBLAS support
+# https://github.com/opencv/opencv/pull/9955
+# https://github.com/opencv/opencv/commit/476c513447eb16784113e982f6bef0dcabb77732.diff
+Patch50:        476c513447eb16784113e982f6bef0dcabb77732.diff
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -90,10 +104,12 @@ BuildRequires:  tbb-devel
 BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
 BuildRequires:  python3-devel
+BuildRequires:  pylint
 BuildRequires:  python2-numpy
 BuildRequires:  python3-numpy
 BuildRequires:  swig >= 1.3.24
-BuildRequires:  python2-sphinx
+# opencv now uses doxygen
+#BuildRequires:  python2-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} || 0%{?rhel} > 7
 %{?with_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
@@ -109,11 +125,14 @@ BuildRequires:  protobuf-devel
 BuildRequires:  gdal-devel
 BuildRequires:  glog-devel
 BuildRequires:  doxygen
+#for doc/doxygen/bib2xhtml.pl
+BuildRequires:  perl-open
 BuildRequires:  gflags-devel
 BuildRequires:  SFML-devel
 BuildRequires:  libucil-devel
 BuildRequires:  qt5-qtbase-devel
-BuildRequires:  mesa-libGL-devel mesa-libGLU-devel
+BuildRequires:  mesa-libGL-devel
+BuildRequires:  mesa-libGLU-devel
 BuildRequires:  hdf5-devel
 %{?with_vtk:BuildRequires: vtk-devel}
 %{?with_atlas:BuildRequires: atlas-devel}
@@ -132,9 +151,10 @@ BuildRequires:  lapack-devel
 #BuildRequires:  lapack64-devel
 #BuildRequires: torch-devel (retired)
 }
-%{?with_gdcm:
-BuildRequires:  gdcm-devel
-}
+%{?with_gdcm:BuildRequires: gdcm-devel}
+%{?with_mfx:BuildRequires:  libmfx-devel}
+%{?with_clp:BuildRequires:  coin-or-Clp-devel}
+%{?with_va:BuildRequires:   libva-devel}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -226,6 +246,7 @@ rm -r 3rdparty/
 %patch1 -p1 -b .cmake_paths
 # missing dependecies for dnn module in Fedora (protobuf-cpp)
 rm -r modules/dnn/
+%patch50 -p1 -b .openblas
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
 rm -r modules/dnn_modern/
@@ -254,32 +275,36 @@ pushd build
  -DWITH_UNICAP=ON \
  -DCMAKE_SKIP_RPATH=ON \
  -DWITH_CAROTENE=OFF \
- -DENABLE_PRECOMPILED_HEADERS:BOOL=OFF \
+ -DENABLE_PRECOMPILED_HEADERS=OFF \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
  -DBUILD_opencv_java=OFF \
  %{?with_tbb: -DWITH_TBB=ON } \
- %{!?with_gstreamer:-DWITH_GSTREAMER=OFF} \
- %{!?with_ffmpeg:-DWITH_FFMPEG=OFF} \
-%{?with_cuda: \
+ %{!?with_gstreamer: -DWITH_GSTREAMER=OFF } \
+ %{!?with_ffmpeg: -DWITH_FFMPEG=OFF } \
+ %{?with_cuda: \
  -DWITH_CUDA=ON \
  -DCUDA_TOOLKIT_ROOT_DIR=%{?_cuda_topdir} \
  -DCUDA_VERBOSE_BUILD=ON \
  -DCUDA_PROPAGATE_HOST_FLAGS=OFF \
-} \
+ } \
  %{?with_openni: -DWITH_OPENNI=ON } \
- %{!?with_xine:-DWITH_XINE=OFF} \
+ %{!?with_xine: -DWITH_XINE=OFF } \
  -DBUILD_EXAMPLES=ON \
+ -DBUILD_DOCS=ON \
  -DINSTALL_C_EXAMPLES=ON \
  -DINSTALL_PYTHON_EXAMPLES=ON \
+ -DENABLE_PYLINT=ON \
  -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  -DWITH_LIBV4L=ON \
- %{?with_gdcm:-DWITH_GDCM=ON} \
+ -DWITH_OPENMP=ON \
+ %{?with_gdcm: -DWITH_GDCM=ON } \
+ %{?with_mfx: -DWITH_MFX=ON } \
+ %{?with_clp: -DWITH_CLP=ON } \
+ %{?with_va: -DWITH_VA=ON } \
  ..
 
 %make_build VERBOSE=1
-
-make doxygen
 
 popd
 
@@ -391,6 +416,13 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Fri Jan 26 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-4
+- Enable pylint
+- Enable clp
+- Enable va
+- Provides and obsoletes for opencv-devel-docs
+- BuildRequires perl-local do generate documentation without errors
+
 * Thu Jan 25 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-3
 - Rename sub-package opencv-python3 to python3-opencv and other minor fixes in
   python packaging
