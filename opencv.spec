@@ -171,6 +171,8 @@ Summary:        docs files
 Group:          Development/Libraries
 Requires:       opencv-devel = %{version}-%{release}
 BuildArch:      noarch
+Provides: %{name}-devel-docs = %{version}-%{release}
+Obsoletes: %{name}-devel-docs < %{version}-%{release}
 
 %description    doc
 This package contains the OpenCV documentation, samples and examples programs.
