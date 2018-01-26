@@ -68,8 +68,8 @@ Patch2:         opencv-3.1-pillow.patch
 Patch3:         opencv-3.2.0-test-file-fix.patch
 # Backport patch, update OpenBLAS support
 # https://github.com/opencv/opencv/pull/9955
-# https://github.com/opencv/opencv/commit/476c513447eb16784113e982f6bef0dcabb77732.diff
-Patch50:        476c513447eb16784113e982f6bef0dcabb77732.diff
+# https://github.com/opencv/opencv/commit/476c513447eb16784113e982f6bef0dcabb77732.patch
+Patch50:        476c513447eb16784113e982f6bef0dcabb77732.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
