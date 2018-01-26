@@ -417,9 +417,10 @@ popd
 
 %changelog
 * Fri Jan 26 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-4
-- Enable pylint
-- Enable clp
-- Enable va
+- Enable Pylint
+- Enable Clp (COIN-OR Linear Program Solver)
+- Enable VA (Video Acceleration API for Linux)
+- Enable OpenMP
 - Provides and obsoletes for opencv-devel-docs
 - BuildRequires perl-local do generate documentation without errors
 
