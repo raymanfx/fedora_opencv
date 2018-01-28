@@ -21,7 +21,7 @@
 %bcond_with     cuda
 %bcond_with     xine
 # Atlas need (missing: Atlas_CLAPACK_INCLUDE_DIR Atlas_CBLAS_LIBRARY Atlas_BLAS_LIBRARY Atlas_LAPACK_LIBRARY)
-# LAPACK may use atlas or openblas since now it detect openblas, atlas is not used aanyway , more info please
+# LAPACK may use atlas or openblas since now it detect openblas, atlas is not used anyway, more info please
 # check OpenCVFindLAPACK.cmake
 %bcond_with     atlas
 %bcond_without  openblas
@@ -310,10 +310,8 @@ popd
 
 
 %install
-pushd build
-%{make_install}
+%make_install -C build
 find %{buildroot} -name '*.la' -delete
-popd
 
 %check
 # Check fails since we don't support most video
