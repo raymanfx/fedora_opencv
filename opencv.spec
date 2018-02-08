@@ -48,7 +48,7 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -414,6 +414,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.3.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Fri Jan 26 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-4
 - Enable Pylint
 - Enable Clp (COIN-OR Linear Program Solver)
