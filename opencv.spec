@@ -48,7 +48,7 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -414,6 +414,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.3.1-6
+- Escape macros in %%changelog
+
 * Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.3.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
@@ -540,7 +543,7 @@ popd
 - Remove SIFT/SURF from source tarball in opencv_contrib, due to legal concerns
 - Redo and readd OpenCV-2.4.4-pillow.patch .
 - Add OpenCV-3.1-pillow.patch to apply only opencv_contrib .
-- Add the %python_provide macro (Packaging:Python guidelines). 
+- Add the %%python_provide macro (Packaging:Python guidelines). 
 
 * Fri Apr 22 2016 Sérgio Basto <sergio@serjux.com> - 3.1.0-3
 - Use always ON and OFF instead 0 and 1 in cmake command.
