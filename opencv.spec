@@ -48,7 +48,7 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 Group:          Development/Libraries
 # This is normal three clause BSD.
@@ -414,6 +414,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun Feb 18 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-7
+- Rebuild for gdcm-2.8
+
 * Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.3.1-6
 - Escape macros in %%changelog
 
