@@ -30,7 +30,7 @@
 %bcond_with     vtk
 %ifarch %{ix86} x86_64
 #disabled for now, maybe for opencv 3.4
-%bcond_with  mfx
+%bcond_with     mfx
 %else
 %bcond_with     mfx
 %endif
@@ -48,9 +48,8 @@
 
 Name:           opencv
 Version:        3.3.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Collection of algorithms for computer vision
-Group:          Development/Libraries
 # This is normal three clause BSD.
 License:        BSD
 URL:            http://opencv.org
@@ -65,7 +64,6 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.2.0-cmake_paths.patch
 Patch2:         opencv-3.1-pillow.patch
-Patch3:         opencv-3.2.0-test-file-fix.patch
 # Backport patch, update OpenBLAS support
 # https://github.com/opencv/opencv/pull/9955
 # https://github.com/opencv/opencv/commit/476c513447eb16784113e982f6bef0dcabb77732.patch
@@ -157,7 +155,7 @@ BuildRequires:  lapack-devel
 %{?with_va:BuildRequires:   libva-devel}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
-
+Requires:       gcc, gcc-c++
 
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
@@ -167,7 +165,6 @@ and Computer Vision algorithms.
 
 %package        core
 Summary:        OpenCV core libraries
-Group:          Development/Libraries
 
 %description    core
 This package contains the OpenCV C/C++ core libraries.
@@ -175,7 +172,6 @@ This package contains the OpenCV C/C++ core libraries.
 
 %package        devel
 Summary:        Development files for using the OpenCV library
-Group:          Development/Libraries
 Requires:       %{name}%{_isa} = %{version}-%{release}
 Requires:       %{name}-contrib%{_isa} = %{version}-%{release}
 
@@ -188,11 +184,10 @@ package.
 
 %package        doc
 Summary:        docs files
-Group:          Development/Libraries
 Requires:       opencv-devel = %{version}-%{release}
 BuildArch:      noarch
-Provides: %{name}-devel-docs = %{version}-%{release}
-Obsoletes: %{name}-devel-docs < %{version}-%{release}
+Provides:       %{name}-devel-docs = %{version}-%{release}
+Obsoletes:      %{name}-devel-docs < %{version}-%{release}
 
 %description    doc
 This package contains the OpenCV documentation, samples and examples programs.
@@ -200,14 +195,13 @@ This package contains the OpenCV documentation, samples and examples programs.
 
 %package        -n python2-opencv
 Summary:        Python2 bindings for apps which use OpenCV
-Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       python2-numpy
 %{?python_provide:%python_provide python2-%{srcname}}
 # Remove before F30
-Provides: %{name}-python = %{version}-%{release}
-Provides: %{name}-python%{?_isa} = %{version}-%{release}
-Obsoletes: %{name}-python < %{version}-%{release}
+Provides:       %{name}-python = %{version}-%{release}
+Provides:       %{name}-python%{?_isa} = %{version}-%{release}
+Obsoletes:      %{name}-python < %{version}-%{release}
 
 %description    -n python2-opencv
 This package contains Python bindings for the OpenCV library.
@@ -215,14 +209,13 @@ This package contains Python bindings for the OpenCV library.
 
 %package        -n python3-opencv
 Summary:        Python3 bindings for apps which use OpenCV
-Group:          Development/Libraries
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       python3-numpy
 %{?python_provide:%python_provide python3-%{srcname}}
 # Remove before F30
-Provides: %{name}-python3 = %{version}-%{release}
-Provides: %{name}-python3%{?_isa} = %{version}-%{release}
-Obsoletes: %{name}-python3 < %{version}-%{release}
+Provides:       %{name}-python3 = %{version}-%{release}
+Provides:       %{name}-python3%{?_isa} = %{version}-%{release}
+Obsoletes:      %{name}-python3 < %{version}-%{release}
 
 %description    -n python3-opencv
 This package contains Python3 bindings for the OpenCV library.
@@ -230,7 +223,6 @@ This package contains Python3 bindings for the OpenCV library.
 
 %package        contrib
 Summary:        OpenCV contributed functionality
-Group:          Development/Libraries
 
 %description    contrib
 This package is intended for development of so-called "extra" modules, contributed
@@ -242,14 +234,16 @@ to provide decent performance and stability.
 %prep
 %setup -q -a1
 # we don't use pre-built contribs
-rm -r 3rdparty/
-%patch1 -p1 -b .cmake_paths
+rm -rf 3rdparty/
 # missing dependecies for dnn module in Fedora (protobuf-cpp)
-rm -r modules/dnn/
+rm -rf modules/dnn/
+
+%patch1 -p1 -b .cmake_paths
 %patch50 -p1 -b .openblas
+
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
-rm -r modules/dnn_modern/
+rm -rf modules/dnn_modern/
 %patch2 -p1 -b .pillow
 popd
 
@@ -327,14 +321,11 @@ popd
 #endif
 
 
-%post core -p /sbin/ldconfig
-%postun core -p /sbin/ldconfig
+%ldconfig_scriptlets core
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
-%post contrib -p /sbin/ldconfig
-%postun contrib -p /sbin/ldconfig
+%ldconfig_scriptlets contrib
 
 %files
 %doc README.md
@@ -387,9 +378,9 @@ popd
 %{_libdir}/libopencv_calib3d.so.%{abiver}*
 %{_libdir}/libopencv_ccalib.so.%{abiver}*
 #Module opencv_datasets disabled because opencv_text dependency can't be resolved!
-#{_libdir}/libopencv_datasets.so.%{abiver}*
+#{_libdir}/libopencv_datasets.so.%%{abiver}*
 # Disabled because of missing dependency package in fedora (protobuf-cpp)
-#{_libdir}/libopencv_dnn.so.%{abiver}*
+#{_libdir}/libopencv_dnn.so.%%{abiver}*
 %{_libdir}/libopencv_dpm.so.%{abiver}*
 %{_libdir}/libopencv_face.so.%{abiver}*
 %{_libdir}/libopencv_freetype.so.%{abiver}*
@@ -407,13 +398,18 @@ popd
 %{_libdir}/libopencv_structured_light.so.%{abiver}*
 %{_libdir}/libopencv_surface_matching.so.%{abiver}*
 #Module opencv_text disabled because opencv_dnn dependency can't be resolved!
-#{_libdir}/libopencv_text.so.%{abiver}*
+#{_libdir}/libopencv_text.so.%%{abiver}*
 %{_libdir}/libopencv_tracking.so.%{abiver}*
 %{_libdir}/libopencv_ximgproc.so.%{abiver}*
 %{_libdir}/libopencv_xobjdetect.so.%{abiver}*
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu Mar 01 2018 Josef Ridky <jridky@redhat.com> - 3.3.1-8
+- Spec clean up (remove Group tag, add ldconfig scriptlets, escape macros in comments)
+- Remove unused patch
+- Add gcc and gcc-c++ requirements
+
 * Sun Feb 18 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-7
 - Rebuild for gdcm-2.8
 
