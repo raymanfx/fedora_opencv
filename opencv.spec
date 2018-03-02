@@ -29,16 +29,15 @@
 #VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4
 %bcond_with     vtk
 %ifarch %{ix86} x86_64
-#disabled for now, maybe for opencv 3.4
-%bcond_with     mfx
+%bcond_without  libmfx
 %else
-%bcond_with     mfx
+%bcond_with     libmfx
 %endif
 %bcond_without  clp
-%bcond_without  va
+%bcond_with  va
 
 %global srcname opencv
-%global abiver  3.3
+%global abiver  3.4
 
 # Required because opencv-core has lot of spurious dependencies
 # (despite supposed to be "-core")
@@ -47,8 +46,8 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.3.1
-Release:        8%{?dist}
+Version:        3.4.1
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -62,13 +61,8 @@ Source0:        %{name}-clean-%{version}.tar.gz
 Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
-Patch1:         opencv-3.2.0-cmake_paths.patch
-Patch2:         opencv-3.1-pillow.patch
-# Backport patch, update OpenBLAS support
-# https://github.com/opencv/opencv/pull/9955
-# https://github.com/opencv/opencv/commit/476c513447eb16784113e982f6bef0dcabb77732.patch
-Patch50:        476c513447eb16784113e982f6bef0dcabb77732.patch
-
+Patch1:         opencv-3.4.1-cmake_paths.patch
+Patch2:         opencv-3.4.1-cmake_va_intel_fix.patch 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
@@ -123,6 +117,7 @@ BuildRequires:  protobuf-devel
 BuildRequires:  gdal-devel
 BuildRequires:  glog-devel
 BuildRequires:  doxygen
+BuildRequires:  python-beautifulsoup4
 #for doc/doxygen/bib2xhtml.pl
 BuildRequires:  perl-open
 BuildRequires:  gflags-devel
@@ -140,22 +135,18 @@ BuildRequires:  hdf5-devel
 BuildRequires:  ceres-solver-devel
   }
 }
-#BuildRequires:  plantuml
 %{?with_openblas:
 BuildRequires:  openblas-devel
 BuildRequires:  blas-devel
 BuildRequires:  lapack-devel
-#BuildRequires:  blas64-devel
-#BuildRequires:  lapack64-devel
-#BuildRequires: torch-devel (retired)
 }
 %{?with_gdcm:BuildRequires: gdcm-devel}
-%{?with_mfx:BuildRequires:  libmfx-devel}
+%{?with_libmfx:BuildRequires:  libmfx-devel}
 %{?with_clp:BuildRequires:  coin-or-Clp-devel}
 %{?with_va:BuildRequires:   libva-devel}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
-Requires:       gcc, gcc-c++
+BuildRequires:       gcc, gcc-c++
 
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
@@ -237,14 +228,11 @@ to provide decent performance and stability.
 rm -rf 3rdparty/
 # missing dependecies for dnn module in Fedora (protobuf-cpp)
 rm -rf modules/dnn/
-
 %patch1 -p1 -b .cmake_paths
-%patch50 -p1 -b .openblas
-
+%patch2 -p1
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
 rm -rf modules/dnn_modern/
-%patch2 -p1 -b .pillow
 popd
 
 # fix dos end of lines
@@ -288,12 +276,13 @@ pushd build
  -DINSTALL_C_EXAMPLES=ON \
  -DINSTALL_PYTHON_EXAMPLES=ON \
  -DENABLE_PYLINT=ON \
- -DOPENCL_INCLUDE_DIR=${_includedir}/CL \
+ -DBUILD_PROTOBUF=OFF \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  -DWITH_LIBV4L=ON \
  -DWITH_OPENMP=ON \
+ -DENABLE_PKG_CONFIG=OFF \
  %{?with_gdcm: -DWITH_GDCM=ON } \
- %{?with_mfx: -DWITH_MFX=ON } \
+ %{?with_libmfx: -DWITH_MFX=ON } \
  %{?with_clp: -DWITH_CLP=ON } \
  %{?with_va: -DWITH_VA=ON } \
  ..
@@ -338,8 +327,10 @@ popd
 
 %files core
 %{_libdir}/libopencv_core.so.%{abiver}*
+%{_libdir}/libopencv_cvv.so.%{abiver}*
 %{_libdir}/libopencv_features2d.so.%{abiver}*
 %{_libdir}/libopencv_flann.so.%{abiver}*
+%{_libdir}/libopencv_hfs.so.%{abiver}*
 %{_libdir}/libopencv_highgui.so.%{abiver}*
 %{_libdir}/libopencv_imgcodecs.so.%{abiver}*
 %{_libdir}/libopencv_imgproc.so.%{abiver}*
@@ -352,7 +343,6 @@ popd
 %{_libdir}/libopencv_video.so.%{abiver}*
 %{_libdir}/libopencv_videoio.so.%{abiver}*
 %{_libdir}/libopencv_videostab.so.%{abiver}*
-%{_libdir}/libopencv_cvv.so.%{abiver}*
 
 %files devel
 %{_includedir}/opencv
@@ -378,7 +368,7 @@ popd
 %{_libdir}/libopencv_calib3d.so.%{abiver}*
 %{_libdir}/libopencv_ccalib.so.%{abiver}*
 #Module opencv_datasets disabled because opencv_text dependency can't be resolved!
-#{_libdir}/libopencv_datasets.so.%%{abiver}*
+{_libdir}/libopencv_datasets.so.%%{abiver}*
 # Disabled because of missing dependency package in fedora (protobuf-cpp)
 #{_libdir}/libopencv_dnn.so.%%{abiver}*
 %{_libdir}/libopencv_dpm.so.%{abiver}*
@@ -405,10 +395,11 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
-* Thu Mar 01 2018 Josef Ridky <jridky@redhat.com> - 3.3.1-8
+* Thu Mar 01 2018 Josef Ridky <jridky@redhat.com> - 3.4.1-1
 - Spec clean up (remove Group tag, add ldconfig scriptlets, escape macros in comments)
 - Remove unused patch
 - Add gcc and gcc-c++ requirements
+- Rebase to version 3.4.1
 
 * Sun Feb 18 2018 Sérgio Basto <sergio@serjux.com> - 3.3.1-7
 - Rebuild for gdcm-2.8
