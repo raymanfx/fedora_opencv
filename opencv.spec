@@ -368,7 +368,7 @@ popd
 %{_libdir}/libopencv_calib3d.so.%{abiver}*
 %{_libdir}/libopencv_ccalib.so.%{abiver}*
 #Module opencv_datasets disabled because opencv_text dependency can't be resolved!
-{_libdir}/libopencv_datasets.so.%%{abiver}*
+%{_libdir}/libopencv_datasets.so.%%{abiver}*
 # Disabled because of missing dependency package in fedora (protobuf-cpp)
 #{_libdir}/libopencv_dnn.so.%%{abiver}*
 %{_libdir}/libopencv_dpm.so.%{abiver}*
