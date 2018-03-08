@@ -34,7 +34,7 @@
 %bcond_with     libmfx
 %endif
 %bcond_without  clp
-%bcond_with  va
+%bcond_without  va
 
 %global srcname opencv
 %global abiver  3.4
@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -62,7 +62,7 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.4.1-cmake_paths.patch
-Patch2:         opencv-3.4.1-cmake_va_intel_fix.patch 
+Patch2:         opencv-3.4.1-cmake_va_intel_fix.patch
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
@@ -100,8 +100,6 @@ BuildRequires:  pylint
 BuildRequires:  python2-numpy
 BuildRequires:  python3-numpy
 BuildRequires:  swig >= 1.3.24
-# opencv now uses doxygen
-#BuildRequires:  python2-sphinx
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} || 0%{?rhel} > 7
 %{?with_gstreamer:BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel}
@@ -225,14 +223,16 @@ to provide decent performance and stability.
 %prep
 %setup -q -a1
 # we don't use pre-built contribs
-rm -rf 3rdparty/
+rm -r 3rdparty/
 # missing dependecies for dnn module in Fedora (protobuf-cpp)
-rm -rf modules/dnn/
+rm -r modules/dnn/
+
 %patch1 -p1 -b .cmake_paths
-%patch2 -p1
+%patch2 -p1 -b .va_intel
+
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
-rm -rf modules/dnn_modern/
+rm -r modules/dnn_modern/
 popd
 
 # fix dos end of lines
@@ -271,8 +271,8 @@ pushd build
  } \
  %{?with_openni: -DWITH_OPENNI=ON } \
  %{!?with_xine: -DWITH_XINE=OFF } \
- -DBUILD_EXAMPLES=ON \
  -DBUILD_DOCS=ON \
+ -DBUILD_EXAMPLES=ON \
  -DINSTALL_C_EXAMPLES=ON \
  -DINSTALL_PYTHON_EXAMPLES=ON \
  -DENABLE_PYLINT=ON \
@@ -312,9 +312,8 @@ popd
 
 %ldconfig_scriptlets core
 
-%ldconfig_scriptlets
-
 %ldconfig_scriptlets contrib
+
 
 %files
 %doc README.md
@@ -395,6 +394,11 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu Mar 08 2018 Sérgio Basto <sergio@serjux.com> - 3.4.1-2
+- Enable VA
+- Do not use -f on rm because it silences errors
+- Opencv sub-package don't need ldconfig because don't have any so
+
 * Thu Mar 01 2018 Josef Ridky <jridky@redhat.com> - 3.4.1-1
 - Spec clean up (remove Group tag, add ldconfig scriptlets, escape macros in comments)
 - Remove unused patch
