@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -115,7 +115,7 @@ BuildRequires:  protobuf-devel
 BuildRequires:  gdal-devel
 BuildRequires:  glog-devel
 BuildRequires:  doxygen
-BuildRequires:  python-beautifulsoup4
+BuildRequires:  python2-beautifulsoup4
 #for doc/doxygen/bib2xhtml.pl
 BuildRequires:  perl-open
 BuildRequires:  gflags-devel
@@ -394,6 +394,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon Mar 26 2018 Iryna Shcherbina <ishcherb@redhat.com> - 3.4.1-3
+- Update Python 2 dependency declarations to new packaging standards
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
 * Thu Mar 08 2018 Sérgio Basto <sergio@serjux.com> - 3.4.1-2
 - Enable VA
 - Do not use -f on rm because it silences errors
