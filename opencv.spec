@@ -230,6 +230,7 @@ rm -r modules/dnn/
 
 %patch1 -p1 -b .cmake_paths
 %patch2 -p1 -b .va_intel
+%patch3 -p1 -b .python37
 
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
