@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -63,10 +63,11 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.4.1-cmake_paths.patch
 Patch2:         opencv-3.4.1-cmake_va_intel_fix.patch
+Patch3:         opencv-3.4.1-python37.patch
+
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
-
 %{?with_eigen2:BuildRequires:  eigen2-devel}
 %{?with_eigen3:BuildRequires:  eigen3-devel}
 BuildRequires:  gtk3-devel
@@ -394,6 +395,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Jul 11 2018 Sérgio Basto <sergio@serjux.com> - 3.4.1-5
+- Small fix to build with Pyhton-3.7
+
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 3.4.1-4
 - Rebuilt for Python 3.7
 
