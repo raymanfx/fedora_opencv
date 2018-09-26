@@ -46,8 +46,8 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.4.1
-Release:        6%{?dist}
+Version:        3.4.2
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -62,8 +62,6 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.4.1-cmake_paths.patch
-Patch2:         opencv-3.4.1-cmake_va_intel_fix.patch
-Patch3:         opencv-3.4.1-python37.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -229,12 +227,10 @@ rm -r 3rdparty/
 rm -r modules/dnn/
 
 %patch1 -p1 -b .cmake_paths
-%patch2 -p1 -b .va_intel
-%patch3 -p1 -b .python37
 
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
-rm -r modules/dnn_modern/
+#rm -r modules/dnn_modern/
 popd
 
 # fix dos end of lines
@@ -297,6 +293,7 @@ popd
 %install
 %make_install -C build
 find %{buildroot} -name '*.la' -delete
+rm -rf %{buildroot}%{_datadir}/OpenCV/licenses/
 
 %check
 # Check fails since we don't support most video
@@ -396,6 +393,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Sep 26 2018 Sérgio Basto <sergio@serjux.com> - 3.4.2-1
+- Update to 3.4.2
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.4.1-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 

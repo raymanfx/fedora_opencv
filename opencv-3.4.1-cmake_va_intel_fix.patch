@@ -1,9 +1,0 @@
---- ./samples/va_intel/CMakeLists.txt.bak	2018-02-28 01:53:40.199554269 +0000
-+++ ./samples/va_intel/CMakeLists.txt	2018-02-28 01:54:34.036200492 +0000
-@@ -17,5 +17,5 @@ ocv_include_modules_recurse(${OPENCV_VA_
- file(GLOB all_samples RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
- foreach(sample_filename ${all_samples})
-   ocv_define_sample(tgt ${sample_filename} va_intel)
--  ocv_target_link_libraries(${tgt} ${OPENCV_LINKER_LIBS} ${OPENCV_VA_INTEL_SAMPLES_REQUIRED_DEPS})
-+  ocv_target_link_libraries(${tgt} ${OPENCV_LINKER_LIBS} ${OPENCV_VA_INTEL_SAMPLES_REQUIRED_DEPS} ${VA_LIBRARIES} ${VA_INTEL_LIBRARIES})
- endforeach()
