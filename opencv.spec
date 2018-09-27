@@ -46,7 +46,7 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.4.2
+Version:        3.4.3
 Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
@@ -62,6 +62,7 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.4.1-cmake_paths.patch
+Patch10:        https://github.com/opencv/opencv/commit/4910f16f16a0a0c2b456b14cbc3429c86f96a5f5.patch
 
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
@@ -227,6 +228,9 @@ rm -r 3rdparty/
 rm -r modules/dnn/
 
 %patch1 -p1 -b .cmake_paths
+%ifarch %{ix86}
+%patch10 -p1 -R -b .revert_support_YV12_too
+%endif
 
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
@@ -393,6 +397,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Sep 26 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-1
+- Update to 3.4.3
+
 * Wed Sep 26 2018 Sérgio Basto <sergio@serjux.com> - 3.4.2-1
 - Update to 3.4.2
 
