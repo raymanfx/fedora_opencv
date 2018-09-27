@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -399,11 +399,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
-* Thu Sep 27 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-2
-- Fix build on arm and s390x
-
 * Wed Sep 26 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-1
 - Update to 3.4.3
+- Fix build on arm and s390x
 
 * Wed Sep 26 2018 Sérgio Basto <sergio@serjux.com> - 3.4.2-1
 - Update to 3.4.2
