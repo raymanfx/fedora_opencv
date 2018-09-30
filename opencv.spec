@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -257,6 +257,7 @@ pushd build
  -DWITH_ITT=OFF \
  -DWITH_QT=ON \
  -DWITH_OPENGL=ON \
+ -DOpenGL_GL_PREFERENCE=GLVND \
  -DWITH_GDAL=ON \
  -DWITH_UNICAP=ON \
  -DCMAKE_SKIP_RPATH=ON \
@@ -399,6 +400,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun Sep 30 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-2
+- Use GLVND libraries for OpenGL and GLX, setting OpenGL_GL_PREFERENCE=GLVND
+
 * Wed Sep 26 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-1
 - Update to 3.4.3
 - Fix build on arm and s390x
