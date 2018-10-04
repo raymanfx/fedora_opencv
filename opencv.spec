@@ -65,6 +65,7 @@ Patch1:         opencv-3.4.1-cmake_paths.patch
 Patch10:        https://github.com/opencv/opencv/commit/4910f16f16a0a0c2b456b14cbc3429c86f96a5f5.patch
 Patch11:        https://github.com/opencv/opencv_contrib/commit/6a01e96ce795ed003cf83a777ba65d6dd2d8afce.patch
 
+BuildRequires:  gcc-c++
 BuildRequires:  libtool
 BuildRequires:  cmake >= 2.6.3
 BuildRequires:  chrpath
@@ -126,6 +127,8 @@ BuildRequires:  qt5-qtbase-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  mesa-libGLU-devel
 BuildRequires:  hdf5-devel
+# Module opencv_ovis disabled because of incompatible OGRE3D version < 1.10
+# BuildRequires:  ogre-devel
 %{?with_vtk:BuildRequires: vtk-devel}
 %{?with_atlas:BuildRequires: atlas-devel}
 #ceres-solver-devel push eigen3-devel and tbb-devel
@@ -145,7 +148,6 @@ BuildRequires:  lapack-devel
 %{?with_va:BuildRequires:   libva-devel}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
-BuildRequires:       gcc, gcc-c++
 
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
