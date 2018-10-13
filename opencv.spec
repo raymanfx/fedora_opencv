@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -402,6 +402,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sat Oct 13 2018 Jerry James <loganjerry@gmail.com> - 3.4.3-3
+- Rebuild for tbb 2019_U1
+
 * Sun Sep 30 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-2
 - Use GLVND libraries for OpenGL and GLX, setting OpenGL_GL_PREFERENCE=GLVND
 
