@@ -47,7 +47,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -227,8 +227,6 @@ to provide decent performance and stability.
 %setup -q -a1
 # we don't use pre-built contribs
 rm -r 3rdparty/
-# missing dependecies for dnn module in Fedora (protobuf-cpp)
-rm -r modules/dnn/
 
 %patch1 -p1 -b .cmake_paths
 %ifarch %{ix86} %{arm}
@@ -284,6 +282,7 @@ pushd build
  -DINSTALL_PYTHON_EXAMPLES=ON \
  -DENABLE_PYLINT=ON \
  -DBUILD_PROTOBUF=OFF \
+ -DPROTOBUF_UPDATE_FILES=ON \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  -DWITH_LIBV4L=ON \
  -DWITH_OPENMP=ON \
@@ -376,8 +375,8 @@ popd
 %{_libdir}/libopencv_ccalib.so.%{abiver}*
 #Module opencv_datasets disabled because opencv_text dependency can't be resolved!
 %{_libdir}/libopencv_datasets.so.%%{abiver}*
-# Disabled because of missing dependency package in fedora (protobuf-cpp)
-#{_libdir}/libopencv_dnn.so.%%{abiver}*
+%{_libdir}/libopencv_dnn.so.%%{abiver}*
+%{_libdir}/libopencv_dnn_objdetect.so.%%{abiver}*
 %{_libdir}/libopencv_dpm.so.%{abiver}*
 %{_libdir}/libopencv_face.so.%{abiver}*
 %{_libdir}/libopencv_freetype.so.%{abiver}*
@@ -394,14 +393,16 @@ popd
 %{_libdir}/libopencv_stereo.so.%{abiver}*
 %{_libdir}/libopencv_structured_light.so.%{abiver}*
 %{_libdir}/libopencv_surface_matching.so.%{abiver}*
-#Module opencv_text disabled because opencv_dnn dependency can't be resolved!
-#{_libdir}/libopencv_text.so.%%{abiver}*
+%{_libdir}/libopencv_text.so.%%{abiver}*
 %{_libdir}/libopencv_tracking.so.%{abiver}*
 %{_libdir}/libopencv_ximgproc.so.%{abiver}*
 %{_libdir}/libopencv_xobjdetect.so.%{abiver}*
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Tue Oct 23 2018 Felix Kaechele <heffer@fedoraproject.org> - 3.4.3-4
+- enable building of dnn
+
 * Sat Oct 13 2018 Jerry James <loganjerry@gmail.com> - 3.4.3-3
 - Rebuild for tbb 2019_U1
 
