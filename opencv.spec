@@ -26,8 +26,13 @@
 %bcond_with     atlas
 %bcond_without  openblas
 %bcond_without  gdcm
-#VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4
-%bcond_with     vtk
+%if 0%{?fedora} > 29
+%bcond_without  vtk
+%else
+#VTK support disabled. Incompatible combination: OpenCV + Qt5 and VTK ver.7.1.1 + Qt4 in <= F29
+%bcond_with  vtk
+%endif
+
 %ifarch %{ix86} x86_64
 %bcond_without  libmfx
 %else
@@ -47,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -97,10 +102,12 @@ BuildRequires:  tbb-devel
 }
 BuildRequires:  zlib-devel pkgconfig
 BuildRequires:  python2-devel
-BuildRequires:  python3-devel
-BuildRequires:  pylint
+BuildRequires:  python2-flake8
 BuildRequires:  python2-numpy
+BuildRequires:  python3-devel
+BuildRequires:  python3-flake8
 BuildRequires:  python3-numpy
+BuildRequires:  pylint
 BuildRequires:  swig >= 1.3.24
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} || 0%{?rhel} > 7
@@ -349,6 +356,9 @@ popd
 %{_libdir}/libopencv_video.so.%{abiver}*
 %{_libdir}/libopencv_videoio.so.%{abiver}*
 %{_libdir}/libopencv_videostab.so.%{abiver}*
+%if %{with vtk}
+%{_libdir}/libopencv_viz.so.%{abiver}*
+%endif
 
 %files devel
 %{_includedir}/opencv
@@ -400,6 +410,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Tue Oct 30 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-5
+- Enable vtk should work with vtk-8.1.1
+- Add BR python Flake8
+
 * Tue Oct 23 2018 Felix Kaechele <heffer@fedoraproject.org> - 3.4.3-4
 - enable building of dnn
 
