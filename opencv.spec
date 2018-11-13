@@ -52,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -410,6 +410,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Tue Nov 13 2018 Sandro Mani <manisandro@gmail.com> - 3.4.3-6
+- Rebuild (tesseract)
+
 * Tue Oct 30 2018 Sérgio Basto <sergio@serjux.com> - 3.4.3-5
 - Enable vtk should work with vtk-8.1.1
 - Add BR python Flake8
