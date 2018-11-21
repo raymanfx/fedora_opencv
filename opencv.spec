@@ -52,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.3
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -410,6 +410,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Nov 21 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.4.3-7
+- Rebuild for protobuf 3.6
+
 * Tue Nov 13 2018 Sandro Mani <manisandro@gmail.com> - 3.4.3-6
 - Rebuild (tesseract)
 
