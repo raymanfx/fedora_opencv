@@ -51,8 +51,8 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.4.3
-Release:        7%{?dist}
+Version:        3.4.4
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -67,8 +67,9 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.4.1-cmake_paths.patch
-Patch10:        https://github.com/opencv/opencv/commit/4910f16f16a0a0c2b456b14cbc3429c86f96a5f5.patch
-Patch11:        https://github.com/opencv/opencv_contrib/commit/6a01e96ce795ed003cf83a777ba65d6dd2d8afce.patch
+Patch10:        fix_support_YV12_too.patch
+Patch11:        https://github.com/opencv/opencv_contrib/pull/1905/commits/c4419e4e65a8d9e0b5a15e9a5242453f261bee46.patch
+Patch12:        https://github.com/opencv/opencv/pull/13254/commits/ad35b79e3f98b4ce30481e0299cca550ed77aef0.patch
 
 BuildRequires:  gcc-c++
 BuildRequires:  libtool
@@ -173,6 +174,7 @@ This package contains the OpenCV C/C++ core libraries.
 Summary:        Development files for using the OpenCV library
 Requires:       %{name}%{_isa} = %{version}-%{release}
 Requires:       %{name}-contrib%{_isa} = %{version}-%{release}
+Provides:       bundled(quirc) = 1.0
 
 %description    devel
 This package contains the OpenCV C/C++ library and header files, as well as
@@ -233,22 +235,22 @@ to provide decent performance and stability.
 %prep
 %setup -q -a1
 # we don't use pre-built contribs
+mv 3rdparty/quirc/ .
 rm -r 3rdparty/
+mkdir 3rdparty/
+mv quirc/ 3rdparty/
 
 %patch1 -p1 -b .cmake_paths
 %ifarch %{ix86} %{arm}
-%patch10 -p1 -R -b .revert_support_YV12_too
+%patch10 -p1 -b .fix_support_YV12_too
 %endif
 
 pushd %{name}_contrib-%{version}
 # missing dependecies for dnn_modern module in Fedora (tiny-dnn)
 #rm -r modules/dnn_modern/
-%patch11 -p1 -b .Add_missing_multi-line_separator
+%patch11 -p1 -b .cvv_repair_build
 popd
-
-# fix dos end of lines
-#sed -i 's|\r||g'  samples/c/adaptiveskindetector.cpp
-
+%patch12 -p1 -b .fix_install_of_python_bindings
 
 %build
 # enabled by default if libraries are presents at build time:
@@ -290,6 +292,9 @@ pushd build
  -DENABLE_PYLINT=ON \
  -DBUILD_PROTOBUF=OFF \
  -DPROTOBUF_UPDATE_FILES=ON \
+%{?with_opencl: -DOPENCL_INCLUDE_DIR=%{_includedir}/CL } \
+%{!?with_opencl: -DWITH_OPENCL=OFF } \
+ -DOPENCV_SKIP_PYTHON_LOADER=ON \
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  -DWITH_LIBV4L=ON \
  -DWITH_OPENMP=ON \
@@ -298,7 +303,12 @@ pushd build
  %{?with_libmfx: -DWITH_MFX=ON } \
  %{?with_clp: -DWITH_CLP=ON } \
  %{?with_va: -DWITH_VA=ON } \
+ %{!?with_vtk: -DWITH_VTK=OFF} \
  ..
+
+# -DENABLE_CXX11=ON \
+# -DPYTHON2_PACKAGES_PATH=%{python2_sitearch} \
+# -DPYTHON3_PACKAGES_PATH=%{python3_sitearch} \
 
 %make_build VERBOSE=1
 
@@ -375,6 +385,7 @@ popd
 %{python2_sitearch}/cv2.so
 
 %files -n python3-opencv
+%{_bindir}/setup_vars_opencv3.sh
 %{python3_sitearch}/cv2.cpython-3*.so
 
 %files contrib
@@ -410,6 +421,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sat Dec 01 2018 Sérgio Basto <sergio@serjux.com> - 3.4.4-1
+- Update to 3.4.4
+
 * Wed Nov 21 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 3.4.3-7
 - Rebuild for protobuf 3.6
 
