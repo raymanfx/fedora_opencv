@@ -52,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -67,7 +67,7 @@ Source1:        %{name}_contrib-clean-%{version}.tar.gz
 # fix/simplify cmake config install location (upstreamable)
 # https://bugzilla.redhat.com/1031312
 Patch1:         opencv-3.4.1-cmake_paths.patch
-Patch10:        fix_support_YV12_too.patch
+Patch10:        https://github.com/opencv/opencv/pull/13351/commits/c26c43c69c654344d2e2fb7b2d21121ca89224e6.patch
 Patch11:        https://github.com/opencv/opencv_contrib/pull/1905/commits/c4419e4e65a8d9e0b5a15e9a5242453f261bee46.patch
 Patch12:        https://github.com/opencv/opencv/pull/13254/commits/ad35b79e3f98b4ce30481e0299cca550ed77aef0.patch
 
@@ -234,20 +234,18 @@ to provide decent performance and stability.
 
 %prep
 %setup -q -a1
-# we don't use pre-built contribs
+# we don't use pre-built contribs except quirc
 mv 3rdparty/quirc/ .
 rm -r 3rdparty/
 mkdir 3rdparty/
 mv quirc/ 3rdparty/
 
 %patch1 -p1 -b .cmake_paths
-%ifarch %{ix86} %{arm}
 %patch10 -p1 -b .fix_support_YV12_too
+%ifarch %{ix86} %{arm}
 %endif
 
 pushd %{name}_contrib-%{version}
-# missing dependecies for dnn_modern module in Fedora (tiny-dnn)
-#rm -r modules/dnn_modern/
 %patch11 -p1 -b .cvv_repair_build
 popd
 %patch12 -p1 -b .fix_install_of_python_bindings
@@ -421,6 +419,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon Dec 03 2018 Sérgio Basto <sergio@serjux.com> - 3.4.4-2
+- Add the correct and upstreamed fix for support_YV12_too, pull request 13351
+  which is merged
+
 * Sat Dec 01 2018 Sérgio Basto <sergio@serjux.com> - 3.4.4-1
 - Update to 3.4.4
 
