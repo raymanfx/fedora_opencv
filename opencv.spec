@@ -52,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -101,10 +101,8 @@ BuildRequires:  openni-primesense
 %{?with_tbb:
 BuildRequires:  tbb-devel
 }
-BuildRequires:  zlib-devel pkgconfig
-BuildRequires:  python2-devel
-BuildRequires:  python2-flake8
-BuildRequires:  python2-numpy
+BuildRequires:  zlib-devel
+BuildRequires:  pkgconfig
 BuildRequires:  python3-devel
 BuildRequires:  python3-flake8
 BuildRequires:  python3-numpy
@@ -125,7 +123,6 @@ BuildRequires:  protobuf-devel
 BuildRequires:  gdal-devel
 BuildRequires:  glog-devel
 BuildRequires:  doxygen
-BuildRequires:  python2-beautifulsoup4
 #for doc/doxygen/bib2xhtml.pl
 BuildRequires:  perl-open
 BuildRequires:  gflags-devel
@@ -194,29 +191,11 @@ Obsoletes:      %{name}-devel-docs < %{version}-%{release}
 This package contains the OpenCV documentation, samples and examples programs.
 
 
-%package        -n python2-opencv
-Summary:        Python2 bindings for apps which use OpenCV
-Requires:       opencv%{_isa} = %{version}-%{release}
-Requires:       python2-numpy
-%{?python_provide:%python_provide python2-%{srcname}}
-# Remove before F30
-Provides:       %{name}-python = %{version}-%{release}
-Provides:       %{name}-python%{?_isa} = %{version}-%{release}
-Obsoletes:      %{name}-python < %{version}-%{release}
-
-%description    -n python2-opencv
-This package contains Python bindings for the OpenCV library.
-
-
 %package        -n python3-opencv
 Summary:        Python3 bindings for apps which use OpenCV
 Requires:       opencv%{_isa} = %{version}-%{release}
 Requires:       python3-numpy
 %{?python_provide:%python_provide python3-%{srcname}}
-# Remove before F30
-Provides:       %{name}-python3 = %{version}-%{release}
-Provides:       %{name}-python3%{?_isa} = %{version}-%{release}
-Obsoletes:      %{name}-python3 < %{version}-%{release}
 
 %description    -n python3-opencv
 This package contains Python3 bindings for the OpenCV library.
@@ -287,6 +266,8 @@ pushd build
  -DBUILD_EXAMPLES=ON \
  -DINSTALL_C_EXAMPLES=ON \
  -DINSTALL_PYTHON_EXAMPLES=ON \
+ -DPYTHON2_EXECUTABLE=false \
+ -DPYTHON3_EXECUTABLE=%{__python3} \
  -DENABLE_PYLINT=ON \
  -DBUILD_PROTOBUF=OFF \
  -DPROTOBUF_UPDATE_FILES=ON \
@@ -379,9 +360,6 @@ popd
 %{_datadir}/OpenCV/samples
 %{_datadir}/OpenCV/doc
 
-%files -n python2-opencv
-%{python2_sitearch}/cv2.so
-
 %files -n python3-opencv
 %{_bindir}/setup_vars_opencv3.sh
 %{python3_sitearch}/cv2.cpython-3*.so
@@ -419,6 +397,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Tue Jan 15 2019 Miro Hrončok <mhroncok@redhat.com> - 3.4.4-3
+- Subpackage python2-opencv has been removed
+  See https://fedoraproject.org/wiki/Changes/Mass_Python_2_Package_Removal
+
 * Mon Dec 03 2018 Sérgio Basto <sergio@serjux.com> - 3.4.4-2
 - Add the correct and upstreamed fix for support_YV12_too, pull request 13351
   which is merged
