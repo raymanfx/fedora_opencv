@@ -52,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -397,6 +397,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.4.4-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Tue Jan 15 2019 Miro Hrončok <mhroncok@redhat.com> - 3.4.4-3
 - Subpackage python2-opencv has been removed
   See https://fedoraproject.org/wiki/Changes/Mass_Python_2_Package_Removal
