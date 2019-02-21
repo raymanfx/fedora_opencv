@@ -25,7 +25,7 @@
 # check OpenCVFindLAPACK.cmake
 %bcond_with     atlas
 %bcond_without  openblas
-%bcond_without  gdcm
+%bcond_with     gdcm
 %if 0%{?fedora} > 29
 %bcond_without  vtk
 %else
@@ -52,7 +52,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -397,6 +397,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu Feb 21 2019 Josef Ridky <jridky@redhat.com> - 3.4.4-5
+- build without gdcm to fix FTBFS in F30+ (#1676289)
+
 * Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.4.4-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
