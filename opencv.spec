@@ -9,7 +9,12 @@
 %bcond_without  opencl
 %else
 # https://bugzilla.redhat.com/show_bug.cgi?id=1487174
+# fixed on f30
+%if 0%{?fedora} > 29
+%bcond_without  opencl
+%else
 %bcond_with     opencl
+%endif
 %endif
 %ifarch %{ix86} x86_64 %{arm}
 %bcond_without  openni
@@ -399,6 +404,7 @@ popd
 %changelog
 * Sun Mar 03 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-6
 - Reenable build with gdcm
+- Opencl is fixed for ppc64le on F30
 
 * Thu Feb 21 2019 Josef Ridky <jridky@redhat.com> - 3.4.4-5
 - build without gdcm to fix FTBFS in F30+ (#1676289)
