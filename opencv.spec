@@ -57,7 +57,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -402,6 +402,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon Mar 18 2019 Orion Poplawski <orion@nwra.com>
+- Rebuild for vtk 8.2
+
 * Sun Mar 03 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-6
 - Reenable build with gdcm
 - Opencl is fixed for ppc64le on F30
