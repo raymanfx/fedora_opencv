@@ -57,7 +57,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -402,6 +402,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Apr 10 2019 Richard Shaw <hobbes1069@gmail.com> - 3.4.4-8
+- Rebuild for OpenEXR 2.3.0.
+
 * Mon Mar 18 2019 Orion Poplawski <orion@nwra.com>
 - Rebuild for vtk 8.2
 
