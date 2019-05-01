@@ -1,4 +1,4 @@
-export VERSION=3.4.6
+export VERSION=4.1.0
 
 wget -c https://github.com/opencv/opencv/archive/${VERSION}/opencv-${VERSION}.tar.gz
 tar xf opencv-${VERSION}.tar.gz

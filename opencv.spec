@@ -46,10 +46,11 @@
 %bcond_without  clp
 %bcond_without  va
 %bcond_without  java
+%bcond_without  vulkan
 
 %global srcname opencv
-%global abiver  3.4
-%global javaver 346
+%global abiver  4.1
+%global javaver 410
 
 # Required because opencv-core has lot of spurious dependencies
 # (despite supposed to be "-core")
@@ -58,8 +59,8 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.4.6
-Release:        7%{?dist}
+Version:        4.1.0
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -71,7 +72,6 @@ URL:            http://opencv.org
 #
 Source0:        %{name}-clean-%{version}.tar.gz
 Source1:        %{name}_contrib-clean-%{version}.tar.gz
-Patch2:         opencv-4.1.0-install_3rdparty_licenses.patch
 
 BuildRequires:  gcc-c++
 BuildRequires:  libtool
@@ -157,8 +157,9 @@ BuildRequires:  lapack-devel
 BuildRequires:  ant
 BuildRequires:  java-devel
 }
+%{?with_vulkan:BuildRequires:  vulkan-headers}
 
-Requires:       opencv-core%{_isa} = %{version}-%{release}
+Requires:       %{name}-core%{_isa} = %{version}-%{release}
 
 %description
 OpenCV means Intel® Open Source Computer Vision Library. It is a collection of
@@ -230,19 +231,6 @@ to provide decent performance and stability.
 
 %prep
 %setup -q -a1
-# we don't use pre-built contribs except quirc
-mv 3rdparty/quirc/ .
-rm -r 3rdparty/
-mkdir 3rdparty/
-mv quirc/ 3rdparty/
-
-%patch2 -p1 -b .install_3rdparty_licenses
-
-%ifarch %{ix86} %{arm}
-%endif
-
-pushd %{name}_contrib-%{version}
-popd
 
 %build
 # enabled by default if libraries are presents at build time:
@@ -300,6 +288,8 @@ pushd build
  %{?with_clp: -DWITH_CLP=ON } \
  %{?with_va: -DWITH_VA=ON } \
  %{!?with_vtk: -DWITH_VTK=OFF} \
+ -DOPENCV_GENERATE_PKGCONFIG=ON \
+%{?with_vulkan: -DWITH_VULKAN=ON -DVULKAN_INCLUDE_DIRS=%{_includedir}/vulkan } \
  ..
 
 # -DENABLE_CXX11=ON \
@@ -314,7 +304,7 @@ popd
 %install
 %make_install -C build
 find %{buildroot} -name '*.la' -delete
-rm -rf %{buildroot}%{_datadir}/OpenCV/licenses/
+rm -rf %{buildroot}%{_datadir}/licenses/
 %if %{with java}
 ln -s -r %{buildroot}%{_jnidir}/libopencv_java%{javaver}.so %{buildroot}%{_jnidir}/libopencv_java.so
 ln -s -r %{buildroot}%{_jnidir}/opencv-%{javaver}.jar %{buildroot}%{_jnidir}/opencv.jar
@@ -342,19 +332,19 @@ popd
 
 %files
 %doc README.md
-%{_bindir}/opencv_*
-%dir %{_datadir}/OpenCV
-%{_datadir}/OpenCV/haarcascades
-%{_datadir}/OpenCV/lbpcascades
-%{_datadir}/OpenCV/valgrind*
+%{_bindir}/*
+%dir %{_datadir}/opencv4
+%{_datadir}/opencv4/haarcascades
+%{_datadir}/opencv4/lbpcascades
+%{_datadir}/opencv4/valgrind*
 
 %files core
 %license LICENSE
-%{_datadir}/licenses/opencv3/
 %{_libdir}/libopencv_core.so.%{abiver}*
 %{_libdir}/libopencv_cvv.so.%{abiver}*
 %{_libdir}/libopencv_features2d.so.%{abiver}*
 %{_libdir}/libopencv_flann.so.%{abiver}*
+%{_libdir}/libopencv_gapi.so.%{abiver}*
 %{_libdir}/libopencv_hfs.so.%{abiver}*
 %{_libdir}/libopencv_highgui.so.%{abiver}*
 %{_libdir}/libopencv_imgcodecs.so.%{abiver}*
@@ -373,18 +363,17 @@ popd
 %endif
 
 %files devel
-%{_includedir}/opencv
-%{_includedir}/opencv2
+%{_includedir}/opencv4
 %{_libdir}/lib*.so
-%{_libdir}/pkgconfig/opencv.pc
+%{_libdir}/pkgconfig/opencv4.pc
 %{_libdir}/cmake/OpenCV/*.cmake
 
 %files doc
-%{_datadir}/OpenCV/samples
-%{_datadir}/OpenCV/doc
+%{_datadir}/opencv4/samples
+%{_datadir}/doc
 
-%files -n python3-opencv
-%{_bindir}/setup_vars_opencv3.sh
+%files -n python3-%{name}
+%{_bindir}/setup_vars_opencv4.sh
 %{python3_sitearch}/cv2.cpython-3*.so
 
 %if %{with java}
@@ -415,6 +404,7 @@ popd
 %{_libdir}/libopencv_optflow.so.%{abiver}*
 %{_libdir}/libopencv_phase_unwrapping.so.%{abiver}*
 %{_libdir}/libopencv_plot.so.%{abiver}*
+%{_libdir}/libopencv_quality.so.%{abiver}*
 %{_libdir}/libopencv_reg.so.%{abiver}*
 %{_libdir}/libopencv_rgbd.so.%{abiver}*
 %{_libdir}/libopencv_saliency.so.%{abiver}*
@@ -428,6 +418,11 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Aug 28 2019 Christopher N. Hesse <raymanfx@gmail.com> - 4.1.0
+- Update to 4.1.0
+- Add new gapi (core) and quality (contrib) modules
+- Enable vulkan compute backend
+
 * Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 3.4.6-7
 - Rebuilt for Python 3.8
 
