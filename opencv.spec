@@ -45,6 +45,7 @@
 %endif
 %bcond_without  clp
 %bcond_without  va
+%bcond_without  java
 
 %global srcname opencv
 %global abiver  3.4
@@ -57,7 +58,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -156,6 +157,10 @@ BuildRequires:  lapack-devel
 %{?with_libmfx:BuildRequires:  libmfx-devel}
 %{?with_clp:BuildRequires:  coin-or-Clp-devel}
 %{?with_va:BuildRequires:   libva-devel}
+%{?with_java:
+BuildRequires:  ant
+BuildRequires:  java-devel
+}
 
 Requires:       opencv-core%{_isa} = %{version}-%{release}
 
@@ -204,6 +209,18 @@ Requires:       python3-numpy
 
 %description    -n python3-opencv
 This package contains Python3 bindings for the OpenCV library.
+
+
+%package    java
+Summary:    Java bindings for apps which use OpenCV
+Requires:   java-headless
+Requires:   javapackages-filesystem
+Requires:   %{name}-core%{_isa} = %{version}-%{release}
+Provides:   lib%{name}_java.so%{?_isa} = %{version}-%{release}
+Obsoletes:  lib%{name}_java.so%{?_isa} < %{version}-%{release}
+
+%description java
+This package contains Java bindings for the OpenCV library.
 
 
 %package        contrib
@@ -255,7 +272,8 @@ pushd build
  -DWITH_CAROTENE=OFF \
  -DENABLE_PRECOMPILED_HEADERS=OFF \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
- -DBUILD_opencv_java=OFF \
+ %{?with_java: -DBUILD_opencv_java=ON } \
+ %{!?with_java: -DBUILD_opencv_java=OFF } \
  %{?with_tbb: -DWITH_TBB=ON } \
  %{!?with_gstreamer: -DWITH_GSTREAMER=OFF } \
  %{!?with_ffmpeg: -DWITH_FFMPEG=OFF } \
@@ -303,6 +321,13 @@ popd
 %make_install -C build
 find %{buildroot} -name '*.la' -delete
 rm -rf %{buildroot}%{_datadir}/OpenCV/licenses/
+%if %{with java}
+mv %{buildroot}/usr/share/OpenCV/java/libopencv_java344.so %{buildroot}%{_libdir}/libopencv_java.so.%{version}
+ln -s -r %{buildroot}%{_libdir}/libopencv_java.so.%{version} %{buildroot}%{_libdir}/libopencv_java.so.%{abiver}
+mkdir -p %{buildroot}%{_jnidir}
+mv %{buildroot}/usr/share/OpenCV/java/opencv-344.jar %{buildroot}%{_jnidir}/opencv.jar.%{version}
+ln -s -r %{buildroot}%{_jnidir}/opencv.jar.%{version} %{buildroot}%{_jnidir}/opencv.jar.%{abiver}
+%endif
 
 %check
 # Check fails since we don't support most video
@@ -322,6 +347,7 @@ popd
 
 %ldconfig_scriptlets contrib
 
+%ldconfig_scriptlets java
 
 %files
 %doc README.md
@@ -369,6 +395,12 @@ popd
 %{_bindir}/setup_vars_opencv3.sh
 %{python3_sitearch}/cv2.cpython-3*.so
 
+%if %{with java}
+%files java
+%{_libdir}/libopencv_java.so.%{abiver}*
+%{_jnidir}/opencv.jar.%{abiver}*
+%endif
+
 %files contrib
 %{_libdir}/libopencv_aruco.so.%{abiver}*
 %{_libdir}/libopencv_bgsegm.so.%{abiver}*
@@ -402,6 +434,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun May 12 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-9
+- Enable Java Bindings (contribution of Ian Wallace)
+
 * Wed Apr 10 2019 Richard Shaw <hobbes1069@gmail.com> - 3.4.4-8
 - Rebuild for OpenEXR 2.3.0.
 
