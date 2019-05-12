@@ -172,6 +172,7 @@ and Computer Vision algorithms.
 
 %package        core
 Summary:        OpenCV core libraries
+Obsoletes:      python2-%{name} < %{version}-%{release}
 
 %description    core
 This package contains the OpenCV C/C++ core libraries.
@@ -436,6 +437,7 @@ popd
 %changelog
 * Sun May 12 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-9
 - Enable Java Bindings (contribution of Ian Wallace)
+- Obsolets python2-opencv to fix upgrade path
 
 * Wed Apr 10 2019 Richard Shaw <hobbes1069@gmail.com> - 3.4.4-8
 - Rebuild for OpenEXR 2.3.0.
