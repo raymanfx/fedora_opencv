@@ -49,6 +49,7 @@
 
 %global srcname opencv
 %global abiver  3.4
+%global javaver 344
 
 # Required because opencv-core has lot of spurious dependencies
 # (despite supposed to be "-core")
@@ -58,7 +59,7 @@
 
 Name:           opencv
 Version:        3.4.4
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -323,11 +324,11 @@ popd
 find %{buildroot} -name '*.la' -delete
 rm -rf %{buildroot}%{_datadir}/OpenCV/licenses/
 %if %{with java}
-mv %{buildroot}/usr/share/OpenCV/java/libopencv_java344.so %{buildroot}%{_libdir}/libopencv_java.so.%{version}
-ln -s -r %{buildroot}%{_libdir}/libopencv_java.so.%{version} %{buildroot}%{_libdir}/libopencv_java.so.%{abiver}
+mv %{buildroot}/usr/share/OpenCV/java/libopencv_java%{javaver}.so %{buildroot}%{_libdir}
+ln -s -r %{buildroot}%{_libdir}/libopencv_java%{javaver}.so %{buildroot}%{_libdir}/libopencv_java.so
 mkdir -p %{buildroot}%{_jnidir}
-mv %{buildroot}/usr/share/OpenCV/java/opencv-344.jar %{buildroot}%{_jnidir}/opencv.jar.%{version}
-ln -s -r %{buildroot}%{_jnidir}/opencv.jar.%{version} %{buildroot}%{_jnidir}/opencv.jar.%{abiver}
+mv %{buildroot}/usr/share/OpenCV/java/opencv-%{javaver}.jar %{buildroot}%{_jnidir}/
+ln -s -r %{buildroot}%{_jnidir}/opencv-%{javaver}.jar %{buildroot}%{_jnidir}/opencv.jar
 %endif
 
 %check
@@ -398,8 +399,10 @@ popd
 
 %if %{with java}
 %files java
-%{_libdir}/libopencv_java.so.%{abiver}*
-%{_jnidir}/opencv.jar.%{abiver}*
+%{_libdir}/libopencv_java%{javaver}.so
+%{_libdir}/libopencv_java.so
+%{_jnidir}/opencv-%{javaver}.jar
+%{_jnidir}/opencv.jar
 %endif
 
 %files contrib
@@ -435,6 +438,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon May 20 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-10
+- Try improve Java Bindings
+
 * Sun May 12 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-9
 - Enable Java Bindings (contribution of Ian Wallace)
 - Obsoletes python2-opencv to fix upgrade path
