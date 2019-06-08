@@ -49,7 +49,7 @@
 
 %global srcname opencv
 %global abiver  3.4
-%global javaver 344
+%global javaver 346
 
 # Required because opencv-core has lot of spurious dependencies
 # (despite supposed to be "-core")
@@ -58,8 +58,8 @@
 %global optflags %(echo %{optflags} -Wl,--as-needed )
 
 Name:           opencv
-Version:        3.4.4
-Release:        10%{?dist}
+Version:        3.4.6
+Release:        1%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -71,12 +71,7 @@ URL:            http://opencv.org
 #
 Source0:        %{name}-clean-%{version}.tar.gz
 Source1:        %{name}_contrib-clean-%{version}.tar.gz
-# fix/simplify cmake config install location (upstreamable)
-# https://bugzilla.redhat.com/1031312
-Patch1:         opencv-3.4.1-cmake_paths.patch
-Patch10:        https://github.com/opencv/opencv/pull/13351/commits/c26c43c69c654344d2e2fb7b2d21121ca89224e6.patch
-Patch11:        https://github.com/opencv/opencv_contrib/pull/1905/commits/c4419e4e65a8d9e0b5a15e9a5242453f261bee46.patch
-Patch12:        https://github.com/opencv/opencv/pull/13254/commits/ad35b79e3f98b4ce30481e0299cca550ed77aef0.patch
+Patch2:         opencv-4.1.0-install_3rdparty_licenses.patch
 
 BuildRequires:  gcc-c++
 BuildRequires:  libtool
@@ -243,15 +238,13 @@ rm -r 3rdparty/
 mkdir 3rdparty/
 mv quirc/ 3rdparty/
 
-%patch1 -p1 -b .cmake_paths
-%patch10 -p1 -b .fix_support_YV12_too
+%patch2 -p1 -b .install_3rdparty_licenses
+
 %ifarch %{ix86} %{arm}
 %endif
 
 pushd %{name}_contrib-%{version}
-%patch11 -p1 -b .cvv_repair_build
 popd
-%patch12 -p1 -b .fix_install_of_python_bindings
 
 %build
 # enabled by default if libraries are presents at build time:
@@ -353,7 +346,6 @@ popd
 
 %files
 %doc README.md
-%license LICENSE
 %{_bindir}/opencv_*
 %dir %{_datadir}/OpenCV
 %{_datadir}/OpenCV/haarcascades
@@ -361,6 +353,8 @@ popd
 %{_datadir}/OpenCV/valgrind*
 
 %files core
+%license LICENSE
+%{_datadir}/licenses/opencv3/
 %{_libdir}/libopencv_core.so.%{abiver}*
 %{_libdir}/libopencv_cvv.so.%{abiver}*
 %{_libdir}/libopencv_features2d.so.%{abiver}*
@@ -387,7 +381,7 @@ popd
 %{_includedir}/opencv2
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/opencv.pc
-%{_libdir}/OpenCV/*.cmake
+%{_datadir}/OpenCV/*.cmake
 
 %files doc
 %{_datadir}/OpenCV/samples
@@ -438,6 +432,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu May 23 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-1
+- Update to 3.4.6
+
 * Mon May 20 2019 Sérgio Basto <sergio@serjux.com> - 3.4.4-10
 - Try improve Java Bindings
 
