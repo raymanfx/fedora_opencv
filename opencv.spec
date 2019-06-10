@@ -59,7 +59,7 @@
 
 Name:           opencv
 Version:        3.4.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -125,6 +125,7 @@ BuildRequires:  protobuf-devel
 BuildRequires:  gdal-devel
 BuildRequires:  glog-devel
 BuildRequires:  doxygen
+BuildRequires:  python3-beautifulsoup4
 #for doc/doxygen/bib2xhtml.pl
 BuildRequires:  perl-open
 BuildRequires:  gflags-devel
@@ -168,6 +169,7 @@ and Computer Vision algorithms.
 
 %package        core
 Summary:        OpenCV core libraries
+Provides:       bundled(quirc) = 1.0
 Obsoletes:      python2-%{name} < %{version}-%{release}
 
 %description    core
@@ -178,7 +180,6 @@ This package contains the OpenCV C/C++ core libraries.
 Summary:        Development files for using the OpenCV library
 Requires:       %{name}%{_isa} = %{version}-%{release}
 Requires:       %{name}-contrib%{_isa} = %{version}-%{release}
-Provides:       bundled(quirc) = 1.0
 
 %description    devel
 This package contains the OpenCV C/C++ library and header files, as well as
@@ -296,6 +297,7 @@ pushd build
  -DWITH_LIBV4L=ON \
  -DWITH_OPENMP=ON \
  -DENABLE_PKG_CONFIG=OFF \
+ -DOPENCV_CONFIG_INSTALL_PATH=%{_libdir}/cmake/OpenCV \
  %{?with_gdcm: -DWITH_GDCM=ON } \
  %{?with_libmfx: -DWITH_MFX=ON } \
  %{?with_clp: -DWITH_CLP=ON } \
@@ -380,8 +382,11 @@ popd
 %{_includedir}/opencv
 %{_includedir}/opencv2
 %{_libdir}/lib*.so
+%if %{with java}
+%exclude %{_libdir}/libopencv_java*.so
+%endif
 %{_libdir}/pkgconfig/opencv.pc
-%{_datadir}/OpenCV/*.cmake
+%{_libdir}/cmake/OpenCV/*.cmake
 
 %files doc
 %{_datadir}/OpenCV/samples
@@ -432,6 +437,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Sun Jun 09 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-2
+- Fix cmakes location
+
 * Thu May 23 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-1
 - Update to 3.4.6
 
