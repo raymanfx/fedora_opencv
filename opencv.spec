@@ -59,7 +59,7 @@
 
 Name:           opencv
 Version:        3.4.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -214,8 +214,6 @@ Summary:    Java bindings for apps which use OpenCV
 Requires:   java-headless
 Requires:   javapackages-filesystem
 Requires:   %{name}-core%{_isa} = %{version}-%{release}
-Provides:   lib%{name}_java.so%{?_isa} = %{version}-%{release}
-Obsoletes:  lib%{name}_java.so%{?_isa} < %{version}-%{release}
 
 %description java
 This package contains Java bindings for the OpenCV library.
@@ -268,7 +266,8 @@ pushd build
  -DWITH_CAROTENE=OFF \
  -DENABLE_PRECOMPILED_HEADERS=OFF \
  -DCMAKE_BUILD_TYPE=ReleaseWithDebInfo \
- %{?with_java: -DBUILD_opencv_java=ON } \
+ %{?with_java: -DBUILD_opencv_java=ON \
+ -DOPENCV_JAR_INSTALL_PATH=%{_jnidir} } \
  %{!?with_java: -DBUILD_opencv_java=OFF } \
  %{?with_tbb: -DWITH_TBB=ON } \
  %{!?with_gstreamer: -DWITH_GSTREAMER=OFF } \
@@ -319,10 +318,7 @@ popd
 find %{buildroot} -name '*.la' -delete
 rm -rf %{buildroot}%{_datadir}/OpenCV/licenses/
 %if %{with java}
-mv %{buildroot}/usr/share/OpenCV/java/libopencv_java%{javaver}.so %{buildroot}%{_libdir}
-ln -s -r %{buildroot}%{_libdir}/libopencv_java%{javaver}.so %{buildroot}%{_libdir}/libopencv_java.so
-mkdir -p %{buildroot}%{_jnidir}
-mv %{buildroot}/usr/share/OpenCV/java/opencv-%{javaver}.jar %{buildroot}%{_jnidir}/
+ln -s -r %{buildroot}%{_jnidir}/libopencv_java%{javaver}.so %{buildroot}%{_jnidir}/libopencv_java.so
 ln -s -r %{buildroot}%{_jnidir}/opencv-%{javaver}.jar %{buildroot}%{_jnidir}/opencv.jar
 %endif
 
@@ -382,9 +378,6 @@ popd
 %{_includedir}/opencv
 %{_includedir}/opencv2
 %{_libdir}/lib*.so
-%if %{with java}
-%exclude %{_libdir}/libopencv_java*.so
-%endif
 %{_libdir}/pkgconfig/opencv.pc
 %{_libdir}/cmake/OpenCV/*.cmake
 
@@ -398,9 +391,9 @@ popd
 
 %if %{with java}
 %files java
-%{_libdir}/libopencv_java%{javaver}.so
-%{_libdir}/libopencv_java.so
+%{_jnidir}/libopencv_java%{javaver}.so
 %{_jnidir}/opencv-%{javaver}.jar
+%{_jnidir}/libopencv_java.so
 %{_jnidir}/opencv.jar
 %endif
 
@@ -437,8 +430,12 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Wed Jun 12 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-3
+- Remove Obsoletes/Provides libopencv_java.so and use OPENCV_JAR_INSTALL_PATH
+
 * Sun Jun 09 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-2
 - Fix cmakes location
+- add BR: python3-beautifulsoup4
 
 * Thu May 23 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-1
 - Update to 3.4.6
