@@ -59,7 +59,7 @@
 
 Name:           opencv
 Version:        3.4.6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -295,8 +295,7 @@ pushd build
  -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-%{version}/modules \
  -DWITH_LIBV4L=ON \
  -DWITH_OPENMP=ON \
- -DENABLE_PKG_CONFIG=OFF \
- -DOPENCV_CONFIG_INSTALL_PATH=%{_libdir}/cmake/OpenCV \
+ -DOPENCV_CONFIG_INSTALL_PATH=%{_lib}/cmake/OpenCV \
  %{?with_gdcm: -DWITH_GDCM=ON } \
  %{?with_libmfx: -DWITH_MFX=ON } \
  %{?with_clp: -DWITH_CLP=ON } \
@@ -430,6 +429,10 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Tue Jun 25 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-4
+- cmake: use relative PATH on OPENCV_CONFIG_INSTALL_PATH, fixes rhbz #1721876
+- cmake: don't set ENABLE_PKG_CONFIG
+
 * Wed Jun 12 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-3
 - Remove Obsoletes/Provides libopencv_java.so and use OPENCV_JAR_INSTALL_PATH
 
