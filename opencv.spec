@@ -59,7 +59,7 @@
 
 Name:           opencv
 Version:        3.4.6
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -429,6 +429,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Thu Jun 27 2019 Jerry James <loganjerry@gmail.com> - 3.4.6-5
+- Rebuild for coin-or package updates
+
 * Tue Jun 25 2019 Sérgio Basto <sergio@serjux.com> - 3.4.6-4
 - cmake: use relative PATH on OPENCV_CONFIG_INSTALL_PATH, fixes rhbz #1721876
 - cmake: don't set ENABLE_PKG_CONFIG
