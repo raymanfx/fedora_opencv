@@ -59,7 +59,7 @@
 
 Name:           opencv
 Version:        3.4.6
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Collection of algorithms for computer vision
 # This is normal three clause BSD.
 License:        BSD
@@ -429,6 +429,9 @@ popd
 %{_libdir}/libopencv_xphoto.so.%{abiver}*
 
 %changelog
+* Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 3.4.6-7
+- Rebuilt for Python 3.8
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.4.6-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
