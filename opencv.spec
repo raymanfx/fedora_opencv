@@ -108,7 +108,6 @@ BuildRequires:  pkgconfig
 BuildRequires:  python3-devel
 BuildRequires:  python3-flake8
 BuildRequires:  python3-numpy
-BuildRequires:  pylint
 BuildRequires:  swig >= 1.3.24
 %{?with_ffmpeg:BuildRequires:  ffmpeg-devel >= 0.4.9}
 %if 0%{?fedora} || 0%{?rhel} > 7
@@ -286,7 +285,7 @@ pushd build
  -DINSTALL_PYTHON_EXAMPLES=ON \
  -DPYTHON2_EXECUTABLE=false \
  -DPYTHON3_EXECUTABLE=%{__python3} \
- -DENABLE_PYLINT=ON \
+ -DENABLE_PYLINT=OFF \
  -DBUILD_PROTOBUF=OFF \
  -DPROTOBUF_UPDATE_FILES=ON \
 %{?with_opencl: -DOPENCL_INCLUDE_DIR=%{_includedir}/CL } \
